@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>&quot;Plant Farm&quot; Would like to Access Your Location</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>&quot;Plant Farm&quot; Would like to Access Your Photo Library </string>
+	<key>NSCameraUsageDescription</key>
+	<string>&quot;Plant Farm&quot; Would like to Access Your Camera</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>
