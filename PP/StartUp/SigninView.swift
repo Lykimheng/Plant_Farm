@@ -55,6 +55,8 @@ struct SigninView: View {
             }
             // SIGN IN BUTTON (BOTTOM SHEET)
             Button {
+                print("Email: '\(email)'")
+                print("Password: '\(password)'")
                 Task{
                     await user.login(email: email, password: password)
                     if user.isLoggedIn {

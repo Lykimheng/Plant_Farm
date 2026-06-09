@@ -10,6 +10,7 @@ import SwiftUI
 struct PlantCard: View {
     let plant: SpecialPlant
     @EnvironmentObject var cart: CartModel
+    @EnvironmentObject var wishlist: WishlistModel
     
     var body: some View {
         NavigationLink(value: plant){
@@ -45,10 +46,12 @@ struct PlantCard: View {
                                 .padding(.top, 10)
                                 .position(x: 45, y: 50)
                         }
-                        Image(systemName: Constants.favoriteIcon)
-                            .foregroundColor(.white)
-                            .padding(.leading, 12)
-                        
+                        Button {
+                            wishlist.toggleItem(plant: plant.plant)
+                        } label: {
+                            Image(systemName: wishlist.isWishlisted(plant.plant) ? "heart.fill" : "heart")
+                                .foregroundColor(wishlist.isWishlisted(plant.plant) ? .red : .white)
+                        }
                     }
                     
                     Spacer()

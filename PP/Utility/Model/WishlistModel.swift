@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-class FavoriteModel: ObservableObject {
+class WishlistModel: ObservableObject {
     @Published var items: [PlantModel] = []
     
     func addItem(plant: PlantModel) {
@@ -22,14 +22,14 @@ class FavoriteModel: ObservableObject {
     }
     
     func toggleItem(plant: PlantModel) {
-        if isFavoreted(plant) {
+        if isWishlisted(plant) {
             removeItem(plant: plant)
         } else {
             addItem(plant: plant)
         }
     }
     
-    func isFavoreted(_ plant: PlantModel) -> Bool {
+    func isWishlisted(_ plant: PlantModel) -> Bool {
         items.contains(where: { $0.id == plant.id })
     }
     

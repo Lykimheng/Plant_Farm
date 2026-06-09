@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PopularCard: View {
     let plant: PlantModel
-    @State private var favoritebtn: Bool = false
     @EnvironmentObject var cart: CartModel
+    @EnvironmentObject var wishlist: WishlistModel
     var body: some View {
         ZStack(alignment: .bottom) {
             ZStack {
@@ -63,11 +63,10 @@ struct PopularCard: View {
                     VStack {
                         Spacer()
                         Button {
-                            favoritebtn.toggle()
+                            wishlist.toggleItem(plant: plant)
                         } label: {
-                            Image(systemName: favoritebtn ? "heart.fill" : Constants.favoriteIcon)
-                                .imageScale(.large)
-                                .foregroundColor(favoritebtn ? .red : .white)
+                            Image(systemName: wishlist.isWishlisted(plant) ? "heart.fill" : "heart")
+                                .foregroundColor(wishlist.isWishlisted(plant) ? .red : .white)
                         }
                         
                         Spacer()

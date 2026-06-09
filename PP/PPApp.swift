@@ -12,14 +12,14 @@ struct PPApp: App {
     @StateObject private var user = UserModel()
     @StateObject private var cart = CartModel()
     @StateObject private var location = LocationManager()
-    @StateObject private var favorite = FavoriteModel()
+    @StateObject private var wishlist = WishlistModel()
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(user)
                 .environmentObject(cart)
                 .environmentObject(location)
-                .environmentObject(favorite)
+                .environmentObject(wishlist)
                 .onAppear{
                     location.requestPermission()
                 }

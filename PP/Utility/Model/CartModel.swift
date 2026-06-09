@@ -54,6 +54,9 @@ class CartModel: ObservableObject {
             }
         }
     }
+    func clearCart() {
+        items.removeAll()
+    }
     
     // Total price
     var totalPrice: Double {

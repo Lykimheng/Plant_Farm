@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct EditProfileView: View {
+    @StateObject private var camera = CameraViewModel()
+    @StateObject private var permission = CameraPermissionManager()
     @State private var name: String = ""
     @State private var OldPassword: String = ""
     @State private var password: String = ""
     @State private var ConfirmPassword: String = ""
+    @State private var showPhotoLibrary: Bool = false
+    @State private var selectedImage: UIImage? = nil 
     var body: some View {
         VStack{
             HStack{
@@ -27,12 +32,20 @@ struct EditProfileView: View {
                         .resizable()
                         .frame(width: 120, height: 120)
                         .clipShape(Circle())
-                    Image(systemName: Constants.cameraIcon)
-                        .frame(width: 30, height: 30)
-                        .background(Color(.white))
-                        .clipShape(Circle())
-                        .foregroundStyle(Color(.black))
-                        .padding(.top, 80)
+                    Button{
+                        permission.requestPhotoPermission { granted in
+                            if granted {
+                                showPhotoLibrary = true
+                            }
+                        }
+                    } label: {
+                        Image(systemName: Constants.cameraIcon)
+                            .frame(width: 30, height: 30)
+                            .background(Color(.white))
+                            .clipShape(Circle())
+                            .foregroundStyle(Color(.black))
+                            .padding(.top, 80)
+                    }
                 }
             }
             HStack{
@@ -45,13 +58,6 @@ struct EditProfileView: View {
             
             NameField(name: $name)
                 .padding(.horizontal ,)
-                
-//            VStack(spacing: 15){
-//                OldPasswordField(OldPassword: $OldPassword)
-//                InputPasswardField(password: $password)
-//                InputPasswardConField(password: $ConfirmPassword)
-//            }
-//            .padding(.horizontal ,)
             
             Spacer()
             
@@ -71,6 +77,9 @@ struct EditProfileView: View {
             
         }
         .padding(.top, 20)
+        .sheet(isPresented: $showPhotoLibrary) {
+            ImagePicker(selectedImage: $selectedImage, sourceType: .photoLibrary)
+        }
         .preferredColorScheme(.light)
     }
 }

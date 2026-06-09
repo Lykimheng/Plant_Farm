@@ -8,12 +8,86 @@
 import SwiftUI
 import MapKit
 
+struct DeliveryOptionRow: View {
+    let option: (name: String, price: Double, duration: String)
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button {
+            onTap()
+        } label: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(option.name)
+                    .font(.subheadline.bold())
+                Text(String(format: "$%.2f", option.price))
+                    .font(.title3.bold())
+                Text(option.duration)
+                    .font(.caption)
+                    .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                isSelected ?
+                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
+                Color.white
+            )
+            .foregroundColor(isSelected ? .white : .black)
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+}
+
+struct PaymentMethodRow: View {
+    let method: (name: String, icon: String)    // ← same tuple type as your array
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button {
+            onTap()
+        } label: {
+            HStack(spacing: 16) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.1))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: method.icon)
+                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                }
+                Text(method.name)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                Spacer()
+                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
+                    .foregroundColor(
+                        isSelected ?
+                        Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
+                        .gray.opacity(0.4)
+                    )
+                    .font(.title3)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal)
+        }
+    }
+}
+
 struct CheckoutView: View {
     @EnvironmentObject var cart: CartModel
+    @EnvironmentObject var userData: UserModel
     @EnvironmentObject var location: LocationManager
     @State private var selectedDelivery = "Standard"
     @State private var specialNotes = ""
     @State private var selectedPayment = "ABA Pay"
+    @State private var orderPlaced = false
+    @State private var savedItems: [CartItem] = []
+    let generatedOrderID = "PF-\(Int.random(in: 90000...99999))"
     
     
     private let deliveryOptions: [(name: String, price: Double, duration: String)] = [
@@ -96,34 +170,11 @@ struct CheckoutView: View {
 
                     HStack(spacing: 12) {
                         ForEach(deliveryOptions, id: \.name) { option in
-                            Button {
-                                selectedDelivery = option.name
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(option.name)
-                                        .font(.subheadline.bold())
-                                    Text(String(format: "$%.2f", option.price))
-                                        .font(.title3.bold())
-                                    Text(option.duration)
-                                        .font(.caption)
-                                        .foregroundColor(
-                                            selectedDelivery == option.name ? .white.opacity(0.8) : .gray
-                                        )
-                                }
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(
-                                    selectedDelivery == option.name ?
-                                    Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                    Color.white
-                                )
-                                .foregroundColor(selectedDelivery == option.name ? .white : .black)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.3), lineWidth: 1)
-                                )
-                            }
+                            DeliveryOptionRow(
+                                option: option,
+                                isSelected: selectedDelivery == option.name,
+                                onTap: { selectedDelivery = option.name }
+                            )
                         }
                     }
                 }
@@ -164,37 +215,11 @@ struct CheckoutView: View {
 
                     VStack(spacing: 0) {
                         ForEach(paymentMethods, id: \.name) { method in
-                            Button {
-                                selectedPayment = method.name
-                            } label: {
-                                HStack(spacing: 16) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.1))
-                                            .frame(width: 44, height: 44)
-                                        Image(systemName: method.icon)
-                                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                    }
-
-                                    Text(method.name)
-                                        .font(.subheadline)
-                                        .foregroundColor(.black)
-
-                                    Spacer()
-
-                                    Image(systemName: selectedPayment == method.name ?
-                                          "largecircle.fill.circle" : "circle")
-                                        .foregroundColor(
-                                            selectedPayment == method.name ?
-                                            Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                            .gray.opacity(0.4)
-                                        )
-                                        .font(.title3)
-                                }
-                                .padding(.vertical, 14)
-                                .padding(.horizontal)
-                            }
-
+                            PaymentMethodRow(
+                                method: method,
+                                isSelected: selectedPayment == method.name,
+                                onTap: { selectedPayment = method.name }
+                            )
                             if method.name != paymentMethods.last?.name {
                                 Divider().padding(.leading, 74)
                             }
@@ -249,7 +274,9 @@ struct CheckoutView: View {
 
                 // MARK: - Confirm Button
                 Button {
-                    // confirm order action
+                    savedItems = cart.items
+                    cart.clearCart()
+                    orderPlaced = true
                 } label: {
                     HStack {
                         Text("Confirm Order")
@@ -265,6 +292,14 @@ struct CheckoutView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
+        }
+        .navigationDestination(isPresented: $orderPlaced) {
+            OrderSuccessView(
+                orderID: generatedOrderID,
+                orderItems: savedItems,
+                userEmail: userData.email
+            )
+            .environmentObject(cart)
         }
         .onAppear {
             location.requestPermission()

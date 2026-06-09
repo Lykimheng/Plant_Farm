@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedCategory = "All"    // ← add this
+    @State private var selectedCategory = "All"
     @State private var searchText = ""
     @State private var isSearching = false
     @State private var isScanning = false

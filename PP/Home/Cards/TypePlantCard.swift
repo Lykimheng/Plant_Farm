@@ -10,6 +10,7 @@ import SwiftUI
 struct TypePlantCard: View {
     let plant: PlantModel
     @EnvironmentObject var cart: CartModel
+    @EnvironmentObject var wishlist: WishlistModel
 
     var body: some View {
         ZStack {
@@ -44,10 +45,12 @@ struct TypePlantCard: View {
                             .padding(.top, 10)
                             .position(x: 45, y: 60)
                     }
-                    Image(systemName: Constants.favoriteIcon)
-                        .foregroundColor(.white)
-                        .padding(.leading, 10)
-
+                    Button {
+                        wishlist.toggleItem(plant: plant)
+                    } label: {
+                        Image(systemName: wishlist.isWishlisted(plant) ? "heart.fill" : "heart")
+                            .foregroundColor(wishlist.isWishlisted(plant) ? .red : .white)
+                    }
                 }
 
                 

@@ -9,8 +9,8 @@ import SwiftUI
 struct DetailSpecialCard: View {
     let plant: SpecialPlant
     @EnvironmentObject var cart: CartModel
+    @EnvironmentObject var wishlist: WishlistModel
     @Environment(\.dismiss) private var dismiss
-    @State private var favoritebtn: Bool = false
 
     var body: some View {
         GeometryReader { geo in
@@ -26,11 +26,10 @@ struct DetailSpecialCard: View {
                     }
                     Spacer()
                     Button {
-                        favoritebtn.toggle()
+                        wishlist.toggleItem(plant: plant.plant)
                     } label: {
-                        Image(systemName: favoritebtn ? "heart.fill" : Constants.favoriteIcon)
-                            .imageScale(.large)
-                            .foregroundColor(favoritebtn ? .red : .white)
+                        Image(systemName: wishlist.isWishlisted(plant.plant) ? "heart.fill" : "heart")
+                            .foregroundColor(wishlist.isWishlisted(plant.plant) ? .red : .white)
                     }
                 }
                 .frame(height: 70)

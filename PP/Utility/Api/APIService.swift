@@ -41,6 +41,19 @@ class APIService {
         
         return await sendRequest(url: url, body: body)
     }
+    // MARK: - Forget Password
+    func forgotPassword(email: String, newPassword: String) async -> Result<UserResponse, APIError> {
+        guard let url = URL(string: "\(baseURL)/forgot_password.php") else {
+            return .failure(.invalidURL)
+        }
+
+        let body: [String: String] = [
+            "email": email,
+            "newPassword": newPassword
+        ]
+
+        return await sendRequest(url: url, body: body)
+    }
     
     // MARK: - Shared Request Handler
     private func sendRequest(url: URL, body: [String: String]) async -> Result<UserResponse, APIError> {

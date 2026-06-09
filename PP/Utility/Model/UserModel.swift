@@ -65,6 +65,25 @@ class UserModel: ObservableObject {
             }
         }
     }
+    // MARK: - Forget Password
+    func forgotPassword(email: String, newPassword: String) async {
+        await MainActor.run { isLoading = true }
+
+        let result = await APIService.shared.forgotPassword(
+            email: email,
+            newPassword: newPassword
+        )
+
+        await MainActor.run {
+            isLoading = false
+            switch result {
+            case .success(let response):
+                errorMessage = response.message    // ← "Password updated successfully."
+            case .failure(let error):
+                errorMessage = error.message
+            }
+        }
+    }
 
     // MARK: - Logout
     func logout() {

@@ -10,9 +10,11 @@ import SwiftUI
 struct HeroSection: View {
     @EnvironmentObject var user: UserModel
     @EnvironmentObject var location: LocationManager
+    @EnvironmentObject var wishlist: WishlistModel
     @Binding var searchText: String
     @Binding var isSearching: Bool
     @Binding var isScanning: Bool
+    @State private var showWishlist = false
     var body: some View {
         VStack(spacing: 16) {
             // Header
@@ -38,7 +40,7 @@ struct HeroSection: View {
 
                 HStack(spacing: 16) {
                     Button{
-                        
+                       showWishlist = true
                     } label: {
                         Image(systemName: Constants.favoriteIcon)
                             .foregroundColor(.white)
@@ -92,5 +94,9 @@ struct HeroSection: View {
         .padding(.top, 8)
         .padding(.bottom, 16)
         .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0))
+        .sheet(isPresented: $showWishlist){
+            WishlistView()
+                .environmentObject(wishlist)
+        }
     }
 }

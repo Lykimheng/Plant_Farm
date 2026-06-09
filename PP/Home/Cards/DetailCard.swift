@@ -9,8 +9,7 @@ import SwiftUI
 struct DetailCard: View {
     let plant: PlantModel  // ← receive data here
     @EnvironmentObject var cart: CartModel
-    
-    @State private var favoritebtn: Bool = false
+    @EnvironmentObject var wishlist: WishlistModel
     @Environment(\.dismiss) private var dismiss  // ← for back button
 
     var body: some View {
@@ -26,11 +25,10 @@ struct DetailCard: View {
                     }
                     Spacer()
                     Button {
-                        favoritebtn.toggle()
+                        wishlist.toggleItem(plant: plant)
                     } label: {
-                        Image(systemName: favoritebtn ? "heart.fill" : Constants.favoriteIcon)
-                            .imageScale(.large)
-                            .foregroundColor(favoritebtn ? .red : .white)
+                        Image(systemName: wishlist.isWishlisted(plant) ? "heart.fill" : "heart")
+                            .foregroundColor(wishlist.isWishlisted(plant) ? .red : .white)
                     }
                 }
                 .frame(height: 70)
