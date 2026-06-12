@@ -17,31 +17,27 @@ struct SignupView: View {
     @State private var confirmPassword = ""
     var body: some View {
             VStack(spacing: 20) {
-                Capsule()
-                    .frame(width: 40, height: 5)
-                    .foregroundColor(.gray.opacity(0.4))
-                    .padding(.top, 8)
-                
-                HStack(spacing: 10) {
+                HStack {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: Constants.backIcon)
-                            .foregroundStyle(Color.blue)
-                        Text("Back")
-                            .font(.system(size: 15, weight: .bold))
-                            .foregroundColor(.blue)
+                        HStack(spacing: 4) {
+                            Image(systemName: Constants.backIcon)
+                                .foregroundStyle(Color.blue)
+                            Text("Back")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundColor(.blue)
+                        }
                     }
+
                     Spacer()
-                    
-                    Text("Sign up")
-                        .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255, opacity: 1.0))
-                        .font(Font.largeTitle.bold())
-                    
-                    Spacer()
-                    Text("          ")
-                        .hidden()
                 }
+                .overlay(
+                    Text("Sign up")
+                        .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
+                        .font(.largeTitle.bold())
+                )
+
                 .padding(20)
                 VStack(spacing: 20){
                     InputField(icon: Constants.userIcon, placeholder: "User name", text: $username)

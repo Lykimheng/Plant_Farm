@@ -102,12 +102,28 @@ struct HomeView: View {
     // MARK: - All Content
     private var allContent: some View {
         VStack(spacing: 16) {
-            TypePlants(title: "Special Offer")
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
+            TypePlants(
+                title: "Special Offer",
+                isExpanded: isExpanded("Special"),
+                onToggle: { toggleSection("Special") }
+            )
+            if isExpanded("Special"){
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(SpecialOfferData.all) { plant in
                         NavigationLink(value: plant) {
                             PlantCard(plant: plant)
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(SpecialOfferData.all) { plant in
+                            NavigationLink(value: plant) {
+                                PlantCard(plant: plant)
+                            }
                         }
                     }
                 }

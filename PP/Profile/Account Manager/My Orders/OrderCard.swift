@@ -24,7 +24,7 @@ struct OrderCard: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(order.status.color)
+                    .background(order.status.color) 
                     .cornerRadius(20)
             }
 

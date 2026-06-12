@@ -9,24 +9,9 @@ import SwiftUI
 import MapKit
 
 struct OrderDetailView: View {
-    @EnvironmentObject var cart: CartModel
+    let order: OrderModel                    // ← add this
     @EnvironmentObject var location: LocationManager
     @State private var showCancelAlert = false
-
-    // sample order data — replace with real API data later
-    let orderNumber = "PF-98234"
-    let estimatedTime = "2:45 PM Today"
-    let deliveryAddress = "No. 42, St. 271, Sangkat Tumnup Teuk, Phnom Penh, Cambodia"
-    let courierName = "Sok San"
-    let courierImage = "avatar"
-
-    let orderStatuses: [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] = [
-        ("Order Placed", "Oct 24, 2023 - 09:15 AM", true, false),
-        ("Payment Confirmed", "Oct 24, 2023 - 09:20 AM", true, false),
-        ("Preparing Plant", "Quality check & hydration in progress", false, true),
-        ("Out for Delivery", "Pending", false, false),
-        ("Delivered", "Expected by 3:00 PM", false, false),
-    ]
 
     var body: some View {
         ScrollView {
@@ -45,26 +30,24 @@ struct OrderDetailView: View {
                             .overlay(ProgressView())
                     }
 
-                    // estimated arrival overlay
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Estimated Arrival")
                             .font(.caption)
-                            .foregroundColor(.white.opacity(0.8))
-                        Text(estimatedTime)
+                            .foregroundColor(.gray.opacity(0.8))
+                        Text("2:45 PM Today")
                             .font(.title3.bold())
-                            .foregroundColor(.white)
+                            .foregroundColor(.gray)
                     }
                     .padding()
 
-                    // status badge
                     HStack {
                         Spacer()
-                        Text("In Transit")
+                        Text(order.status.rawValue)         // ← dynamic
                             .font(.subheadline.bold())
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                            .background(order.status.color) // ← dynamic
                             .cornerRadius(20)
                             .padding()
                     }
@@ -82,7 +65,7 @@ struct OrderDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Delivery Address")
                             .font(.subheadline.bold())
-                        Text(deliveryAddress)
+                        Text(order.deliveryAddress)         // ← dynamic
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -99,17 +82,14 @@ struct OrderDetailView: View {
                         .font(.headline.bold())
 
                     VStack(spacing: 0) {
-                        ForEach(Array(orderStatuses.enumerated()), id: \.offset) { index, status in
+                        ForEach(Array(orderStatuses(for: order.status).enumerated()), id: \.offset) { index, status in
                             HStack(alignment: .top, spacing: 16) {
-
-                                // timeline indicator
                                 VStack(spacing: 0) {
                                     ZStack {
                                         Circle()
                                             .fill(status.isDone ?
                                                 Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                                status.isCurrent ?
-                                                Color.white : Color(.systemGray4))
+                                                status.isCurrent ? Color.white : Color(.systemGray4))
                                             .frame(width: 28, height: 28)
                                             .overlay(
                                                 Circle()
@@ -120,7 +100,6 @@ struct OrderDetailView: View {
                                                         lineWidth: 2
                                                     )
                                             )
-
                                         if status.isDone {
                                             Image(systemName: "checkmark")
                                                 .font(.system(size: 12, weight: .bold))
@@ -131,9 +110,7 @@ struct OrderDetailView: View {
                                                 .frame(width: 10, height: 10)
                                         }
                                     }
-
-                                    // connecting line
-                                    if index < orderStatuses.count - 1 {
+                                    if index < orderStatuses(for: order.status).count - 1 {
                                         Rectangle()
                                             .fill(status.isDone ?
                                                 Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
@@ -141,20 +118,15 @@ struct OrderDetailView: View {
                                             .frame(width: 2, height: 36)
                                     }
                                 }
-
-                                // status text
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(status.title)
                                         .font(.subheadline.bold())
-                                        .foregroundColor(
-                                            status.isDone || status.isCurrent ? .black : .gray
-                                        )
+                                        .foregroundColor(status.isDone || status.isCurrent ? .black : .gray)
                                     Text(status.subtitle)
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                 }
                                 .padding(.top, 4)
-
                                 Spacer()
                             }
                         }
@@ -165,44 +137,32 @@ struct OrderDetailView: View {
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.05), radius: 4)
 
-                // MARK: - Courier
+                // MARK: - Courier (static for now)
                 HStack(spacing: 16) {
-                    Image(courierImage)
+                    Image("avatar")
                         .resizable()
                         .scaledToFill()
                         .frame(width: 50, height: 50)
                         .clipShape(Circle())
-
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Courier")
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.7))
-                        Text(courierName)
+                        Text("Sok San")
                             .font(.headline.bold())
                             .foregroundColor(.white)
                     }
-
                     Spacer()
-
-                    // message button
                     Button { } label: {
                         ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 44, height: 44)
-                            Image(systemName: "message")
-                                .foregroundColor(.white)
+                            Circle().fill(Color.white.opacity(0.2)).frame(width: 44, height: 44)
+                            Image(systemName: "message").foregroundColor(.white)
                         }
                     }
-
-                    // call button
                     Button { } label: {
                         ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 44, height: 44)
-                            Image(systemName: "phone")
-                                .foregroundColor(.white)
+                            Circle().fill(Color.white.opacity(0.2)).frame(width: 44, height: 44)
+                            Image(systemName: "phone").foregroundColor(.white)
                         }
                     }
                 }
@@ -216,35 +176,30 @@ struct OrderDetailView: View {
                         Text("Order Summary")
                             .font(.headline.bold())
                         Spacer()
-                        Text("\(cart.items.count) Items")
+                        Text("\(order.items.count) Items")    // ← dynamic
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
 
-                    // items list
-                    ForEach(cart.items) { item in
+                    ForEach(order.items) { item in            // ← dynamic
                         HStack(spacing: 12) {
                             Image(item.plant.image)
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 70, height: 70)
                                 .cornerRadius(8)
-
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.plant.name)
                                     .font(.subheadline.bold())
-                                Text("Size: Medium | Qty: \(item.quantity)")
+                                Text("Qty: \(item.quantity)")
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
-
                             Spacer()
-
                             Text(String(format: "$%.2f", item.plant.price * Double(item.quantity)))
                                 .font(.subheadline.bold())
                         }
-
-                        if item.id != cart.items.last?.id {
+                        if item.id != order.items.last?.id {
                             Divider()
                         }
                     }
@@ -255,7 +210,7 @@ struct OrderDetailView: View {
                         Text("Total Amount")
                             .font(.headline.bold())
                         Spacer()
-                        Text(String(format: "$%.2f", cart.totalPrice))
+                        Text(String(format: "$%.2f", order.total))    // ← dynamic
                             .font(.headline.bold())
                     }
                 }
@@ -285,24 +240,44 @@ struct OrderDetailView: View {
             .padding(.top, 16)
         }
         .background(Color(.systemGray6))
-        .navigationTitle("Order #\(orderNumber)")
+        .navigationTitle("Order #\(order.orderNumber)")      // ← dynamic
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
         .alert("Cancel Order", isPresented: $showCancelAlert) {
-            Button("Cancel Order", role: .destructive) {
-                // cancel order action
-            }
-            Button("Keep Order", role: .cancel) {}
+            Button("Cancel Order", role: .destructive) { }
+            Button("Keep Order", role: .cancel) { }
         } message: {
             Text("Are you sure you want to cancel this order?")
+        }
+    }
+
+    // ← generate status steps based on current order status
+    func orderStatuses(for status: OrderModel.OrderStatus) -> [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] {
+        let allStatuses: [OrderModel.OrderStatus] = [.placed, .confirmed, .preparing, .inTransit, .delivered]
+        let currentIndex = allStatuses.firstIndex(of: status) ?? 0
+
+        return allStatuses.map { s in
+            let index = allStatuses.firstIndex(of: s) ?? 0
+            return (
+                title: s.rawValue,
+                subtitle: index <= currentIndex ? order.date : "Pending",
+                isDone: index < currentIndex,
+                isCurrent: index == currentIndex
+            )
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        OrderDetailView()
-            .environmentObject(CartModel())
-            .environmentObject(LocationManager())
+        OrderDetailView(order: OrderModel(
+            orderNumber: "PF-98234",
+            date: "Oct 24, 2023 - 09:15 AM",
+            status: .preparing,
+            items: [],
+            total: 63.00,
+            deliveryAddress: "No. 42, St. 271, Phnom Penh"
+        ))
+        .environmentObject(LocationManager())
     }
 }

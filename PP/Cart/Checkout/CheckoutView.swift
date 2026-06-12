@@ -82,6 +82,7 @@ struct CheckoutView: View {
     @EnvironmentObject var cart: CartModel
     @EnvironmentObject var userData: UserModel
     @EnvironmentObject var location: LocationManager
+    @EnvironmentObject var orders:  OrdersModel
     @State private var selectedDelivery = "Standard"
     @State private var specialNotes = ""
     @State private var selectedPayment = "ABA Pay"
@@ -275,6 +276,13 @@ struct CheckoutView: View {
                 // MARK: - Confirm Button
                 Button {
                     savedItems = cart.items
+                    
+                    orders.addOrder(
+                        orderNumber: generatedOrderID,
+                        items: cart.items,
+                        total: total,
+                        deliveryAddress: location.userAddress
+                    )
                     cart.clearCart()
                     orderPlaced = true
                 } label: {

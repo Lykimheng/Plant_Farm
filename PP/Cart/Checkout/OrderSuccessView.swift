@@ -250,9 +250,15 @@ struct OrderSuccessView: View {
             }
         }
         .navigationDestination(isPresented: $showTracking) {
-            OrderDetailView()
-                .environmentObject(cart)
-                .environmentObject(LocationManager())
+            OrderDetailView(order: OrderModel(
+                orderNumber: orderID,
+                date: "",
+                status: .placed,
+                items: orderItems,
+                total: orderItems.reduce(0) { $0 + $1.plant.price * Double($1.quantity) },
+                deliveryAddress: ""
+            ))
+            .environmentObject(LocationManager())
         }
         .preferredColorScheme(.light)
     }

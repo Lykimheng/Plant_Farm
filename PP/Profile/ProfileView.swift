@@ -12,12 +12,24 @@ struct ProfileView: View {
     @EnvironmentObject var user: UserModel
     @EnvironmentObject var orders: OrdersModel
     @EnvironmentObject var wishlist: WishlistModel
+    @EnvironmentObject var myPlants: MyPlantsModel
     @StateObject private var camera = CameraViewModel()
     @StateObject private var permission = CameraPermissionManager()
     @State private var showWishlist = false
     @State private var showLogoutAlert = false
     @State private var editBtn = false
     @State private var showMyOrder = false
+
+    private var careLevelText: String {
+        let count = myPlants.plants.count
+        switch count {
+        case 0:        return "Lvl 1"
+        case 1...3:    return "Lvl 2"
+        case 4...7:    return "Lvl 3"
+        case 8...12:   return "Lvl 4"
+        default:       return "Lvl 5"
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -63,7 +75,7 @@ struct ProfileView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "checkmark.seal.fill")
                                 .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            Text("Chlorophyll Tech Member")
+                            Text("ITE Member")
                                 .font(.caption.bold())
                                 .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
                         }
@@ -76,8 +88,8 @@ struct ProfileView: View {
 
                     // MARK: - Stats
                     HStack(spacing: 12) {
-                        StatCard(title: "My Plants", value: "24")
-                        StatCard(title: "Care Level", value: "Lvl 5")
+                        StatCard(title: "My Plants", value: "\(myPlants.plants.count)")
+                        StatCard(title: "Care Level", value: careLevelText)
                     }
                     .padding(.horizontal)
 
@@ -170,7 +182,6 @@ struct ProfileView: View {
             .preferredColorScheme(.light)
             .navigationDestination(isPresented: $showMyOrder){
                 MyOrdersView()
-//                    .environmentObject(orders)
             }
             // ← open wishlist as sheet
             .navigationDestination(isPresented: $showWishlist){
@@ -254,4 +265,6 @@ struct ProfileRow: View {
     ProfileView()
         .environmentObject(UserModel())
         .environmentObject(WishlistModel())
+        .environmentObject(OrdersModel())
+        .environmentObject(MyPlantsModel())
 }

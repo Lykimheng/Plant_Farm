@@ -10,7 +10,7 @@ import Foundation
 class APIService {
     static let shared = APIService()        // ← singleton, call anywhere
     
-    private let baseURL = "http:/192.168.2.17:8888/PP"
+    private let baseURL = "http:/172.20.10.13:8888/PP"
     
     // MARK: - Register
     func register(name: String, email: String, password: String, location: String) async -> Result<UserResponse, APIError> {

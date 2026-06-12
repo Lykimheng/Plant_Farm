@@ -48,4 +48,5 @@ struct Constants{
     static let closeCircleIcon = "xmark.circle"
     static let locationIcon = "location1"
     static let phoneIcon = "phone"
+    static let noNotifaicationIcon = "bell.slash"
 }

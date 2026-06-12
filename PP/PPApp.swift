@@ -13,6 +13,8 @@ struct PPApp: App {
     @StateObject private var cart = CartModel()
     @StateObject private var location = LocationManager()
     @StateObject private var wishlist = WishlistModel()
+    @StateObject private var orders = OrdersModel()
+    @StateObject private var myPlants = MyPlantsModel()
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -23,6 +25,9 @@ struct PPApp: App {
                 .onAppear{
                     location.requestPermission()
                 }
+                .environmentObject(orders)
+                .environmentObject(myPlants)
         }
     }
 }
+

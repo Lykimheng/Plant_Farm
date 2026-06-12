@@ -31,5 +31,9 @@ struct SpecialOfferData {
     static let all: [SpecialPlant] = [
         SpecialPlant(plant: PlantData.indoorPlants[0], discountPrice: 3.50),
         SpecialPlant(plant: PlantData.outdoorPlants[0], discountPrice: 5.00),
+        SpecialPlant(plant: PlantData.outdoorPlants[1], discountPrice: 6.00),
+        SpecialPlant(plant: PlantData.bigTrees[0], discountPrice: 10.00),
+        SpecialPlant(plant: PlantData.bigTrees[1], discountPrice: 12.00),
+        SpecialPlant(plant: PlantData.aquaticPlants[1], discountPrice: 5.00),
     ]
 }
