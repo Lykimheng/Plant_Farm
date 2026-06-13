@@ -11,10 +11,12 @@ struct HeroSection: View {
     @EnvironmentObject var user: UserModel
     @EnvironmentObject var location: LocationManager
     @EnvironmentObject var wishlist: WishlistModel
+    @EnvironmentObject var notifications: NotificationsModel
     @Binding var searchText: String
     @Binding var isSearching: Bool
     @Binding var isScanning: Bool
     @State private var showWishlist = false
+    @State private var showNotifications = false
     var body: some View {
         VStack(spacing: 16) {
             // Header
@@ -24,32 +26,41 @@ struct HeroSection: View {
                         .resizable()
                         .frame(width: 36, height: 36)
                         .clipShape(Circle())
-
+                    
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Hi! \(user.name)")
                             .font(.headline)
                             .foregroundColor(.white)
-
+                        
                         Text(location.userAddress.isEmpty ? user.location : location.userAddress)
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.7))
                     }
                 }
-
+                
                 Spacer()
-
+                
                 HStack(spacing: 16) {
                     Button{
-                       showWishlist = true
+                        showWishlist = true
                     } label: {
                         Image(systemName: Constants.favoriteIcon)
                             .foregroundColor(.white)
                     }
                     Button{
-                        
+                        showNotifications = true
                     } label: {
-                        Image(systemName: Constants.notificationIcon)
-                            .foregroundColor(.white)
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: Constants.notificationIcon)
+                                .foregroundColor(.white)
+                            
+                            if notifications.unreadCount > 0 {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 8, height: 8)
+                                    .offset(x: 4, y: -4)
+                            }
+                        }
                     }
                 }
             }
@@ -97,6 +108,12 @@ struct HeroSection: View {
         .sheet(isPresented: $showWishlist){
             WishlistView()
                 .environmentObject(wishlist)
+        }
+        .sheet(isPresented: $showNotifications) {
+            NavigationStack {
+                NotificationsView()
+                    .environmentObject(notifications)
+            }
         }
     }
 }

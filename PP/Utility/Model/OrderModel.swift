@@ -11,18 +11,19 @@ struct OrderModel: Identifiable {
     let id = UUID()
     let orderNumber: String
     let date: String
-    let status: OrderStatus
+    var status: OrderStatus
     let items: [CartItem]
     let total: Double
     let deliveryAddress: String
 
     enum OrderStatus: String {
-        case placed = "Order Placed"
+        case pending = "Pedding"
         case confirmed = "Confirmed"
         case preparing = "Preparing"
         case inTransit = "In Transit"
         case delivered = "Delivered"
         case cancelled = "Cancelled"
+        case rejected = "Rejected"
     }
 }
 
@@ -30,12 +31,13 @@ struct OrderModel: Identifiable {
 extension OrderModel.OrderStatus {
     var color: Color {
         switch self {
-        case .placed:     return .blue
+        case .pending:     return .orange
         case .confirmed:  return .blue
         case .preparing:  return .orange
         case .inTransit:  return .green
         case .delivered:  return Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255)
         case .cancelled:  return .red
+        case .rejected:  return .red
         }
     }
 

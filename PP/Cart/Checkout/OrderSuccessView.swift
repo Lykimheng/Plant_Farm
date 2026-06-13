@@ -253,7 +253,7 @@ struct OrderSuccessView: View {
             OrderDetailView(order: OrderModel(
                 orderNumber: orderID,
                 date: "",
-                status: .placed,
+                status: .pending,
                 items: orderItems,
                 total: orderItems.reduce(0) { $0 + $1.plant.price * Double($1.quantity) },
                 deliveryAddress: ""

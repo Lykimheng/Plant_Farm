@@ -49,4 +49,5 @@ struct Constants{
     static let locationIcon = "location1"
     static let phoneIcon = "phone"
     static let noNotifaicationIcon = "bell.slash"
+    static let envlopIcon = "envelope.fill"
 }

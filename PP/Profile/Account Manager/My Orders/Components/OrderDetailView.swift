@@ -9,7 +9,8 @@ import SwiftUI
 import MapKit
 
 struct OrderDetailView: View {
-    let order: OrderModel                    // ← add this
+    let order: OrderModel
+    @EnvironmentObject var orders: OrdersModel
     @EnvironmentObject var location: LocationManager
     @State private var showCancelAlert = false
 
@@ -220,31 +221,42 @@ struct OrderDetailView: View {
                 .shadow(color: .black.opacity(0.05), radius: 4)
 
                 // MARK: - Cancel Button
-                Button {
-                    showCancelAlert = true
-                } label: {
-                    Text("Cancel Order")
-                        .font(.headline)
+                if order.status == .pending {
+                    Button {
+                        showCancelAlert = true
+                    } label: {
+                        Text("Cancel Order")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, minHeight: 54)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                            )
+                    }
+                    .padding(.bottom, 24)
+                } else {
+                    Text(order.status == .cancelled ?
+                         "This order has been cancelled." :
+                         "Order already processed. Cannot be cancelled.")
+                        .font(.caption)
                         .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, minHeight: 54)
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(.systemGray4), lineWidth: 1)
-                        )
+                        .padding(.bottom, 24)
                 }
-                .padding(.bottom, 24)
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
         }
         .background(Color(.systemGray6))
-        .navigationTitle("Order #\(order.orderNumber)")      // ← dynamic
+        .navigationTitle("Order #\(order.orderNumber)")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
         .alert("Cancel Order", isPresented: $showCancelAlert) {
-            Button("Cancel Order", role: .destructive) { }
+            Button("Cancel Order", role: .destructive) {
+                orders.cancelOrder(order)
+            }
             Button("Keep Order", role: .cancel) { }
         } message: {
             Text("Are you sure you want to cancel this order?")
@@ -253,7 +265,7 @@ struct OrderDetailView: View {
 
     // ← generate status steps based on current order status
     func orderStatuses(for status: OrderModel.OrderStatus) -> [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] {
-        let allStatuses: [OrderModel.OrderStatus] = [.placed, .confirmed, .preparing, .inTransit, .delivered]
+        let allStatuses: [OrderModel.OrderStatus] = [.pending, .confirmed, .preparing, .inTransit, .delivered]
         let currentIndex = allStatuses.firstIndex(of: status) ?? 0
 
         return allStatuses.map { s in

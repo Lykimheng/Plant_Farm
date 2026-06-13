@@ -38,6 +38,7 @@ struct WishlistCard: View {
                 }
                 .padding(8)
             }
+            .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
 
             VStack(alignment: .leading, spacing: 6) {
                 // rating

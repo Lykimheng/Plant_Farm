@@ -15,7 +15,7 @@ struct MyOrdersView: View {
         Group {
             if orders.orders.isEmpty {
                 VStack(spacing: 16) {
-                    Image(systemName: "bag")
+                    Image(systemName: Constants.notificationIcon)
                         .font(.system(size: 60))
                         .foregroundColor(.gray.opacity(0.4))
                     Text("No orders yet")
