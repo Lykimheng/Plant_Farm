@@ -8,21 +8,43 @@
 import SwiftUI
 import Combine
 
-struct MyPlantModel: Identifiable {
-    let id = UUID()
+struct MyPlantModel: Identifiable, Codable {
+    let id: UUID
+    var apiId: Int = 0
     let image: String
     let name: String
     let species: String
     let careLevel: CareLevel
     let nextWatering: String
     let sunlight: String
-    let addedDate: Date = Date()
-
-    enum CareLevel: String {
-        case easy = "Easy Care"
-        case moderate = "Moderate Care"
-        case expert = "Expert Care"
-
+    let addedDate: Date
+    
+    init(apiId: Int = 0, image: String, name: String, species: String,
+         careLevel: CareLevel, nextWatering: String, sunlight: String) {
+        self.id = UUID()
+        self.apiId = apiId
+        self.image = image
+        self.name = name
+        self.species = species
+        self.careLevel = careLevel
+        self.nextWatering = nextWatering
+        self.sunlight = sunlight
+        self.addedDate = Date()
+    }
+    
+    enum CareLevel: String, Codable {
+        case easy = "easy"
+        case moderate = "moderate"
+        case expert = "expert"
+        
+        var displayName: String {
+            switch self {
+            case .easy:     return "Easy Care"
+            case .moderate: return "Moderate Care"
+            case .expert:   return "Expert Care"
+            }
+        }
+        
         var color: Color {
             switch self {
             case .easy:     return .green
@@ -30,7 +52,7 @@ struct MyPlantModel: Identifiable {
             case .expert:   return .orange
             }
         }
-
+        
         var icon: String {
             switch self {
             case .easy:     return "bolt.fill"
@@ -38,17 +60,5 @@ struct MyPlantModel: Identifiable {
             case .expert:   return "flame.fill"
             }
         }
-    }
-}
-
-class MyPlantsModel: ObservableObject {
-    @Published var plants: [MyPlantModel] = []
-
-    func addPlant(_ plant: MyPlantModel) {
-        plants.insert(plant, at: 0)
-    }
-
-    func removePlant(_ plant: MyPlantModel) {
-        plants.removeAll { $0.id == plant.id }
     }
 }

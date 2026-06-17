@@ -14,7 +14,7 @@ struct HeroSection: View {
     @EnvironmentObject var notifications: NotificationsModel
     @Binding var searchText: String
     @Binding var isSearching: Bool
-    @Binding var isScanning: Bool
+//    @Binding var isScanning: Bool
     @State private var showWishlist = false
     @State private var showNotifications = false
     var body: some View {
@@ -88,7 +88,7 @@ struct HeroSection: View {
                         }
                     } else {
                         Button{
-                            isScanning = false
+//                            isScanning = false
                         } label: {
                             Image(systemName: Constants.scanImageString)
                                 .foregroundColor(.gray)

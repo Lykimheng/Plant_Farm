@@ -255,7 +255,10 @@ struct OrderDetailView: View {
         .preferredColorScheme(.light)
         .alert("Cancel Order", isPresented: $showCancelAlert) {
             Button("Cancel Order", role: .destructive) {
-                orders.cancelOrder(order)
+                Task{
+                    await orders.cancelOrder(order)
+                }
+
             }
             Button("Keep Order", role: .cancel) { }
         } message: {
@@ -265,6 +268,15 @@ struct OrderDetailView: View {
 
     // ← generate status steps based on current order status
     func orderStatuses(for status: OrderModel.OrderStatus) -> [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] {
+        
+        // ← handle cancelled/rejected separately
+        if status == .cancelled || status == .rejected {
+            return [
+                (title: "Order Placed", subtitle: order.date, isDone: true, isCurrent: false),
+                (title: status.rawValue, subtitle: "Order was \(status.rawValue.lowercased())", isDone: false, isCurrent: true)
+            ]
+        }
+
         let allStatuses: [OrderModel.OrderStatus] = [.pending, .confirmed, .preparing, .inTransit, .delivered]
         let currentIndex = allStatuses.firstIndex(of: status) ?? 0
 
@@ -291,5 +303,6 @@ struct OrderDetailView: View {
             deliveryAddress: "No. 42, St. 271, Phnom Penh"
         ))
         .environmentObject(LocationManager())
+        .environmentObject(OrdersModel())       // ← add this
     }
 }

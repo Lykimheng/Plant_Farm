@@ -7,42 +7,19 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedCategory = "All"
-    @State private var searchText = ""
-    @State private var isSearching = false
-    @State private var isScanning = false
-    @State private var expandedSection: Set<String> = []
-    
-    func isExpanded(_ section: String) -> Bool{
-        expandedSection.contains(section)
-    }
-    func toggleSection(_ section: String) {
-        if expandedSection.contains(section) {
-            expandedSection.remove(section)
-        } else {
-            expandedSection.insert(section)
-        }
-    }
-    
-    var searchResults: [PlantModel] {
-        let all = PlantData.indoorPlants + PlantData.outdoorPlants + PlantData.aquaticPlants + PlantData.bigTrees
-        if searchText.isEmpty { return [] }
-        return all.filter{
-            $0.name.localizedCaseInsensitiveContains(searchText) ||
-            $0.type.localizedCaseInsensitiveContains(searchText)
-        }
-    }
+    @StateObject private var vm = HomeViewModel()
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0)
                     .ignoresSafeArea()
                 VStack(spacing: 20) {
-                    HeroSection(searchText: $searchText, isSearching: $isSearching, isScanning: $isScanning)
+                    HeroSection(searchText: $vm.searchText, isSearching: .constant(false))
 
                     ScrollView {
                         // ← only show slider when All is selected
-                        if selectedCategory == "All" {
+                        if vm.selectedCategory == "All" {
                             ImageSliderView()
                                 .cornerRadius(16)
                                 .padding(.horizontal, 16)
@@ -52,33 +29,33 @@ struct HomeView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 12) {
                                 CategoryButton(title: "All",
-                                    isSelected: selectedCategory == "All") {
-                                    selectedCategory = "All"
+                                    isSelected: vm.selectedCategory == "All") {
+                                    vm.selectedCategory = "All"
                                 }
                                 CategoryButton(title: "Indoor",
-                                    isSelected: selectedCategory == "Indoor") {
-                                    selectedCategory = "Indoor"
+                                    isSelected: vm.selectedCategory == "Indoor") {
+                                    vm.selectedCategory = "Indoor"
                                 }
                                 CategoryButton(title: "Outdoor",
-                                    isSelected: selectedCategory == "Outdoor") {
-                                    selectedCategory = "Outdoor"
+                                    isSelected: vm.selectedCategory == "Outdoor") {
+                                    vm.selectedCategory = "Outdoor"
                                 }
                                 CategoryButton(title: "Big Tree",
-                                    isSelected: selectedCategory == "Big Tree") {
-                                    selectedCategory = "Big Tree"
+                                    isSelected: vm.selectedCategory == "Big Tree") {
+                                    vm.selectedCategory = "Big Tree"
                                 }
                                 CategoryButton(title: "Aquatic",
-                                    isSelected: selectedCategory == "Aquatic") {
-                                    selectedCategory = "Aquatic"
+                                    isSelected: vm.selectedCategory == "Aquatic") {
+                                    vm.selectedCategory = "Aquatic"
                                 }
                             }
                         }
                         .padding(.leading, 16)
 
                         // ← switch content based on selected category
-                        if !searchText.isEmpty {
+                        if !vm.searchText.isEmpty {
                             searchContent
-                        } else if selectedCategory == "All" {
+                        } else if vm.selectedCategory == "All" {
                             allContent
                         } else {
                             filteredContent
@@ -104,10 +81,10 @@ struct HomeView: View {
         VStack(spacing: 16) {
             TypePlants(
                 title: "Special Offer",
-                isExpanded: isExpanded("Special"),
-                onToggle: { toggleSection("Special") }
+                isExpanded: vm.isExpanded("Special"),
+                onToggle: { vm.toggleSection("Special") }
             )
-            if isExpanded("Special"){
+            if vm.isExpanded("Special"){
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     ForEach(SpecialOfferData.all) { plant in
                         NavigationLink(value: plant) {
@@ -136,10 +113,10 @@ struct HomeView: View {
 
                 TypePlants(
                     title: "Indoor Plants",
-                    isExpanded: isExpanded("Indoor"),
-                    onToggle: { toggleSection("Indoor") }
+                    isExpanded: vm.isExpanded("Indoor"),
+                    onToggle: { vm.toggleSection("Indoor") }
                 )
-                if isExpanded("Indoor"){
+                if vm.isExpanded("Indoor"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                         ForEach(PlantData.indoorPlants) { plant in
                             NavigationLink(value: plant) {
@@ -163,10 +140,10 @@ struct HomeView: View {
 
                 TypePlants(
                     title: "Outdoor Plants",
-                    isExpanded: isExpanded("Outdoor"),
-                    onToggle: { toggleSection("Outdoor") }
+                    isExpanded: vm.isExpanded("Outdoor"),
+                    onToggle: { vm.toggleSection("Outdoor") }
                 )
-                if isExpanded("Outdoor"){
+                if vm.isExpanded("Outdoor"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                         ForEach(PlantData.outdoorPlants) { plant in
                             NavigationLink(value: plant) {
@@ -190,10 +167,10 @@ struct HomeView: View {
 
                 TypePlants(
                     title: "Aquatic Plants",
-                    isExpanded: isExpanded("Aquatic"),
-                    onToggle: { toggleSection("Aquatic")}
+                    isExpanded: vm.isExpanded("Aquatic"),
+                    onToggle: { vm.toggleSection("Aquatic")}
                 )
-                if isExpanded("Aquatic"){
+                if vm.isExpanded("Aquatic"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                         ForEach(PlantData.aquaticPlants) { plant in
                             NavigationLink(value: plant) {
@@ -217,10 +194,10 @@ struct HomeView: View {
 
                 TypePlants(
                     title: "BIG TREE",
-                    isExpanded: isExpanded("BigTree"),
-                    onToggle: { toggleSection("BigTree")}
+                    isExpanded: vm.isExpanded("BigTree"),
+                    onToggle: { vm.toggleSection("BigTree")}
                 )
-                if isExpanded("BigTree"){
+                if vm.isExpanded("BigTree"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                         ForEach(PlantData.bigTrees) { plant in
                             NavigationLink(value: plant) {
@@ -254,7 +231,7 @@ struct HomeView: View {
     // MARK: - Filtered Content
     private var filteredContent: some View {
         let plants: [PlantModel] = {
-            switch selectedCategory {
+            switch vm.selectedCategory {
             case "Indoor":   return PlantData.indoorPlants
             case "Outdoor":  return PlantData.outdoorPlants
             case "Aquatic":  return PlantData.aquaticPlants
@@ -277,12 +254,12 @@ struct HomeView: View {
     }
     private var searchContent: some View {
         VStack(alignment: .leading) {
-            Text("Results for \"\(searchText)\"")
+            Text("Results for \"\(vm.searchText)\"")
                 .font(.headline)
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
 
-            if searchResults.isEmpty {
+            if vm.searchResults.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 50))
@@ -297,7 +274,7 @@ struct HomeView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: 16) {
-                    ForEach(searchResults) { plant in
+                    ForEach(vm.searchResults) { plant in
                         NavigationLink(value: plant) {
                             TypePlantCard(plant: plant)
                         }

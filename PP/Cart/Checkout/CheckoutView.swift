@@ -79,43 +79,17 @@ struct PaymentMethodRow: View {
 }
 
 struct CheckoutView: View {
+    @StateObject private var vm  = CheckoutViewModel()
     @EnvironmentObject var cart: CartModel
     @EnvironmentObject var userData: UserModel
     @EnvironmentObject var location: LocationManager
     @EnvironmentObject var orders:  OrdersModel
-    @State private var selectedDelivery = "Standard"
-    @State private var specialNotes = ""
-    @State private var selectedPayment = "ABA Pay"
-    @State private var orderPlaced = false
-    @State private var savedItems: [CartItem] = []
-    let generatedOrderID = "PF-\(Int.random(in: 90000...99999))"
-    
-    
-    private let deliveryOptions: [(name: String, price: Double, duration: String)] = [
-        ("Standard", 1.50, "3-5 Days"),
-        ("Express", 2.00, "Next Day")
-    ]
-    
-    private let paymentMethods: [(name: String, icon: String)] = [
-        ("ABA Pay", "building.columns"),
-        ("KHQR", "qrcode"),
-        ("Visa / Mastercard", "creditcard"),
-        ("Cash on Delivery", "banknote")
-    ]
-    
-    var deliveryFee: Double {
-        selectedDelivery == "Standard" ? 1.50 : 2.00
-    }
-    
-    var total: Double {
-        cart.totalPrice + deliveryFee
-    }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 if let coordinate = location.userLocation {
-                               AppleMapView(coordinate: coordinate)   // ← real location
+                               AppleMapView(coordinate: coordinate)
                                    .frame(height: 200)
                                    .cornerRadius(12)
                            } else {
@@ -170,11 +144,11 @@ struct CheckoutView: View {
                         .font(.headline)
 
                     HStack(spacing: 12) {
-                        ForEach(deliveryOptions, id: \.name) { option in
+                        ForEach(vm.deliveryOptions, id: \.name) { option in
                             DeliveryOptionRow(
                                 option: option,
-                                isSelected: selectedDelivery == option.name,
-                                onTap: { selectedDelivery = option.name }
+                                isSelected: vm.selectedDelivery == option.name,
+                                onTap: { vm.selectedDelivery = option.name }
                             )
                         }
                     }
@@ -190,15 +164,15 @@ struct CheckoutView: View {
                         .font(.headline)
 
                     ZStack(alignment: .topLeading) {
-                        if specialNotes.isEmpty {
+                        if vm.specialNotes.isEmpty {
                             Text("E.g. Please handle carefully, fragile plant...")
                                 .foregroundColor(.gray.opacity(0.6))
                                 .padding(.top, 8)
                                 .padding(.leading, 4)
                         }
-                        TextEditor(text: $specialNotes)
+                        TextEditor(text: $vm.specialNotes)
                             .frame(height: 100)
-                            .opacity(specialNotes.isEmpty ? 0.25 : 1)
+                            .opacity(vm.specialNotes.isEmpty ? 0.25 : 1)
                     }
                     .padding(8)
                     .background(Color(.systemGray6))
@@ -215,13 +189,13 @@ struct CheckoutView: View {
                         .font(.headline)
 
                     VStack(spacing: 0) {
-                        ForEach(paymentMethods, id: \.name) { method in
+                        ForEach(vm.paymentMethods, id: \.name) { method in
                             PaymentMethodRow(
                                 method: method,
-                                isSelected: selectedPayment == method.name,
-                                onTap: { selectedPayment = method.name }
+                                isSelected: vm.selectedPayment == method.name,
+                                onTap: { vm.selectedPayment = method.name }
                             )
-                            if method.name != paymentMethods.last?.name {
+                            if method.name != vm.paymentMethods.last?.name {
                                 Divider().padding(.leading, 74)
                             }
                         }
@@ -252,7 +226,7 @@ struct CheckoutView: View {
                         Text("Shipping Fee")
                             .foregroundColor(.white.opacity(0.8))
                         Spacer()
-                        Text(String(format: "$%.2f", deliveryFee))
+                        Text(String(format: "$%.2f", vm.deliveryFee))
                             .foregroundColor(.white)
                     }
 
@@ -264,7 +238,7 @@ struct CheckoutView: View {
                             .font(.headline.bold())
                             .foregroundColor(.white)
                         Spacer()
-                        Text(String(format: "$%.2f", total))
+                        Text(String(format: "$%.2f", vm.total(cartPrice: cart.totalPrice)))
                             .font(.title3.bold())
                             .foregroundColor(.white)
                     }
@@ -275,36 +249,44 @@ struct CheckoutView: View {
 
                 // MARK: - Confirm Button
                 Button {
-                    savedItems = cart.items
-                    
-                    orders.addOrder(
-                        orderNumber: generatedOrderID,
-                        items: cart.items,
-                        total: total,
-                        deliveryAddress: location.userAddress
-                    )
-                    cart.clearCart()
-                    orderPlaced = true
-                } label: {
-                    HStack {
-                        Text("Confirm Order")
-                            .font(.headline)
-                        Image(systemName: "chevron.right")
+                    Task {
+                        await vm.confirmOrder(
+                            cart: cart,
+                            orders: orders,
+                            address: location.userAddress,
+                            userId: userData.id              // ← add userId
+                        )
                     }
-                    .frame(maxWidth: .infinity, minHeight: 54)
-                    .foregroundColor(.white)
-                    .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    .cornerRadius(12)
+                } label: {
+                    if vm.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, minHeight: 54)
+                    } else {
+                        HStack {
+                            Text("Confirm Order")
+                                .font(.headline)
+                            Image(systemName: "chevron.right")
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 54)
+                        .foregroundColor(.white)
+                        .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                        .cornerRadius(12)
+                    }
                 }
-                .padding(.bottom, 24)
+                if !vm.errorMessage.isEmpty {
+                    Text(vm.errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
+                
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
         }
-        .navigationDestination(isPresented: $orderPlaced) {
+        .navigationDestination(isPresented: $vm.orderPlaced) {
             OrderSuccessView(
-                orderID: generatedOrderID,
-                orderItems: savedItems,
+                orderID: vm.orderID,
+                orderItems: vm.savedItems,
                 userEmail: userData.email
             )
             .environmentObject(cart)

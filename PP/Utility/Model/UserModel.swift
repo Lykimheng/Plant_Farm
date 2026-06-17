@@ -20,21 +20,22 @@ class UserModel: ObservableObject {
     // MARK: - Login
     func login(email: String, password: String) async {
         await MainActor.run { isLoading = true }
-        
+
         let result = await APIService.shared.login(email: email, password: password)
-        
+
         await MainActor.run {
             isLoading = false
-            switch result {
-            case .success(let response):
+            switch result {                          // ← add switch
+            case .success(let response):             // ← add case
                 if let user = response.user {
                     self.id       = user.id
                     self.name     = user.name
                     self.email    = user.email
                     self.location = user.location
                     self.isLoggedIn = true
+                    self.errorMessage = ""
                 }
-            case .failure(let error):
+            case .failure(let error):               // ← add failure case
                 self.errorMessage = error.message
             }
         }
@@ -43,12 +44,12 @@ class UserModel: ObservableObject {
     // MARK: - Register
     func register(name: String, email: String, password: String, location: String) async {
         await MainActor.run { isLoading = true }
-        
+
         let result = await APIService.shared.register(
             name: name, email: email,
             password: password, location: location
         )
-        
+
         await MainActor.run {
             isLoading = false
             switch result {
@@ -59,13 +60,15 @@ class UserModel: ObservableObject {
                     self.email    = user.email
                     self.location = user.location
                     self.isLoggedIn = true
+                    self.errorMessage = ""
                 }
             case .failure(let error):
                 self.errorMessage = error.message
             }
         }
     }
-    // MARK: - Forget Password
+
+    // MARK: - Forgot Password
     func forgotPassword(email: String, newPassword: String) async {
         await MainActor.run { isLoading = true }
 
@@ -78,7 +81,7 @@ class UserModel: ObservableObject {
             isLoading = false
             switch result {
             case .success(let response):
-                errorMessage = response.message    // ← "Password updated successfully."
+                errorMessage = response.message
             case .failure(let error):
                 errorMessage = error.message
             }
@@ -92,5 +95,6 @@ class UserModel: ObservableObject {
         self.email      = ""
         self.location   = "Unknown"
         self.isLoggedIn = false
+        self.errorMessage = ""
     }
 }

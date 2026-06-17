@@ -47,6 +47,7 @@ struct NotificationModel: Identifiable {
 
 class NotificationsModel: ObservableObject {
     @Published var notifications: [NotificationModel] = []
+    @Published var isLoading = false                        // ← add
 
     var unreadCount: Int {
         notifications.filter { !$0.isRead }.count
@@ -54,6 +55,10 @@ class NotificationsModel: ObservableObject {
 
     func add(_ notification: NotificationModel) {
         notifications.insert(notification, at: 0)
+    }
+
+    func remove(_ notification: NotificationModel) {        // ← add
+        notifications.removeAll { $0.id == notification.id }
     }
 
     func markAllAsRead() {
@@ -70,5 +75,48 @@ class NotificationsModel: ObservableObject {
 
     func clearAll() {
         notifications.removeAll()
+    }
+
+    // ← add API fetch
+    func fetchNotifications(userId: Int) async {
+        await MainActor.run { isLoading = true }
+
+        guard let url = URL(string: "\(APIService.shared.baseURL)/notifications.php?user_id=\(userId)") else { return }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let notifArray = json["notifications"] as? [[String: Any]] {
+                let fetched = notifArray.compactMap { dict -> NotificationModel? in
+                    guard let title = dict["title"] as? String,
+                          let message = dict["message"] as? String,
+                          let typeStr = dict["type"] as? String else { return nil }
+                    return NotificationModel(
+                        title: title,
+                        message: message,
+                        type: notifType(from: typeStr),
+                        isRead: (dict["is_read"] as? Int) == 1
+                    )
+                }
+                await MainActor.run {
+                    self.notifications = fetched
+                    self.isLoading = false
+                }
+            }
+        } catch {
+            await MainActor.run { isLoading = false }
+            print("Fetch notifications error: \(error)")
+        }
+    }
+
+    // ← helper to convert string to enum
+    private func notifType(from string: String) -> NotificationModel.NotificationType {
+        switch string {
+        case "orderConfirmed":  return .orderConfirmed
+        case "orderCancelled":  return .orderCancelled
+        case "orderRejected":   return .orderRejected
+        case "orderDelivered":  return .orderDelivered
+        default:                return .orderPlaced
+        }
     }
 }
