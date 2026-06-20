@@ -188,15 +188,23 @@ struct MonthCalendarView: View {
         }
     }
 
-    func dayLetter(_ date: Date) -> String {
+    private static let dayLetterFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "EEE"
-        return f.string(from: date)
+        return f
+    }()
+
+    private static let dayNumberFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "d"
+        return f
+    }()
+
+    func dayLetter(_ date: Date) -> String {
+        Self.dayLetterFormatter.string(from: date)
     }
 
     func dayNumber(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateFormat = "d"
-        return f.string(from: date)
+        Self.dayNumberFormatter.string(from: date)
     }
 }

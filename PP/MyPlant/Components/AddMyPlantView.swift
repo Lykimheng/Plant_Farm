@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddMyPlantView: View {
     @EnvironmentObject var myPlants: MyPlantsModel
+    @EnvironmentObject var user: UserModel
     @Environment(\.dismiss) private var dismiss
 
     @State private var name = ""
@@ -17,6 +18,7 @@ struct AddMyPlantView: View {
     @State private var nextWatering = "Next in 3 days"
     @State private var sunlight = "Partial Sunlight"
     @State private var image = "Cactus"
+    @State private var isSaving = false
 
     var body: some View {
         NavigationStack {
@@ -49,21 +51,31 @@ struct AddMyPlantView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .disabled(isSaving)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        guard !name.isEmpty else { return }
-                        myPlants.addPlant(MyPlantModel(
-                            image: image,
-                            name: name,
-                            species: species,
-                            careLevel: selectedCare,
-                            nextWatering: nextWatering,
-                            sunlight: sunlight
-                        ))
-                        dismiss()
+                    if isSaving {
+                        ProgressView()
+                    } else {
+                        Button("Save") {
+                            isSaving = true
+                            Task {
+                                await myPlants.addPlant(
+                                    MyPlantModel(
+                                        image: image,
+                                        name: name,
+                                        species: species,
+                                        careLevel: selectedCare,
+                                        nextWatering: nextWatering,
+                                        sunlight: sunlight
+                                    ),
+                                    userId: user.id
+                                )
+                                dismiss()
+                            }
+                        }
+                        .disabled(name.isEmpty)
                     }
-                    .disabled(name.isEmpty)
                 }
             }
         }

@@ -80,16 +80,14 @@ class CheckoutViewModel: ObservableObject {
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                let success = json["success"] as? Bool, success {
 
-                // ← save to local OrdersModel too for instant UI update
-                await orders.addOrder(
-                    orderNumber: orderID,
-                    items: cart.items,
-                    total: total(cartPrice: cart.totalPrice),
-                    deliveryAddress: address,
-                    userId: userId
-                )
-
                 await MainActor.run {
+                    orders.addOrder(
+                        orderNumber: orderID,
+                        items: cart.items,
+                        total: total(cartPrice: cart.totalPrice),
+                        deliveryAddress: address,
+                        userId: userId
+                    )
                     cart.clearCart()
                     isLoading = false
                     orderPlaced = true

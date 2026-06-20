@@ -12,6 +12,16 @@ class MyPlantsModel: ObservableObject {
     @Published var plants: [MyPlantModel] = []
     @Published var isLoading = false
 
+    var careLevelText: String {
+        switch plants.count {
+        case 0:        return "Lvl 1"
+        case 1...3:    return "Lvl 2"
+        case 4...7:    return "Lvl 3"
+        case 8...12:   return "Lvl 4"
+        default:       return "Lvl 5"
+        }
+    }
+
     // MARK: - Fetch from API
     func fetchPlants(userId: Int) async {
         await MainActor.run { isLoading = true }
@@ -20,6 +30,7 @@ class MyPlantsModel: ObservableObject {
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
+            print("fetchPlants raw response: \(String(data: data, encoding: .utf8) ?? "nil")")
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                let plantsArray = json["plants"] as? [[String: Any]] {
                 let fetched = plantsArray.compactMap { dict -> MyPlantModel? in
@@ -74,6 +85,7 @@ class MyPlantsModel: ObservableObject {
 
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
+            print("addPlant raw response: \(String(data: data, encoding: .utf8) ?? "nil")")
             if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                let success = json["success"] as? Bool, success,
                let plantId = json["plant_id"] as? Int {

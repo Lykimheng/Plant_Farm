@@ -20,17 +20,6 @@ struct ProfileView: View {
     @State private var editBtn = false
     @State private var showMyOrder = false
 
-    private var careLevelText: String {
-        let count = myPlants.plants.count
-        switch count {
-        case 0:        return "Lvl 1"
-        case 1...3:    return "Lvl 2"
-        case 4...7:    return "Lvl 3"
-        case 8...12:   return "Lvl 4"
-        default:       return "Lvl 5"
-        }
-    }
-
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -89,7 +78,7 @@ struct ProfileView: View {
                     // MARK: - Stats
                     HStack(spacing: 12) {
                         StatCard(title: "My Plants", value: "\(myPlants.plants.count)")
-                        StatCard(title: "Care Level", value: careLevelText)
+                        StatCard(title: "Care Level", value: myPlants.careLevelText)
                     }
                     .padding(.horizontal)
 

@@ -12,6 +12,7 @@ struct OrderDetailView: View {
     let order: OrderModel
     @EnvironmentObject var orders: OrdersModel
     @EnvironmentObject var location: LocationManager
+    @EnvironmentObject var user: UserModel
     @State private var showCancelAlert = false
 
     var body: some View {
@@ -256,7 +257,7 @@ struct OrderDetailView: View {
         .alert("Cancel Order", isPresented: $showCancelAlert) {
             Button("Cancel Order", role: .destructive) {
                 Task{
-                    await orders.cancelOrder(order)
+                    await orders.cancelOrder(order, userId: user.id)
                 }
 
             }

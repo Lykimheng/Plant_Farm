@@ -230,21 +230,11 @@ struct HomeView: View {
 
     // MARK: - Filtered Content
     private var filteredContent: some View {
-        let plants: [PlantModel] = {
-            switch vm.selectedCategory {
-            case "Indoor":   return PlantData.indoorPlants
-            case "Outdoor":  return PlantData.outdoorPlants
-            case "Aquatic":  return PlantData.aquaticPlants
-            case "Big Tree": return PlantData.bigTrees
-            default:         return []
-            }
-        }()
-
-        return LazyVGrid(columns: [
+        LazyVGrid(columns: [
             GridItem(.flexible()),
             GridItem(.flexible())
         ], spacing: 16) {
-            ForEach(plants) { plant in
+            ForEach(vm.filteredPlants) { plant in
                 NavigationLink(value: plant) {
                     TypePlantCard(plant: plant)
                 }
