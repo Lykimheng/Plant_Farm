@@ -19,7 +19,7 @@
 		FA6314DD2FC5928F00146074 /* Exceptions for "PP" folder in "PP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Frontend/Info.plist,
 			);
 			target = FA0F4D082EFC33B7009766B8 /* PP */;
 		};
