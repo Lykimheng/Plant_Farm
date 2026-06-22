@@ -23,8 +23,7 @@ struct ImageSliderView: View {
             GeometryReader { geo in
                 HStack(spacing: 0) {
                     ForEach(images, id: \.self) { image in
-                        Image(image)
-                            .resizable()
+                        RemoteImage(urlString: APIService.shared.bannerURL(image))
                             .scaledToFill()
                             .frame(width: geo.size.width, height: geo.size.height)
                             .clipped()

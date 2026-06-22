@@ -4,25 +4,37 @@
 //
 //  Created by Ly Kimheng on 24/12/25.
 //
+
 import SwiftUI
 
 struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
+    @EnvironmentObject var catalog: PlantsModel
+    @State private var scrollOffset: CGFloat = 0
+
+    private var isHeroCollapsed: Bool { scrollOffset > 40 }
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0)
-                    .ignoresSafeArea()
-                VStack(spacing: 20) {
-                    HeroSection(searchText: $vm.searchText, isSearching: .constant(false))
+            ScrollViewReader { proxy in
+            VStack(spacing: 0) {
+                    HeroSection(
+                        searchText: $vm.searchText,
+                        isSearching: .constant(false),
+                        isCollapsed: isHeroCollapsed,
+                        scrollToTop: { withAnimation { proxy.scrollTo("homeTop", anchor: .top) } }
+                    )
 
                     ScrollView {
-                        // ← only show slider when All is selected
+                        Color.clear
+                            .frame(height: 1)
+                            .id("homeTop")
+
                         if vm.selectedCategory == "All" {
                             ImageSliderView()
                                 .cornerRadius(16)
                                 .padding(.horizontal, 16)
+                                .padding(.top, 20)
                         }
 
                         // Category buttons
@@ -51,9 +63,14 @@ struct HomeView: View {
                             }
                         }
                         .padding(.leading, 16)
+                        .padding(.top, 20)
 
                         // ← switch content based on selected category
-                        if !vm.searchText.isEmpty {
+                        if catalog.isLoading && catalog.plants.isEmpty {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 80)
+                        } else if !vm.searchText.isEmpty {
                             searchContent
                         } else if vm.selectedCategory == "All" {
                             allContent
@@ -61,17 +78,31 @@ struct HomeView: View {
                             filteredContent
                         }
                     }
+                    .onScrollGeometryChange(for: CGFloat.self) { geo in
+                        geo.contentOffset.y
+                    } action: { _, newValue in
+                        scrollOffset = newValue
+                    }
                     .background(Color(.sRGB, red: 246/255, green: 246/255, blue: 246/255, opacity: 1))
                     .padding(.bottom, 80)
                     .ignoresSafeArea(edges: .bottom)
-                }
+                    .refreshable {
+                        await catalog.fetchPlants()
+                    }
             }
+            }
+            .background(Color(.sRGB, red: 246/255, green: 246/255, blue: 246/255, opacity: 1))
             .preferredColorScheme(.light)
             .navigationDestination(for: PlantModel.self) { plant in
                 DetailCard(plant: plant)
             }
             .navigationDestination(for: SpecialPlant.self) { offer in
                 DetailSpecialCard(plant: offer)
+            }
+            .task {
+                if catalog.plants.isEmpty {
+                    await catalog.fetchPlants()
+                }
             }
         }
     }
@@ -86,7 +117,7 @@ struct HomeView: View {
             )
             if vm.isExpanded("Special"){
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(SpecialOfferData.all) { plant in
+                    ForEach(catalog.specialOffers) { plant in
                         NavigationLink(value: plant) {
                             PlantCard(plant: plant)
                         }
@@ -97,7 +128,7 @@ struct HomeView: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(SpecialOfferData.all) { plant in
+                        ForEach(catalog.specialOffers) { plant in
                             NavigationLink(value: plant) {
                                 PlantCard(plant: plant)
                             }
@@ -118,7 +149,7 @@ struct HomeView: View {
                 )
                 if vm.isExpanded("Indoor"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(PlantData.indoorPlants) { plant in
+                        ForEach(catalog.indoorPlants) { plant in
                             NavigationLink(value: plant) {
                                 TypePlantCard(plant: plant)
                             }
@@ -128,7 +159,7 @@ struct HomeView: View {
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            ForEach(PlantData.indoorPlants) { plant in
+                            ForEach(catalog.indoorPlants) { plant in
                                 NavigationLink(value: plant) {
                                     TypePlantCard(plant: plant)
                                 }
@@ -145,7 +176,7 @@ struct HomeView: View {
                 )
                 if vm.isExpanded("Outdoor"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(PlantData.outdoorPlants) { plant in
+                        ForEach(catalog.outdoorPlants) { plant in
                             NavigationLink(value: plant) {
                                 TypePlantCard(plant: plant)
                             }
@@ -155,7 +186,7 @@ struct HomeView: View {
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            ForEach(PlantData.outdoorPlants) { plant in
+                            ForEach(catalog.outdoorPlants) { plant in
                                 NavigationLink(value: plant) {
                                     TypePlantCard(plant: plant)
                                 }
@@ -172,7 +203,7 @@ struct HomeView: View {
                 )
                 if vm.isExpanded("Aquatic"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(PlantData.aquaticPlants) { plant in
+                        ForEach(catalog.aquaticPlants) { plant in
                             NavigationLink(value: plant) {
                                 TypePlantCard(plant: plant)
                             }
@@ -182,7 +213,7 @@ struct HomeView: View {
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            ForEach(PlantData.aquaticPlants) { plant in
+                            ForEach(catalog.aquaticPlants) { plant in
                                 NavigationLink(value: plant) {
                                     TypePlantCard(plant: plant)
                                 }
@@ -199,7 +230,7 @@ struct HomeView: View {
                 )
                 if vm.isExpanded("BigTree"){
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(PlantData.bigTrees) { plant in
+                        ForEach(catalog.bigTrees) { plant in
                             NavigationLink(value: plant) {
                                 TypePlantCard(plant: plant)
                             }
@@ -209,7 +240,7 @@ struct HomeView: View {
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            ForEach(PlantData.bigTrees) { plant in
+                            ForEach(catalog.bigTrees) { plant in
                                 NavigationLink(value: plant) {
                                     TypePlantCard(plant: plant)
                                 }
@@ -234,7 +265,7 @@ struct HomeView: View {
             GridItem(.flexible()),
             GridItem(.flexible())
         ], spacing: 16) {
-            ForEach(vm.filteredPlants) { plant in
+            ForEach(vm.filteredPlants(in: catalog)) { plant in
                 NavigationLink(value: plant) {
                     TypePlantCard(plant: plant)
                 }
@@ -243,13 +274,14 @@ struct HomeView: View {
         .padding(16)
     }
     private var searchContent: some View {
-        VStack(alignment: .leading) {
+        let results = vm.searchResults(in: catalog)
+        return VStack(alignment: .leading) {
             Text("Results for \"\(vm.searchText)\"")
                 .font(.headline)
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
 
-            if vm.searchResults.isEmpty {
+            if results.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 50))
@@ -264,7 +296,7 @@ struct HomeView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: 16) {
-                    ForEach(vm.searchResults) { plant in
+                    ForEach(results) { plant in
                         NavigationLink(value: plant) {
                             TypePlantCard(plant: plant)
                         }
@@ -275,4 +307,3 @@ struct HomeView: View {
         }
     }
 }
-

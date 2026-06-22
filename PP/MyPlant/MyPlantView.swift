@@ -10,11 +10,26 @@ import SwiftUI
 struct MyPlantView: View {
     @EnvironmentObject var myPlants: MyPlantsModel
     @EnvironmentObject var user: UserModel
+    @EnvironmentObject var catalog: PlantsModel
     @State private var selectedDate = Date()
     @State private var showAddPlant = false
 
     var body: some View {
         NavigationStack {
+            Group {
+                if !user.isLoggedIn {
+                    SignInRequiredView(message: "Sign in to track and manage your plants.")
+                } else {
+                    myPlantContent
+                }
+            }
+            .navigationTitle("My Plants")
+            .navigationBarTitleDisplayMode(.large)
+            .preferredColorScheme(.light)
+        }
+    }
+
+    private var myPlantContent: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
@@ -54,7 +69,7 @@ struct MyPlantView: View {
                             ForEach(myPlants.plants) { plant in
                                 MyPlantCard(plant: plant) {
                                     Task {
-                                        await myPlants.removePlant(plant, userId: user.id)  // ← async + userId
+                                        await myPlants.removePlant(plant, userId: user.id)  // async + userId
                                     }
                                 }
                             }
@@ -69,10 +84,6 @@ struct MyPlantView: View {
                 }
                 .padding(.top, 8)
             }
-            .background(Color(.systemGray6))
-            .navigationTitle("My Plants")
-            .navigationBarTitleDisplayMode(.large)
-            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { } label: {
@@ -102,15 +113,16 @@ struct MyPlantView: View {
             .sheet(isPresented: $showAddPlant) {
                 AddMyPlantView()
                     .environmentObject(myPlants)
-                    .environmentObject(user)               // ← add user
+                    .environmentObject(user)
+                    .environmentObject(catalog)
             }
-            // ← fetch plants when view appears
+            // fetch plants when view appears
             .onAppear {
                 Task {
                     await myPlants.fetchPlants(userId: user.id)
                 }
             }
-            // ← refresh when sheet dismisses
+            // refresh when sheet dismisses
             .onChange(of: showAddPlant) { isShowing in
                 if !isShowing {
                     Task {
@@ -118,7 +130,6 @@ struct MyPlantView: View {
                     }
                 }
             }
-        }
     }
 }
 

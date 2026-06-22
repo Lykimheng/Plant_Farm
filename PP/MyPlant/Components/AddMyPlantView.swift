@@ -10,21 +10,31 @@ import SwiftUI
 struct AddMyPlantView: View {
     @EnvironmentObject var myPlants: MyPlantsModel
     @EnvironmentObject var user: UserModel
+    @EnvironmentObject var catalog: PlantsModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var name = ""
     @State private var species = ""
     @State private var selectedCare: MyPlantModel.CareLevel = .easy
     @State private var nextWatering = "Next in 3 days"
     @State private var sunlight = "Partial Sunlight"
-    @State private var image = "Cactus"
+    @State private var selectedPlant: PlantModel?
     @State private var isSaving = false
+
+    private var availablePlants: [PlantModel] {
+        var seen = Set<String>()
+        return catalog.plants.filter { seen.insert($0.name).inserted }
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Plant Info") {
-                    TextField("Plant name", text: $name)
+                    Picker("Plant name", selection: $selectedPlant) {
+                        Text("Select a plant").tag(nil as PlantModel?)
+                        ForEach(availablePlants) { plant in
+                            Text(plant.name).tag(plant as PlantModel?)
+                        }
+                    }
                     TextField("Species", text: $species)
                 }
 
@@ -42,12 +52,22 @@ struct AddMyPlantView: View {
                     TextField("Sunlight needs", text: $sunlight)
                 }
 
-                Section("Image") {
-                    TextField("Image name from assets", text: $image)
+                if let selectedPlant {
+                    Section("Image Preview") {
+                        RemoteImage(urlString: selectedPlant.image)
+                            .scaledToFit()
+                            .frame(height: 120)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
             }
             .navigationTitle("Add Plant")
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                if catalog.plants.isEmpty {
+                    await catalog.fetchPlants()
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
@@ -58,12 +78,13 @@ struct AddMyPlantView: View {
                         ProgressView()
                     } else {
                         Button("Save") {
+                            guard let selectedPlant else { return }
                             isSaving = true
                             Task {
                                 await myPlants.addPlant(
                                     MyPlantModel(
-                                        image: image,
-                                        name: name,
+                                        image: selectedPlant.image,
+                                        name: selectedPlant.name,
                                         species: species,
                                         careLevel: selectedCare,
                                         nextWatering: nextWatering,
@@ -74,7 +95,7 @@ struct AddMyPlantView: View {
                                 dismiss()
                             }
                         }
-                        .disabled(name.isEmpty)
+                        .disabled(selectedPlant == nil)
                     }
                 }
             }

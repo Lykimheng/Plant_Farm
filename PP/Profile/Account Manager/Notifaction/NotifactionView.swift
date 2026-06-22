@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NotificationsView: View {
     @EnvironmentObject var notifications: NotificationsModel
+    @EnvironmentObject var user: UserModel
 
     var body: some View {
         Group {
@@ -34,7 +35,7 @@ struct NotificationsView: View {
                         ForEach(notifications.notifications) { notification in
                             NotificationCard(notification: notification)
                                 .onTapGesture {
-                                    notifications.markAsRead(notification)
+                                    Task { await notifications.markAsRead(notification, userId: user.id) }
                                 }
                         }
                     }
@@ -50,14 +51,14 @@ struct NotificationsView: View {
             if !notifications.notifications.isEmpty {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Clear All") {
-                        notifications.clearAll()
+                        Task { await notifications.deleteAll(userId: user.id) }
                     }
                     .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
                 }
             }
         }
         .onAppear {
-            notifications.markAllAsRead()
+            Task { await notifications.markAllAsRead(userId: user.id) }
         }
     }
 }
@@ -65,5 +66,6 @@ struct NotificationsView: View {
     NavigationStack {
         NotificationsView()
             .environmentObject(NotificationsModel())
+            .environmentObject(UserModel())
     }
 }

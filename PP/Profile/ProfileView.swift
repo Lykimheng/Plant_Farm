@@ -13,8 +13,6 @@ struct ProfileView: View {
     @EnvironmentObject var orders: OrdersModel
     @EnvironmentObject var wishlist: WishlistModel
     @EnvironmentObject var myPlants: MyPlantsModel
-    @StateObject private var camera = CameraViewModel()
-    @StateObject private var permission = CameraPermissionManager()
     @State private var showWishlist = false
     @State private var showLogoutAlert = false
     @State private var editBtn = false
@@ -22,17 +20,27 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
+            Group {
+                if !user.isLoggedIn {
+                    SignInRequiredView(message: "Sign in to manage your profile, orders, and more.")
+                } else {
+                    profileContent
+                }
+            }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .preferredColorScheme(.light)
+        }
+    }
+
+    private var profileContent: some View {
             ScrollView {
                 VStack(spacing: 24) {
 
                     // MARK: - Profile Header
                     VStack(spacing: 12) {
                         ZStack(alignment: .bottomTrailing) {
-                            Image("avatar")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 90, height: 90)
-                                .clipShape(Circle())
+                            UserAvatarView(avatarURL: user.avatarURL, size: 90)
                                 .overlay(
                                     Circle()
                                         .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255), lineWidth: 2)
@@ -165,14 +173,10 @@ struct ProfileView: View {
                         .padding(.bottom, 20)
                 }
             }
-            .background(Color(.systemGray6))
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.inline)
-            .preferredColorScheme(.light)
             .navigationDestination(isPresented: $showMyOrder){
                 MyOrdersView()
             }
-            // ← open wishlist as sheet
+            // open wishlist as sheet
             .navigationDestination(isPresented: $showWishlist){
                 WishlistView()
                     .environmentObject(wishlist)
@@ -180,10 +184,11 @@ struct ProfileView: View {
 
             .popover(isPresented : $editBtn) {
                 EditProfileView()
+                    .environmentObject(user)
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
             }
-            // ← logout confirmation
+            // logout confirmation
             .alert("Logout", isPresented: $showLogoutAlert) {
                 Button("Logout", role: .destructive) {
                     user.logout()
@@ -192,7 +197,6 @@ struct ProfileView: View {
             } message: {
                 Text("Are you sure you want to logout?")
             }
-        }
     }
 }
 

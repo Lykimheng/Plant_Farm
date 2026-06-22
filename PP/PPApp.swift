@@ -16,6 +16,8 @@ struct PPApp: App {
     @StateObject private var orders = OrdersModel()
     @StateObject private var notifactions = NotificationsModel()
     @StateObject private var myPlants = MyPlantsModel()
+    @StateObject private var catalog = PlantsModel()
+    @StateObject private var toast = ToastCenter()
 
     var body: some Scene {
         WindowGroup {
@@ -27,9 +29,12 @@ struct PPApp: App {
                 .environmentObject(orders)
                 .environmentObject(notifactions)
                 .environmentObject(myPlants)
+                .environmentObject(catalog)
+                .environmentObject(toast)
                 .onAppear{
                     location.requestPermission()
                     orders.notifications = notifactions
+                    cart.toastCenter = toast
                 }
         }
     }

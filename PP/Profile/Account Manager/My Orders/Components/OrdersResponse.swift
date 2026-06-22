@@ -33,13 +33,13 @@ struct OrderAPIModel: Codable {
         case items
     }
 
-    // ← convert API model to your OrderModel
+    // convert API model to OrderModel
     func toOrderModel() -> OrderModel {
         OrderModel(
             orderNumber: orderNumber,
             date: createdAt,
             status: OrderModel.OrderStatus(rawValue: status) ?? .pending,
-            items: [],                // ← items handled separately
+            items: [],
             total: total,
             deliveryAddress: deliveryAddress
         )
@@ -49,7 +49,7 @@ struct OrderAPIModel: Codable {
 // MARK: - Order Item from API
 struct OrderItemAPIModel: Codable {
     let id: Int
-    let plantId: String
+    let plantId: Int
     let plantName: String
     let price: Double
     let quantity: Int

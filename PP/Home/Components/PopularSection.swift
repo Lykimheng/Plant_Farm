@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PopularSection: View {
+    @EnvironmentObject var catalog: PlantsModel
 
     var body: some View {
         ZStack{
@@ -25,7 +26,7 @@ struct PopularSection: View {
                   
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 20) {
-                            ForEach(PlantData.popularPlants) { plant in
+                            ForEach(catalog.popularPlants) { plant in
                                 NavigationLink(value: plant) {
                                     PopularCard(plant: plant)
                                 }
@@ -42,4 +43,5 @@ struct PopularSection: View {
 
 #Preview {
     PopularSection()
+        .environmentObject(PlantsModel())
 }

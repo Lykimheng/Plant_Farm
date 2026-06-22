@@ -15,8 +15,7 @@ struct WishlistCard: View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 // plant image
-                Image(plant.image)
-                    .resizable()
+                RemoteImage(urlString: plant.image)
                     .scaledToFill()
                     .frame(height: 160)
                     .clipped()

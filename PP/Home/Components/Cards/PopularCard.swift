@@ -16,7 +16,7 @@ struct PopularCard: View {
             ZStack {
                 // MARK: - Card Background
                 RoundedRectangle(cornerRadius: 28)
-                    .foregroundStyle(Color(red: 0.0/255.0, green: 41.0/255.0, blue: 45.0/255.0, opacity: 1.0)) // dark teal
+                    .foregroundStyle(Color(red: 0.0/255.0, green: 41.0/255.0, blue: 45.0/255.0, opacity: 1.0))
                 
                 // Curved accent background
                 Color(red: 0.0, green: 0.41, blue: 0.43, opacity: 1.0)
@@ -46,8 +46,7 @@ struct PopularCard: View {
                             .lineLimit(1)
                         HStack {
                             
-                            Image(plant.typePlant)
-                                .resizable()
+                            RemoteImage(urlString: APIService.shared.categoryIconURL(plant.typePlant))
                                 .frame(width: 16, height: 16)
                             
                             Text(plant.typePlant)
@@ -88,8 +87,7 @@ struct PopularCard: View {
             .frame(width: 380, height: 160)
             .cornerRadius(20)
             
-            Image(plant.image)
-                .resizable()
+            RemoteImage(urlString: plant.image)
                 .scaledToFit()
                 .padding(.top, 10)
                 .position(x: 75, y: 70)

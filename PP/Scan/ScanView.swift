@@ -4,6 +4,7 @@
 //
 //  Created by Ly Kimheng on 26/12/25.
 //
+
 import SwiftUI
 import AVFoundation
 import PhotosUI
@@ -13,8 +14,8 @@ struct ScanView: View {
     @StateObject private var permission = CameraPermissionManager()
     @State private var selectedImage: UIImage? = nil
     @State private var showPhotoLibrary = false
-    @State private var isScanning = false           // ← scanning animation
-    @State private var scanOffset: CGFloat = -150   // ← animation position
+    @State private var isScanning = false
+    @State private var scanOffset: CGFloat = -150
     let scanSize: CGFloat = 280
     var body: some View {
         ZStack {
@@ -44,7 +45,7 @@ struct ScanView: View {
                             // top left
                             ScanCorner()
                                 .frame(width: 24, height: 24)
-                                .offset(x: -2, y: -2)           // ← slight outside offset
+                                .offset(x: -2, y: -2)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity,
                                        alignment: .topLeading)
 

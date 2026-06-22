@@ -7,17 +7,17 @@
 
 import SwiftUI
 struct DetailCard: View {
-    let plant: PlantModel  // ← receive data here
+    let plant: PlantModel
     @EnvironmentObject var cart: CartModel
     @EnvironmentObject var wishlist: WishlistModel
-    @Environment(\.dismiss) private var dismiss  // ← for back button
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         GeometryReader { geo in
             VStack {
                 HStack {
                     Button {
-                        dismiss()  // ← this pops back
+                        dismiss()
                     } label: {
                         Image(systemName: Constants.closeIcon)
                             .imageScale(.large)
@@ -35,10 +35,9 @@ struct DetailCard: View {
                 .padding()
                 
                 VStack {
-                    Image(plant.image)       // ← dynamic
-                        .resizable()
+                    RemoteImage(urlString: plant.image)
                         .scaledToFit()
-                        .frame(width: geo.size.width * 0.6,      // ← 60% of screen width
+                        .frame(width: geo.size.width * 0.6,
                                height: geo.size.height * 0.28)
                     HStack {
                         Image(systemName: Constants.starIcon)
@@ -51,10 +50,10 @@ struct DetailCard: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(plant.name)         // ← dynamic
+                    Text(plant.name)
                         .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
                         .font(.largeTitle.bold())
-                    Text(plant.type)         // ← dynamic
+                    Text(plant.type)
                         .foregroundStyle(.gray)
                         .font(.subheadline.bold())
                         .padding(.bottom, 5)
@@ -63,7 +62,7 @@ struct DetailCard: View {
                         .font(.title3.bold())
                         .padding(.bottom, 5)
                     
-                    Text(plant.description)  // ← dynamic
+                    Text(plant.description)
                         .foregroundStyle(.gray)
                         .font(.system(size: 13))
                     

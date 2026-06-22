@@ -11,9 +11,14 @@ struct MyOrdersView: View {
     @EnvironmentObject var cart: CartModel
     @EnvironmentObject var orders: OrdersModel
     @EnvironmentObject var location: LocationManager
+    @EnvironmentObject var user: UserModel
     var body: some View {
         Group {
-            if orders.orders.isEmpty {
+            if orders.isLoading && orders.orders.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(.systemGray6))
+            } else if orders.orders.isEmpty {
                 VStack(spacing: 16) {
                     Image(systemName: Constants.notificationIcon)
                         .font(.system(size: 60))
@@ -49,6 +54,11 @@ struct MyOrdersView: View {
         .navigationTitle("My Orders")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
+        .onAppear {
+            Task {
+                await orders.fetchOrders(userId: user.id)
+            }
+        }
     }
 }
 

@@ -4,6 +4,7 @@
 //
 //  Created by Ly Kimheng on 9/4/26.
 //
+
 import SwiftUI
 
 struct DetailSpecialCard: View {
@@ -37,11 +38,10 @@ struct DetailSpecialCard: View {
 
                 // MARK: - Image + Rating
                 VStack(spacing: 8) {
-                    Image(plant.image)
-                        .resizable()
+                    RemoteImage(urlString: plant.image)
                         .scaledToFit()
-                        .frame(width: geo.size.width * 0.6,      // ← 60% of screen width
-                               height: geo.size.height * 0.28)   // ← 28% of screen height
+                        .frame(width: geo.size.width * 0.6,
+                               height: geo.size.height * 0.28)
                     
                     HStack(spacing: 4) {
                         Image(systemName: Constants.starIcon)
@@ -72,7 +72,7 @@ struct DetailSpecialCard: View {
                     Text(plant.description)
                         .foregroundStyle(.gray)
                         .font(.system(size: 13))
-                        .fixedSize(horizontal: false, vertical: true)  // ← wraps properly
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Spacer()
 
@@ -96,19 +96,19 @@ struct DetailSpecialCard: View {
                             cart.addItem(plant: plant.plant)
                         } label: {
                             Text("Add to Cart")
-                                .frame(width: geo.size.width * 0.3,   // ← 30% of screen width
+                                .frame(width: geo.size.width * 0.3,
                                        height: 50)
                                 .foregroundColor(.white)
                                 .background(Color(red: 0.15, green: 0.70, blue: 0.70))
                                 .cornerRadius(10)
                         }
                     }
-                    .padding(.bottom, geo.safeAreaInsets.bottom + 16)  // ← respects safe area
+                    .padding(.bottom, geo.safeAreaInsets.bottom + 16)
                 }
                 .padding(.horizontal,)
                 .padding(.bottom, 100)
                 .frame(maxWidth: .infinity)
-                .frame(height: geo.size.height * 0.58)                  // ← 50% of screen height
+                .frame(height: geo.size.height * 0.58)
                 .background(Color.white)
                 .clipShape(
                     UnevenRoundedRectangle(cornerRadii: .init(topTrailing: 50.0))

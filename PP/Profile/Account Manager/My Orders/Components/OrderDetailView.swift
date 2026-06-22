@@ -44,12 +44,12 @@ struct OrderDetailView: View {
 
                     HStack {
                         Spacer()
-                        Text(order.status.rawValue)         // ← dynamic
+                        Text(order.status.rawValue)
                             .font(.subheadline.bold())
                             .foregroundColor(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(order.status.color) // ← dynamic
+                            .background(order.status.color)
                             .cornerRadius(20)
                             .padding()
                     }
@@ -67,7 +67,7 @@ struct OrderDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Delivery Address")
                             .font(.subheadline.bold())
-                        Text(order.deliveryAddress)         // ← dynamic
+                        Text(order.deliveryAddress)
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -141,11 +141,7 @@ struct OrderDetailView: View {
 
                 // MARK: - Courier (static for now)
                 HStack(spacing: 16) {
-                    Image("avatar")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+                    UserAvatarView(avatarURL: user.avatarURL, size: 50)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Courier")
                             .font(.caption)
@@ -178,15 +174,14 @@ struct OrderDetailView: View {
                         Text("Order Summary")
                             .font(.headline.bold())
                         Spacer()
-                        Text("\(order.items.count) Items")    // ← dynamic
+                        Text("\(order.items.count) Items")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
 
-                    ForEach(order.items) { item in            // ← dynamic
+                    ForEach(order.items) { item in
                         HStack(spacing: 12) {
-                            Image(item.plant.image)
-                                .resizable()
+                            RemoteImage(urlString: item.plant.image)
                                 .scaledToFill()
                                 .frame(width: 70, height: 70)
                                 .cornerRadius(8)
@@ -212,7 +207,7 @@ struct OrderDetailView: View {
                         Text("Total Amount")
                             .font(.headline.bold())
                         Spacer()
-                        Text(String(format: "$%.2f", order.total))    // ← dynamic
+                        Text(String(format: "$%.2f", order.total))
                             .font(.headline.bold())
                     }
                 }
@@ -267,10 +262,10 @@ struct OrderDetailView: View {
         }
     }
 
-    // ← generate status steps based on current order status
+    // generate status steps based on current order status
     func orderStatuses(for status: OrderModel.OrderStatus) -> [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] {
         
-        // ← handle cancelled/rejected separately
+        // handle cancelled/rejected separately
         if status == .cancelled || status == .rejected {
             return [
                 (title: "Order Placed", subtitle: order.date, isDone: true, isCurrent: false),
@@ -304,6 +299,6 @@ struct OrderDetailView: View {
             deliveryAddress: "No. 42, St. 271, Phnom Penh"
         ))
         .environmentObject(LocationManager())
-        .environmentObject(OrdersModel())       // ← add this
+        .environmentObject(OrdersModel())
     }
 }

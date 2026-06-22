@@ -28,7 +28,6 @@ struct SigninView: View {
                 .font(.subheadline.bold())
                 .foregroundStyle(Color.gray)
             
-            // ← VStack instead of ZStack
             VStack(spacing: 16) {
                 InputField(icon: Constants.mailIcon, placeholder: "Email", text: $email)
                 InputPasswardField(password: $password)

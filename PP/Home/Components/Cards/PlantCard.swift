@@ -17,7 +17,7 @@ struct PlantCard: View {
             ZStack {
                 // MARK: - Card Background
                 RoundedRectangle(cornerRadius: 28)
-                    .fill(Color(red: 0.16, green: 0.40, blue: 0.40)) // dark teal
+                    .fill(Color(red: 0.16, green: 0.40, blue: 0.40))
                 
                 // Curved accent background
                 Color(red: 0.35, green: 0.70, blue: 0.70)
@@ -39,8 +39,7 @@ struct PlantCard: View {
                     // MARK: - Top image + favorite
                     ZStack(alignment: .topTrailing) {
                         HStack{
-                            Image(plant.image)
-                                .resizable()
+                            RemoteImage(urlString: plant.image)
                                 .scaledToFit()
                                 .frame(height: 150)
                                 .padding(.top, 10)
@@ -58,8 +57,7 @@ struct PlantCard: View {
                     
                     // MARK: - Type
                     HStack(spacing: 6) {
-                        Image(plant.typePlant)
-                            .resizable()
+                        RemoteImage(urlString: APIService.shared.categoryIconURL(plant.typePlant))
                             .frame(width: 16, height: 16)
                         
                         Text(plant.type)

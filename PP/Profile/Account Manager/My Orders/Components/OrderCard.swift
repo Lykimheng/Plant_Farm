@@ -37,8 +37,7 @@ struct OrderCard: View {
             // items preview
             HStack(spacing: 8) {
                 ForEach(order.items.prefix(3)) { item in
-                    Image(item.plant.image)
-                        .resizable()
+                    RemoteImage(urlString: item.plant.image)
                         .scaledToFill()
                         .frame(width: 50, height: 50)
                         .cornerRadius(8)

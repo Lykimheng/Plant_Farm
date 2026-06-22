@@ -54,6 +54,17 @@ struct StartScreen: View {
                                 .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255, opacity: 1.0))
                         }
                     }
+                    .padding(.bottom, 16)
+
+                    // CONTINUE AS GUEST
+                    Button {
+                        isLoggedIn = true
+                    } label: {
+                        Text("Continue as Guest")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.8))
+                            .underline()
+                    }
                     .padding(.bottom, 50)
                 }
             }

@@ -18,8 +18,7 @@ struct MyPlantCard: View {
 
             // MARK: - Image
             ZStack(alignment: .bottomLeading) {
-                Image(plant.image)
-                    .resizable()
+                RemoteImage(urlString: plant.image)
                     .scaledToFill()
                     .frame(height: 180)
                     .clipped()
