@@ -2,16 +2,16 @@
 //  View+Extensions.swift
 //  PP
 //
+//  Created by Ly Kimheng on 10/9/26.
+//
 
 import SwiftUI
 
 extension View {
-    /// Rounds only the given corners — SwiftUI's own `cornerRadius` is all-or-nothing.
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 
-    /// Applies a transform only when `condition` holds, keeping call sites flat.
     @ViewBuilder
     func applyIf<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition { transform(self) } else { self }

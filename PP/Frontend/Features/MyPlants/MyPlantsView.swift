@@ -1,5 +1,5 @@
 //
-//  MyPlantView.swift
+//  MyPlantsView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 26/12/25.
@@ -7,215 +7,166 @@
 
 import SwiftUI
 
-struct MyPlantView: View {
-    @EnvironmentObject var myPlants: MyPlantsModel
-    @EnvironmentObject var user: UserModel
-    @EnvironmentObject var catalog: PlantsModel
+struct MyPlantsView: View {
+    @EnvironmentObject private var myPlants: MyPlantsStore
+    @EnvironmentObject private var user: UserStore
+    @EnvironmentObject private var catalog: PlantsStore
+
     @State private var selectedDate = Date()
     @State private var showAddPlant = false
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if !user.isLoggedIn {
-                    SignInRequiredView(message: "Sign in to track and manage your plants.")
-                } else {
-                    myPlantContent
+        Group {
+            if user.isLoggedIn {
+                content
+            } else {
+                SignInRequiredView(message: "Sign in to track and care for your plants.")
+            }
+        }
+        .background(Theme.background)
+        .navigationTitle("My Plants")
+        .navigationBarTitleDisplayMode(.large)
+    }
+
+    private var content: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
+                Text("Manage your garden's health and care schedule.")
+                    .font(.system(size: 13.5))
+                    .foregroundStyle(Theme.textSecondary)
+                    .padding(.horizontal, Theme.Spacing.lg)
+
+                WeekStrip(selectedDate: $selectedDate)
+                    .padding(.horizontal, Theme.Spacing.lg)
+
+                plantList
+
+                DailyRoutineCard()
+                    .padding(.horizontal, Theme.Spacing.lg)
+            }
+            .padding(.top, Theme.Spacing.md)
+            .padding(.bottom, 88)
+            .readableWidth()
+        }
+        .refreshable { await myPlants.load(userId: user.id) }
+        .overlay(alignment: .bottomTrailing) { addButton }
+        .sheet(isPresented: $showAddPlant) {
+            AddMyPlantView()
+        }
+        .task { await myPlants.loadIfNeeded(userId: user.id) }
+    }
+
+    @ViewBuilder
+    private var plantList: some View {
+        if myPlants.isLoading && myPlants.isEmpty {
+            SkeletonList(count: 2, height: 240)
+                .padding(.horizontal, Theme.Spacing.lg)
+        } else if myPlants.isEmpty {
+            EmptyStateView(
+                icon: Icons.leaf,
+                title: "No plants yet",
+                message: "Add a plant from the shop catalog to start tracking its watering schedule.",
+                actionTitle: "Add a plant",
+                action: { showAddPlant = true }
+            )
+        } else {
+            LazyVStack(spacing: Theme.Spacing.lg) {
+                ForEach(myPlants.plants) { plant in
+                    MyPlantCard(plant: plant) {
+                        Task { await myPlants.remove(plant, userId: user.id) }
+                    }
                 }
             }
-            .navigationTitle("My Plants")
-            .navigationBarTitleDisplayMode(.large)
-            .preferredColorScheme(.light)
+            .padding(.horizontal, Theme.Spacing.lg)
         }
     }
 
-    private var myPlantContent: some View {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-
-                    // subtitle
-                    Text("Manage your garden's health and care schedule.")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .padding(.horizontal)
-
-                    // MARK: - Date Picker
-                    MonthCalendarView(selectedDate: $selectedDate)
-                        .padding(.horizontal)
-
-                    // MARK: - Loading
-                    if myPlants.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 60)
-                    }
-                    // MARK: - Plant Cards
-                    else if myPlants.plants.isEmpty {
-                        VStack(spacing: 16) {
-                            Image(systemName: "leaf")
-                                .font(.system(size: 60))
-                                .foregroundColor(.gray.opacity(0.4))
-                            Text("No plants yet")
-                                .font(.title3)
-                                .foregroundColor(.gray)
-                            Text("Tap + to add your first plant")
-                                .font(.caption)
-                                .foregroundColor(.gray.opacity(0.7))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 60)
-                    } else {
-                        VStack(spacing: 16) {
-                            ForEach(myPlants.plants) { plant in
-                                MyPlantCard(plant: plant) {
-                                    Task {
-                                        await myPlants.removePlant(plant, userId: user.id)  // async + userId
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-
-                    // MARK: - Daily Routine
-                    DailyRoutineCard()
-                        .padding(.horizontal)
-                        .padding(.bottom, 80)
-                }
-                .padding(.top, 8)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { } label: {
-                        Image(systemName: "calendar.badge.clock")
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    }
-                }
-            }
-            .overlay(
-                Button {
-                    showAddPlant = true
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            .frame(width: 56, height: 56)
-                            .shadow(radius: 6)
-                        Image(systemName: "plus")
-                            .font(.title2.bold())
-                            .foregroundColor(.white)
-                    }
-                }
-                .padding(.trailing, 20)
-                .padding(.bottom, 90),
-                alignment: .bottomTrailing
-            )
-            .sheet(isPresented: $showAddPlant) {
-                AddMyPlantView()
-                    .environmentObject(myPlants)
-                    .environmentObject(user)
-                    .environmentObject(catalog)
-            }
-            // fetch plants when view appears
-            .onAppear {
-                Task {
-                    await myPlants.fetchPlants(userId: user.id)
-                }
-            }
-            // refresh when sheet dismisses
-            .onChange(of: showAddPlant) { isShowing in
-                if !isShowing {
-                    Task {
-                        await myPlants.fetchPlants(userId: user.id)
-                    }
-                }
-            }
+    private var addButton: some View {
+        Button {
+            showAddPlant = true
+        } label: {
+            Image(systemName: Icons.plus)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(Theme.onBrand)
+                .frame(width: 56, height: 56)
+                .background(Theme.brand, in: Circle())
+                .softShadow(radius: 12, y: 6)
+        }
+        .buttonStyle(.pressable)
+        .padding(Theme.Spacing.lg)
+        .accessibilityLabel("Add a plant")
     }
 }
 
-// MARK: - Simple month calendar (no changes needed)
-struct MonthCalendarView: View {
-    @Binding var selectedDate: Date
-    private let calendar = Calendar.current
-    private let dateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "MMMM yyyy"
-        return f
-    }()
+// MARK: - Week strip
 
-    var weekDates: [Date] {
+struct WeekStrip: View {
+    @Binding var selectedDate: Date
+
+    private let calendar = Calendar.current
+
+    private var weekDates: [Date] {
         let today = Date()
-        let weekday = calendar.component(.weekday, from: today)
-        let startOfWeek = calendar.date(byAdding: .day, value: -(weekday - 2), to: today) ?? today
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: startOfWeek) }
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: today) else { return [today] }
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: interval.start) }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(dateFormatter.string(from: selectedDate))
-                    .font(.title3.bold())
-                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                Spacer()
-                Button { } label: {
-                    Image(systemName: "calendar")
-                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                }
-            }
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Text(selectedDate.formatted(.dateTime.month(.wide).year()))
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(Theme.brand)
 
-            HStack(spacing: 8) {
+            HStack(spacing: Theme.Spacing.sm) {
                 ForEach(weekDates, id: \.self) { date in
-                    let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
-                    let isToday = calendar.isDateInToday(date)
-
-                    Button {
-                        selectedDate = date
-                    } label: {
-                        VStack(spacing: 4) {
-                            Text(dayLetter(date))
-                                .font(.caption2)
-                                .foregroundColor(isSelected ? .white : .gray)
-                            Text(dayNumber(date))
-                                .font(.subheadline.bold())
-                                .foregroundColor(isSelected ? .white : .black)
-                            if isToday {
-                                Circle()
-                                    .fill(isSelected ? Color.white :
-                                        Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                    .frame(width: 4, height: 4)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(
-                            isSelected ?
-                            Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                            Color.white
-                        )
-                        .cornerRadius(10)
-                    }
+                    dayCell(date)
                 }
             }
         }
     }
 
-    private static let dayLetterFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "EEE"
-        return f
-    }()
+    private func dayCell(_ date: Date) -> some View {
+        let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
+        let isToday = calendar.isDateInToday(date)
 
-    private static let dayNumberFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "d"
-        return f
-    }()
+        return Button {
+            withAnimation(.easeOut(duration: 0.15)) { selectedDate = date }
+        } label: {
+            VStack(spacing: 3) {
+                Text(date.formatted(.dateTime.weekday(.abbreviated)))
+                    .font(.system(size: 10.5))
+                    .foregroundStyle(isSelected ? Theme.onBrand.opacity(0.85) : Theme.textTertiary)
 
-    func dayLetter(_ date: Date) -> String {
-        Self.dayLetterFormatter.string(from: date)
+                Text(date.formatted(.dateTime.day()))
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(isSelected ? Theme.onBrand : Theme.textPrimary)
+
+                Circle()
+                    .fill(isToday ? (isSelected ? Theme.onBrand : Theme.brand) : .clear)
+                    .frame(width: 4, height: 4)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, Theme.Spacing.sm)
+            .background(
+                isSelected ? Theme.brand : Theme.surface,
+                in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous)
+                    .strokeBorder(isSelected ? .clear : Theme.separator, lineWidth: 0.7)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(date.formatted(date: .complete, time: .omitted))
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
+}
 
-    func dayNumber(_ date: Date) -> String {
-        Self.dayNumberFormatter.string(from: date)
+#Preview {
+    NavigationStack {
+        MyPlantsView()
+            .environmentObject(MyPlantsStore())
+            .environmentObject(UserStore())
+            .environmentObject(PlantsStore())
     }
 }

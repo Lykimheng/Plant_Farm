@@ -11,61 +11,79 @@ struct OrderCard: View {
     let order: OrderModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-
-            // top row
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             HStack {
-                Text("Order #\(order.orderNumber)")
-                    .font(.headline.bold())
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("#\(order.orderNumber)")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text(order.dateText)
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(Theme.textTertiary)
+                }
+
                 Spacer()
-                // status badge
-                Text(order.status.rawValue)
-                    .font(.caption.bold())
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(order.status.color) 
-                    .cornerRadius(20)
+
+                OrderStatusBadge(status: order.status)
             }
 
-            Text(order.date)
-                .font(.caption)
-                .foregroundColor(.gray)
+            Divider().overlay(Theme.separator)
 
-            Divider()
-
-            // items preview
-            HStack(spacing: 8) {
+            HStack(spacing: Theme.Spacing.sm) {
                 ForEach(order.items.prefix(3)) { item in
                     RemoteImage(urlString: item.plant.image)
                         .scaledToFill()
-                        .frame(width: 50, height: 50)
-                        .cornerRadius(8)
+                        .frame(width: 46, height: 46)
+                        .clipped()
+                        .background(Theme.surfaceAlt)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
                 }
+
                 if order.items.count > 3 {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray5))
-                            .frame(width: 50, height: 50)
-                        Text("+\(order.items.count - 3)")
-                            .font(.caption.bold())
-                            .foregroundColor(.gray)
-                    }
+                    Text("+\(order.items.count - 3)")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Theme.textSecondary)
+                        .frame(width: 46, height: 46)
+                        .background(Theme.surfaceAlt, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
                 }
+
                 Spacer()
-                VStack(alignment: .trailing) {
-                    Text("\(order.items.count) items")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    Text(String(format: "$%.2f", order.total))
-                        .font(.headline.bold())
-                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("^[\(order.itemCount) item](inflect: true)")
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(Theme.textTertiary)
+                    Text(order.total.priceText)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Theme.brand)
                 }
             }
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4)
+        .cardSurface(padding: Theme.Spacing.lg)
+        .accessibilityElement(children: .combine)
     }
+}
+
+struct OrderStatusBadge: View {
+    let status: OrderModel.OrderStatus
+    var size: CGFloat = 11.5
+
+    var body: some View {
+        Label(status.label, systemImage: status.icon)
+            .font(.system(size: size, weight: .semibold))
+            .foregroundStyle(status.color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(status.color.opacity(0.14), in: Capsule())
+    }
+}
+
+#Preview {
+    OrderCard(order: OrderModel(
+        apiId: 1, orderNumber: "PF-98234", placedAt: Date(), status: .preparing,
+        items: [CartItem(plant: .preview, quantity: 2)],
+        total: 63, deliveryAddress: "Phnom Penh"
+    ))
+    .padding()
+    .background(Theme.background)
 }

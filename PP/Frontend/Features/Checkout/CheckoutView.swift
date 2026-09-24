@@ -6,313 +6,401 @@
 //
 
 import SwiftUI
-import MapKit
 
-struct DeliveryOptionRow: View {
-    let option: (name: String, price: Double, duration: String)
+struct CheckoutView: View {
+    @StateObject private var viewModel = CheckoutViewModel()
+    @EnvironmentObject private var cart: CartStore
+    @EnvironmentObject private var user: UserStore
+    @EnvironmentObject private var location: LocationManager
+    @EnvironmentObject private var orders: OrdersStore
+    @EnvironmentObject private var router: AppRouter
+
+    @State private var isEditingAddress = false
+
+    private var resolvedAddress: String {
+        location.userAddress.isBlank ? user.location : location.userAddress
+    }
+
+    private var deliveryAddress: String {
+        viewModel.deliveryAddress(from: resolvedAddress)
+    }
+
+    var body: some View {
+        Group {
+            if !user.isLoggedIn {
+                SignInRequiredView(message: "Sign in to check out and place your order.")
+            } else if cart.isEmpty {
+                EmptyStateView(
+                    icon: "cart",
+                    title: "Nothing to check out",
+                    message: "Your cart is empty."
+                )
+            } else {
+                content
+            }
+        }
+        .background(Theme.background)
+        .navigationTitle("Checkout")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
+        .task { location.requestPermissionIfNeeded() }
+        .onChange(of: viewModel.placedOrder) { _, order in
+            guard let order else { return }
+            router.push(.orderPlaced(order))
+        }
+    }
+
+    private var content: some View {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                mapPreview
+                addressCard
+                deliveryOptions
+                paymentMethods
+                specialNotes
+                orderSummary
+
+                if !viewModel.errorMessage.isEmpty {
+                    Label(viewModel.errorMessage, systemImage: "exclamationmark.triangle")
+                        .font(.system(size: 12.5))
+                        .foregroundStyle(Theme.danger)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.lg)
+            .readableWidth()
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .safeAreaInset(edge: .bottom) { confirmBar }
+    }
+
+    // MARK: - Map
+
+    @ViewBuilder
+    private var mapPreview: some View {
+        if let coordinate = location.userLocation {
+            AppleMapView(coordinate: coordinate)
+                .frame(height: 180)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
+        } else {
+            RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
+                .fill(Theme.surfaceAlt)
+                .frame(height: 180)
+                .overlay {
+                    VStack(spacing: Theme.Spacing.sm) {
+                        if location.isDenied {
+                            Image(systemName: "location.slash")
+                                .font(.system(size: 22))
+                                .foregroundStyle(Theme.textTertiary)
+                            Text("Location is off — type your address below.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.textTertiary)
+                                .multilineTextAlignment(.center)
+                        } else {
+                            ProgressView()
+                            Text("Finding your location…")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.textTertiary)
+                        }
+                    }
+                    .padding(Theme.Spacing.lg)
+                }
+        }
+    }
+
+    // MARK: - Address
+
+    private var addressCard: some View {
+        SectionCard(title: "Delivery Address", icon: Icons.location) {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                if isEditingAddress {
+                    AppTextField(
+                        placeholder: "Street, house, floor",
+                        text: $viewModel.addressOverride,
+                        icon: Icons.location,
+                        textContentType: .fullStreetAddress,
+                        submitLabel: .done
+                    )
+                    AppTextField(
+                        placeholder: "Contact phone",
+                        text: $viewModel.contactPhone,
+                        icon: Icons.phone,
+                        textContentType: .telephoneNumber,
+                        submitLabel: .done
+                    )
+                } else {
+                    Text(deliveryAddress.isBlank ? "No address yet" : deliveryAddress)
+                        .font(.system(size: 14))
+                        .foregroundStyle(deliveryAddress.isBlank ? Theme.textTertiary : Theme.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if !viewModel.contactPhone.isBlank {
+                        Label(viewModel.contactPhone, systemImage: Icons.phone)
+                            .font(.system(size: 12.5))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+            }
+        } accessory: {
+            Button(isEditingAddress ? "Done" : "Edit") {
+                withAnimation(.easeInOut(duration: 0.2)) { isEditingAddress.toggle() }
+            }
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(Theme.brand)
+        }
+    }
+
+    // MARK: - Delivery
+
+    private var deliveryOptions: some View {
+        SectionCard(title: "Delivery Speed", icon: Icons.truck) {
+            HStack(spacing: Theme.Spacing.md) {
+                ForEach(viewModel.deliveryOptions) { option in
+                    DeliveryOptionTile(
+                        option: option,
+                        isSelected: viewModel.selectedDelivery == option
+                    ) {
+                        withAnimation(.easeOut(duration: 0.15)) { viewModel.selectedDelivery = option }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Payment
+
+    private var paymentMethods: some View {
+        SectionCard(title: "Payment Method", icon: Icons.card) {
+            VStack(spacing: 0) {
+                ForEach(viewModel.paymentMethods) { method in
+                    PaymentMethodRow(
+                        method: method,
+                        isSelected: viewModel.selectedPayment == method
+                    ) {
+                        viewModel.selectedPayment = method
+                    }
+
+                    if method != viewModel.paymentMethods.last {
+                        Divider().overlay(Theme.separator).padding(.leading, 56)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Notes
+
+    private var specialNotes: some View {
+        SectionCard(title: "Special Notes", icon: Icons.edit) {
+            ZStack(alignment: .topLeading) {
+                if viewModel.specialNotes.isEmpty {
+                    Text("E.g. leave with the guard, handle carefully…")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.textTertiary)
+                        .padding(.top, 8)
+                        .padding(.leading, 5)
+                }
+
+                TextEditor(text: $viewModel.specialNotes)
+                    .font(.system(size: 13))
+                    .frame(height: 84)
+                    .scrollContentBackground(.hidden)
+            }
+            .padding(6)
+            .background(Theme.surfaceAlt, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+        }
+    }
+
+    // MARK: - Summary
+
+    private var orderSummary: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            HStack {
+                Text("Order Summary")
+                    .font(.system(size: 15, weight: .bold))
+                Spacer()
+                Text("^[\(cart.totalCount) item](inflect: true)")
+                    .font(.system(size: 13))
+                    .opacity(0.8)
+            }
+
+            summaryRow("Subtotal", cart.subtotal.priceText)
+            summaryRow("\(viewModel.selectedDelivery.name) delivery", viewModel.deliveryFee.priceText)
+
+            Divider().overlay(Theme.onBrand.opacity(0.3))
+
+            HStack {
+                Text("Total")
+                    .font(.system(size: 16, weight: .bold))
+                Spacer()
+                Text(viewModel.total(subtotal: cart.subtotal).priceText)
+                    .font(.system(size: 20, weight: .bold))
+                    .contentTransition(.numericText())
+            }
+        }
+        .foregroundStyle(Theme.onBrand)
+        .padding(Theme.Spacing.lg)
+        .background(Theme.brandGradient, in: RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
+    }
+
+    private func summaryRow(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label).opacity(0.85)
+            Spacer()
+            Text(value)
+        }
+        .font(.system(size: 14))
+    }
+
+    // MARK: - Confirm
+
+    private var confirmBar: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            Button {
+                Task {
+                    await viewModel.placeOrder(
+                        cart: cart,
+                        orders: orders,
+                        userId: user.id,
+                        address: resolvedAddress
+                    )
+                }
+            } label: {
+                if viewModel.isPlacingOrder {
+                    ProgressView().tint(Theme.onBrand)
+                } else {
+                    Text("Place Order · \(viewModel.total(subtotal: cart.subtotal).priceText)")
+                }
+            }
+            .buttonStyle(.primary)
+            .disabled(!viewModel.canPlaceOrder(cart: cart, address: resolvedAddress))
+
+            if deliveryAddress.isBlank {
+                Text("Add a delivery address to continue")
+                    .font(.system(size: 11.5))
+                    .foregroundStyle(Theme.textTertiary)
+            }
+        }
+        .padding(Theme.Spacing.lg)
+        .readableWidth()
+        .background(.regularMaterial)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Theme.separator).frame(height: 0.7)
+        }
+    }
+}
+
+// MARK: - Rows
+
+struct DeliveryOptionTile: View {
+    let option: DeliveryOption
     let isSelected: Bool
     let onTap: () -> Void
 
     var body: some View {
-        Button {
-            onTap()
-        } label: {
+        Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(option.name)
-                    .font(.subheadline.bold())
-                Text(String(format: "$%.2f", option.price))
-                    .font(.title3.bold())
+                    .font(.system(size: 13, weight: .semibold))
+                Text(option.fee.priceText)
+                    .font(.system(size: 18, weight: .bold))
                 Text(option.duration)
-                    .font(.caption)
-                    .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+                    .font(.system(size: 11))
+                    .opacity(0.8)
             }
-            .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(Theme.Spacing.md)
+            .foregroundStyle(isSelected ? Theme.onBrand : Theme.textPrimary)
             .background(
-                isSelected ?
-                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                Color.white
-            )
-            .foregroundColor(isSelected ? .white : .black)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.3), lineWidth: 1)
+                isSelected ? Theme.brand : Theme.surfaceAlt,
+                in: RoundedRectangle(cornerRadius: Theme.Radius.md, style: .continuous)
             )
         }
+        .buttonStyle(.pressable)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 
 struct PaymentMethodRow: View {
-    let method: (name: String, icon: String)
+    let method: PaymentMethod
     let isSelected: Bool
     let onTap: () -> Void
 
     var body: some View {
-        Button {
-            onTap()
-        } label: {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.1))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: method.icon)
-                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+        Button(action: onTap) {
+            HStack(spacing: Theme.Spacing.md) {
+                Image(systemName: method.icon)
+                    .font(.system(size: 16))
+                    .foregroundStyle(Theme.brand)
+                    .frame(width: 40, height: 40)
+                    .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(method.name)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text(method.detail)
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(Theme.textTertiary)
                 }
-                Text(method.name)
-                    .font(.subheadline)
-                    .foregroundColor(.black)
+
                 Spacer()
+
                 Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-                    .foregroundColor(
-                        isSelected ?
-                        Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                        .gray.opacity(0.4)
-                    )
-                    .font(.title3)
+                    .font(.system(size: 19))
+                    .foregroundStyle(isSelected ? Theme.brand : Theme.textTertiary.opacity(0.6))
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal)
+            .padding(.vertical, Theme.Spacing.sm)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 
-struct CheckoutView: View {
-    @StateObject private var vm  = CheckoutViewModel()
-    @EnvironmentObject var cart: CartModel
-    @EnvironmentObject var userData: UserModel
-    @EnvironmentObject var location: LocationManager
-    @EnvironmentObject var orders:  OrdersModel
-    
+/// Titled block used across checkout, orders and profile.
+struct SectionCard<Content: View, Accessory: View>: View {
+    let title: String
+    var icon: String?
+    @ViewBuilder var content: () -> Content
+    @ViewBuilder var accessory: () -> Accessory
+
     var body: some View {
-        Group {
-            if !userData.isLoggedIn {
-                SignInRequiredView(message: "Sign in to checkout and place your order.")
-            } else {
-                checkoutContent
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            HStack(spacing: Theme.Spacing.sm) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.brand)
+                }
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                accessory()
             }
+
+            content()
         }
-        .navigationTitle("Checkout")
-        .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.light)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardSurface(padding: Theme.Spacing.lg)
     }
+}
 
-    private var checkoutContent: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if let coordinate = location.userLocation {
-                               AppleMapView(coordinate: coordinate)
-                                   .frame(height: 200)
-                                   .cornerRadius(12)
-                           } else {
-                               // ← show while waiting for location
-                               RoundedRectangle(cornerRadius: 12)
-                                   .fill(Color(.systemGray5))
-                                   .frame(height: 200)
-                                   .overlay(
-                                       VStack(spacing: 8) {
-                                           ProgressView()
-                                           Text("Getting your location...")
-                                               .font(.caption)
-                                               .foregroundColor(.gray)
-                                       }
-                                   )
-                           }
-                
-                // MARK: - Delivery Address
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        Text("Delivery Address")
-                            .font(.headline)
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        Spacer()
-                        Button("Edit") {}
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    }
-                    Text("Home")
-                        .font(.subheadline.bold())
-                    Text(location.userAddress)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    HStack(spacing: 4) {
-                        Image(systemName: "phone")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Text("+123 456 789")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Delivery Options
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Delivery Options")
-                        .font(.headline)
-
-                    HStack(spacing: 12) {
-                        ForEach(vm.deliveryOptions, id: \.name) { option in
-                            DeliveryOptionRow(
-                                option: option,
-                                isSelected: vm.selectedDelivery == option.name,
-                                onTap: { vm.selectedDelivery = option.name }
-                            )
-                        }
-                    }
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Special Notes
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Special Notes")
-                        .font(.headline)
-
-                    ZStack(alignment: .topLeading) {
-                        if vm.specialNotes.isEmpty {
-                            Text("E.g. Please handle carefully, fragile plant...")
-                                .foregroundColor(.gray.opacity(0.6))
-                                .padding(.top, 8)
-                                .padding(.leading, 4)
-                        }
-                        TextEditor(text: $vm.specialNotes)
-                            .frame(height: 100)
-                            .opacity(vm.specialNotes.isEmpty ? 0.25 : 1)
-                    }
-                    .padding(8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Payment Methods
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Payment Methods")
-                        .font(.headline)
-
-                    VStack(spacing: 0) {
-                        ForEach(vm.paymentMethods, id: \.name) { method in
-                            PaymentMethodRow(
-                                method: method,
-                                isSelected: vm.selectedPayment == method.name,
-                                onTap: { vm.selectedPayment = method.name }
-                            )
-                            if method.name != vm.paymentMethods.last?.name {
-                                Divider().padding(.leading, 74)
-                            }
-                        }
-                    }
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.05), radius: 4)
-                }
-
-                // MARK: - Order Summary
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Order Summary")
-                        .font(.headline.bold())
-                        .foregroundColor(.white)
-
-                    Divider()
-                        .background(Color.white.opacity(0.3))
-
-                    HStack {
-                        Text("Subtotal")
-                            .foregroundColor(.white.opacity(0.8))
-                        Spacer()
-                        Text(String(format: "$%.2f", cart.totalPrice))
-                            .foregroundColor(.white)
-                    }
-
-                    HStack {
-                        Text("Shipping Fee")
-                            .foregroundColor(.white.opacity(0.8))
-                        Spacer()
-                        Text(String(format: "$%.2f", vm.deliveryFee))
-                            .foregroundColor(.white)
-                    }
-
-                    Divider()
-                        .background(Color.white.opacity(0.3))
-
-                    HStack {
-                        Text("Total Amount")
-                            .font(.headline.bold())
-                            .foregroundColor(.white)
-                        Spacer()
-                        Text(String(format: "$%.2f", vm.total(cartPrice: cart.totalPrice)))
-                            .font(.title3.bold())
-                            .foregroundColor(.white)
-                    }
-                }
-                .padding()
-                .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                .cornerRadius(12)
-
-                // MARK: - Confirm Button
-                Button {
-                    Task {
-                        await vm.confirmOrder(
-                            cart: cart,
-                            orders: orders,
-                            address: location.userAddress,
-                            userId: userData.id              // ← add userId
-                        )
-                    }
-                } label: {
-                    if vm.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, minHeight: 54)
-                    } else {
-                        HStack {
-                            Text("Confirm Order")
-                                .font(.headline)
-                            Image(systemName: "chevron.right")
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 54)
-                        .foregroundColor(.white)
-                        .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        .cornerRadius(12)
-                    }
-                }
-                if !vm.errorMessage.isEmpty {
-                    Text(vm.errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                }
-                
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-        }
-        .navigationDestination(isPresented: $vm.orderPlaced) {
-            OrderSuccessView(
-                orderID: vm.orderID,
-                orderItems: vm.savedItems,
-                userEmail: userData.email
-            )
-            .environmentObject(cart)
-        }
-        .onAppear {
-            location.requestPermission()
-        }
+extension SectionCard where Accessory == EmptyView {
+    init(title: String, icon: String? = nil, @ViewBuilder content: @escaping () -> Content) {
+        self.init(title: title, icon: icon, content: content, accessory: { EmptyView() })
     }
 }
 
 #Preview {
     NavigationStack {
         CheckoutView()
-            .environmentObject(CartModel())
+            .environmentObject(CartStore())
+            .environmentObject(UserStore())
+            .environmentObject(LocationManager())
+            .environmentObject(OrdersStore())
+            .environmentObject(AppRouter())
     }
 }

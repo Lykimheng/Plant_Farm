@@ -1,186 +1,166 @@
 //
-//  UserModel.swift
+//  UserStore.swift
 //  PP
 //
-//  Created by Ly Kimheng on 26/5/26.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
 import SwiftUI
 import Combine
 
-class UserModel: ObservableObject {
-    @Published var id: Int = 0
-    @Published var name: String = "Guest"
-    @Published var email: String = ""
-    @Published var location: String = "Unknown"
-    @Published var avatarURL: String = ""
-    @Published var isLoggedIn: Bool = false
-    @Published var isLoading: Bool = false
+@MainActor
+final class UserStore: ObservableObject {
+    @Published private(set) var id: Int = 0
+    @Published private(set) var name: String = "Guest"
+    @Published private(set) var email: String = ""
+    @Published private(set) var location: String = "Unknown"
+    @Published private(set) var avatarURL: String = ""
+    @Published private(set) var isLoggedIn: Bool = false
+    @Published private(set) var isLoading: Bool = false
     @Published var errorMessage: String = ""
 
-    // MARK: - Login
-    func login(email: String, password: String) async {
-        await MainActor.run { isLoading = true }
+    private let client: APIClient
 
-        let result = await APIService.shared.login(email: email, password: password)
+    init(client: APIClient = .shared) {
+        self.client = client
+    }
 
-        await MainActor.run {
-            isLoading = false
-            switch result {
-            case .success(let response):
-                if let user = response.user {
-                    self.id       = user.id
-                    self.name     = user.name
-                    self.email    = user.email
-                    self.location = user.location
-                    self.avatarURL = user.avatar ?? ""
-                    self.isLoggedIn = true
-                    self.errorMessage = ""
-                }
-            case .failure(let error):
-                self.errorMessage = error.message
-            }
+    // MARK: - Auth
+
+    @discardableResult
+    func login(email: String, password: String) async -> Bool {
+        await authenticate {
+            try await self.client.send(
+                API.Path.login,
+                method: .post,
+                body: LoginRequest(email: email.trimmed, password: password)
+            )
         }
     }
 
-    // MARK: - Register
-    func register(name: String, email: String, password: String, location: String) async {
-        await MainActor.run { isLoading = true }
-
-        let result = await APIService.shared.register(
-            name: name, email: email,
-            password: password, location: location
-        )
-
-        await MainActor.run {
-            isLoading = false
-            switch result {
-            case .success(let response):
-                if let user = response.user {
-                    self.id       = user.id
-                    self.name     = user.name
-                    self.email    = user.email
-                    self.location = user.location
-                    self.avatarURL = user.avatar ?? ""
-                    self.isLoggedIn = true
-                    self.errorMessage = ""
-                }
-            case .failure(let error):
-                self.errorMessage = error.message
-            }
+    @discardableResult
+    func register(name: String, email: String, password: String, location: String) async -> Bool {
+        await authenticate {
+            try await self.client.send(
+                API.Path.register,
+                method: .post,
+                body: RegisterRequest(
+                    name: name.trimmed,
+                    email: email.trimmed,
+                    password: password,
+                    location: location
+                )
+            )
         }
     }
-
-    // MARK: - Forgot Password
-    func forgotPassword(email: String, newPassword: String) async {
-        await MainActor.run { isLoading = true }
-
-        let result = await APIService.shared.forgotPassword(
-            email: email,
-            newPassword: newPassword
-        )
-
-        await MainActor.run {
-            isLoading = false
-            switch result {
-            case .success(let response):
-                errorMessage = response.message
-            case .failure(let error):
-                errorMessage = error.message
-            }
-        }
-    }
-
-    // MARK: - Update Profile
-    func updateProfile(name: String) async -> Bool {
-        await MainActor.run { isLoading = true }
-
-        guard let url = URL(string: "\(APIService.shared.baseURL)/update_profile.php"),
-              let jsonData = try? JSONSerialization.data(withJSONObject: ["user_id": id, "name": name]) else {
-            await MainActor.run { isLoading = false }
-            return false
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
+    
+    func resetPassword(email: String, newPassword: String) async -> Bool {
+        isLoading = true
+        errorMessage = ""
+        defer { isLoading = false }
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-            let success = (json?["success"] as? Bool) ?? false
-
-            await MainActor.run {
-                isLoading = false
-                if success {
-                    self.name = name
-                } else {
-                    self.errorMessage = (json?["message"] as? String) ?? "Failed to update profile."
-                }
-            }
-            return success
+            let _: StatusResponse = try await client.send(
+                API.Path.forgotPassword,
+                method: .post,
+                body: ForgotPasswordRequest(email: email.trimmed, newPassword: newPassword)
+            )
+            return true
         } catch {
-            await MainActor.run {
-                isLoading = false
-                self.errorMessage = "Network error: \(error.localizedDescription)"
-            }
+            errorMessage = error.userMessage
             return false
         }
     }
 
-    // MARK: - Upload Avatar
-    func uploadAvatar(_ image: UIImage) async -> Bool {
-        await MainActor.run { isLoading = true }
-
-        guard let imageData = image.jpegData(compressionQuality: 0.7) else {
-            await MainActor.run { isLoading = false }
-            return false
-        }
-        let base64 = imageData.base64EncodedString()
-
-        guard let url = URL(string: "\(APIService.shared.baseURL)/upload_avatar.php"),
-              let jsonData = try? JSONSerialization.data(withJSONObject: ["user_id": id, "image_base64": base64]) else {
-            await MainActor.run { isLoading = false }
-            return false
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-            let success = (json?["success"] as? Bool) ?? false
-
-            await MainActor.run {
-                isLoading = false
-                if success, let avatarUrl = json?["avatar_url"] as? String {
-                    self.avatarURL = avatarUrl
-                } else {
-                    self.errorMessage = (json?["message"] as? String) ?? "Failed to upload avatar."
-                }
-            }
-            return success
-        } catch {
-            await MainActor.run {
-                isLoading = false
-                self.errorMessage = "Network error: \(error.localizedDescription)"
-            }
-            return false
-        }
-    }
-
-    // MARK: - Logout
     func logout() {
-        self.id         = 0
-        self.name       = "Guest"
-        self.email      = ""
-        self.location   = "Unknown"
-        self.avatarURL  = ""
-        self.isLoggedIn = false
-        self.errorMessage = ""
+        id = 0
+        name = "Guest"
+        email = ""
+        location = "Unknown"
+        avatarURL = ""
+        isLoggedIn = false
+        errorMessage = ""
+    }
+
+    // MARK: - Profile
+
+    func updateProfile(name newName: String) async -> Bool {
+        let trimmed = newName.trimmed
+        guard !trimmed.isEmpty else {
+            errorMessage = "Name can't be empty."
+            return false
+        }
+
+        isLoading = true
+        errorMessage = ""
+        defer { isLoading = false }
+
+        do {
+            let _: StatusResponse = try await client.send(
+                API.Path.updateProfile,
+                method: .put,
+                body: UpdateProfileRequest(userId: id, name: trimmed)
+            )
+            name = trimmed
+            return true
+        } catch {
+            errorMessage = error.userMessage
+            return false
+        }
+    }
+
+    func uploadAvatar(_ image: UIImage) async -> Bool {
+        guard let data = image.resized(maxDimension: 800).jpegData(compressionQuality: 0.7) else {
+            errorMessage = "That image couldn't be prepared for upload."
+            return false
+        }
+
+        isLoading = true
+        errorMessage = ""
+        defer { isLoading = false }
+
+        do {
+            let response: AvatarResponse = try await client.send(
+                API.Path.uploadAvatar,
+                method: .post,
+                body: UploadAvatarRequest(userId: id, imageBase64: data.base64EncodedString())
+            )
+            if let url = response.avatarURL { avatarURL = url }
+            return true
+        } catch {
+            errorMessage = error.userMessage
+            return false
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func authenticate(_ request: () async throws -> UserResponse) async -> Bool {
+        isLoading = true
+        errorMessage = ""
+        defer { isLoading = false }
+
+        do {
+            let response = try await request()
+            guard let user = response.user else {
+                errorMessage = response.message ?? "Something went wrong. Please try again."
+                return false
+            }
+            apply(user)
+            return true
+        } catch {
+            errorMessage = error.userMessage
+            return false
+        }
+    }
+
+    private func apply(_ user: UserDTO) {
+        id = user.id
+        name = user.name
+        email = user.email
+        location = user.location
+        avatarURL = user.avatar ?? ""
+        isLoggedIn = true
+        errorMessage = ""
     }
 }

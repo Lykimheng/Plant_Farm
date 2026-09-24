@@ -1,13 +1,13 @@
 //
-//  Plant.swift
+//  PlantModel.swift
 //  PP
 //
 //  Created by Ly Kimheng on 14/5/26.
 //
 
-import SwiftUI
+import Foundation
 
-struct PlantModel: Identifiable, Hashable, Codable {
+nonisolated struct PlantModel: Identifiable, Hashable, Codable {
     let id: Int
     let image: String
     let name: String
@@ -22,13 +22,16 @@ struct PlantModel: Identifiable, Hashable, Codable {
         case id, image, name, type, price, description, rating, counting
         case typePlant = "type_plant"
     }
+
+    var category: PlantCategory { PlantCategory(apiValue: typePlant) }
 }
 
-// MARK: - Preview sample (SwiftUI previews only, not used by the app)
-extension PlantModel {
+// MARK: - Preview sample (SwiftUI previews only, never shipped data)
+nonisolated extension PlantModel {
     static let preview = PlantModel(
-        id: 0, image: "Cactus", name: "Cactus", type: "Indoor Plant",
-        typePlant: "indoorPlant", price: 5.00,
-        description: "Adapted to arid environments...", rating: 5.0, counting: 39
+        id: 0, image: "", name: "Golden Barrel Cactus", type: "Indoor Plant",
+        typePlant: "indoorPlant", price: 25.00,
+        description: "Adapted to arid environments, this slow-growing cactus asks for little more than a bright windowsill and a drink every few weeks.",
+        rating: 4.6, counting: 39
     )
 }

@@ -8,302 +8,178 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var vm = HomeViewModel()
-    @EnvironmentObject var catalog: PlantsModel
+    @StateObject private var viewModel = HomeViewModel()
+    @EnvironmentObject private var catalog: PlantsStore
     @State private var scrollOffset: CGFloat = 0
-
-    private var isHeroCollapsed: Bool { scrollOffset > 40 }
+    private var isHeaderCollapsed: Bool { scrollOffset > 40 }
+    private static let sectionCategories: [PlantCategory] = [.indoor, .outdoor, .aquatic, .bigTree]
 
     var body: some View {
-        NavigationStack {
-            ScrollViewReader { proxy in
+        ScrollViewReader { proxy in
             VStack(spacing: 0) {
-                    HeroSection(
-                        searchText: $vm.searchText,
-                        isSearching: .constant(false),
-                        isCollapsed: isHeroCollapsed,
-                        scrollToTop: { withAnimation { proxy.scrollTo("homeTop", anchor: .top) } }
-                    )
-
-                    ScrollView {
-                        Color.clear
-                            .frame(height: 1)
-                            .id("homeTop")
-
-                        if vm.selectedCategory == "All" {
-                            ImageSliderView()
-                                .cornerRadius(16)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 20)
-                        }
-
-                        // Category buttons
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                CategoryButton(title: "All",
-                                    isSelected: vm.selectedCategory == "All") {
-                                    vm.selectedCategory = "All"
-                                }
-                                CategoryButton(title: "Indoor",
-                                    isSelected: vm.selectedCategory == "Indoor") {
-                                    vm.selectedCategory = "Indoor"
-                                }
-                                CategoryButton(title: "Outdoor",
-                                    isSelected: vm.selectedCategory == "Outdoor") {
-                                    vm.selectedCategory = "Outdoor"
-                                }
-                                CategoryButton(title: "Big Tree",
-                                    isSelected: vm.selectedCategory == "Big Tree") {
-                                    vm.selectedCategory = "Big Tree"
-                                }
-                                CategoryButton(title: "Aquatic",
-                                    isSelected: vm.selectedCategory == "Aquatic") {
-                                    vm.selectedCategory = "Aquatic"
-                                }
-                            }
-                        }
-                        .padding(.leading, 16)
-                        .padding(.top, 20)
-
-                        // ← switch content based on selected category
-                        if catalog.isLoading && catalog.plants.isEmpty {
-                            ProgressView()
-                                .frame(maxWidth: .infinity)
-                                .padding(.top, 80)
-                        } else if !vm.searchText.isEmpty {
-                            searchContent
-                        } else if vm.selectedCategory == "All" {
-                            allContent
-                        } else {
-                            filteredContent
-                        }
+                HomeHeader(
+                    searchText: $viewModel.searchText,
+                    isCollapsed: isHeaderCollapsed,
+                    scrollToTop: {
+                        withAnimation { proxy.scrollTo(Self.topAnchor, anchor: .top) }
                     }
-                    .onScrollGeometryChange(for: CGFloat.self) { geo in
-                        geo.contentOffset.y
-                    } action: { _, newValue in
-                        scrollOffset = newValue
-                    }
-                    .background(Color(.sRGB, red: 246/255, green: 246/255, blue: 246/255, opacity: 1))
-                    .padding(.bottom, 80)
-                    .ignoresSafeArea(edges: .bottom)
-                    .refreshable {
-                        await catalog.fetchPlants()
-                    }
-            }
-            }
-            .background(Color(.sRGB, red: 246/255, green: 246/255, blue: 246/255, opacity: 1))
-            .preferredColorScheme(.light)
-            .navigationDestination(for: PlantModel.self) { plant in
-                DetailCard(plant: plant)
-            }
-            .navigationDestination(for: SpecialPlant.self) { offer in
-                DetailSpecialCard(plant: offer)
-            }
-            .task {
-                if catalog.plants.isEmpty {
-                    await catalog.fetchPlants()
-                }
+                )
+
+                content
             }
         }
+        .background(Theme.background)
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationDestination(for: PlantListing.self) { listing in
+            PlantDetailView(listing: listing)
+        }
+        .task { await catalog.loadIfNeeded() }
     }
 
-    // MARK: - All Content
-    private var allContent: some View {
-        VStack(spacing: 16) {
-            TypePlants(
-                title: "Special Offer",
-                isExpanded: vm.isExpanded("Special"),
-                onToggle: { vm.toggleSection("Special") }
+    private static let topAnchor = "home-top"
+
+    // MARK: - Body
+
+    private var content: some View {
+        ScrollView {
+            LazyVStack(spacing: Theme.Spacing.xl) {
+                Color.clear.frame(height: 1).id(Self.topAnchor)
+
+                if viewModel.isSearching {
+                    searchResults
+                } else {
+                    if viewModel.selectedCategory == .all {
+                        BannerCarousel()
+                            .padding(.horizontal, Theme.Spacing.lg)
+                    }
+
+                    categoryChips
+
+                    if catalog.isLoading && !catalog.hasLoaded {
+                        SkeletonList(count: 3, height: 150)
+                            .padding(.horizontal, Theme.Spacing.lg)
+                    } else if catalog.plants.isEmpty {
+                        catalogUnavailable
+                    } else if viewModel.selectedCategory == .all {
+                        browseAll
+                    } else {
+                        PlantGrid(listings: catalog.listings(in: viewModel.selectedCategory))
+                    }
+                }
+            }
+            .padding(.top, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
+            .readableWidth(760)
+        }
+        .scrollDismissesKeyboard(.immediately)
+        .onScrollGeometryChange(for: CGFloat.self) { geometry in
+            geometry.contentOffset.y
+        } action: { _, newValue in
+            scrollOffset = newValue
+        }
+        .refreshable { await catalog.load() }
+    }
+
+    // MARK: - Sections
+
+    private var categoryChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(PlantCategory.browsable) { category in
+                    CategoryChip(
+                        title: category.title,
+                        isSelected: viewModel.selectedCategory == category
+                    ) {
+                        viewModel.select(category)
+                    }
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+        }
+        .scrollClipDisabled()
+    }
+
+    @ViewBuilder
+    private var browseAll: some View {
+        PlantSection(
+            title: "Special Offers",
+            listings: catalog.specialOffers,
+            isExpanded: viewModel.isOffersExpanded,
+            onToggle: viewModel.toggleOffers
+        )
+
+        if !catalog.popularPlants.isEmpty {
+            PopularSection()
+        }
+
+        ForEach(Self.sectionCategories) { category in
+            PlantSection(
+                title: category.sectionTitle,
+                listings: catalog.listings(in: category),
+                isExpanded: viewModel.isExpanded(category),
+                onToggle: { viewModel.toggle(category) }
             )
-            if vm.isExpanded("Special"){
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(catalog.specialOffers) { plant in
-                        NavigationLink(value: plant) {
-                            PlantCard(plant: plant)
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        ForEach(catalog.specialOffers) { plant in
-                            NavigationLink(value: plant) {
-                                PlantCard(plant: plant)
-                            }
-                        }
-                    }
-                }
-                .padding(.leading, 16)
-                .padding(.bottom, 16)
-            }
-
-            VStack(spacing: 20) {
-                PopularSection()
-
-                TypePlants(
-                    title: "Indoor Plants",
-                    isExpanded: vm.isExpanded("Indoor"),
-                    onToggle: { vm.toggleSection("Indoor") }
-                )
-                if vm.isExpanded("Indoor"){
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(catalog.indoorPlants) { plant in
-                            NavigationLink(value: plant) {
-                                TypePlantCard(plant: plant)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(catalog.indoorPlants) { plant in
-                                NavigationLink(value: plant) {
-                                    TypePlantCard(plant: plant)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.leading, 16)
-                }
-
-                TypePlants(
-                    title: "Outdoor Plants",
-                    isExpanded: vm.isExpanded("Outdoor"),
-                    onToggle: { vm.toggleSection("Outdoor") }
-                )
-                if vm.isExpanded("Outdoor"){
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(catalog.outdoorPlants) { plant in
-                            NavigationLink(value: plant) {
-                                TypePlantCard(plant: plant)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(catalog.outdoorPlants) { plant in
-                                NavigationLink(value: plant) {
-                                    TypePlantCard(plant: plant)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.leading, 16)
-                }
-
-                TypePlants(
-                    title: "Aquatic Plants",
-                    isExpanded: vm.isExpanded("Aquatic"),
-                    onToggle: { vm.toggleSection("Aquatic")}
-                )
-                if vm.isExpanded("Aquatic"){
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(catalog.aquaticPlants) { plant in
-                            NavigationLink(value: plant) {
-                                TypePlantCard(plant: plant)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(catalog.aquaticPlants) { plant in
-                                NavigationLink(value: plant) {
-                                    TypePlantCard(plant: plant)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.leading, 16)
-                }
-
-                TypePlants(
-                    title: "BIG TREE",
-                    isExpanded: vm.isExpanded("BigTree"),
-                    onToggle: { vm.toggleSection("BigTree")}
-                )
-                if vm.isExpanded("BigTree"){
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(catalog.bigTrees) { plant in
-                            NavigationLink(value: plant) {
-                                TypePlantCard(plant: plant)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            ForEach(catalog.bigTrees) { plant in
-                                NavigationLink(value: plant) {
-                                    TypePlantCard(plant: plant)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.leading, 16)
-                }
-
-                AboutUs()
-                Spacer()
-                DiscountCard(title: "Membership", subtitle: "Discount 20% for every purchase.")
-                DiscountCard(title: "Free 5 coupons", subtitle: "For new user.")
-                DiscountCard(title: "Free delivery", subtitle: "For under 3km")
-            }
         }
+
+        AboutUsSection()
+
+        VStack(spacing: Theme.Spacing.md) {
+            PerkCard(icon: Icons.verified, title: "Membership", subtitle: "20% off every purchase.")
+            PerkCard(icon: "ticket", title: "Five free coupons", subtitle: "A welcome gift for new gardeners.")
+            PerkCard(icon: Icons.truck, title: "Free delivery", subtitle: "On any address within 3 km.")
+        }
+        .padding(.horizontal, Theme.Spacing.lg)
     }
 
-    // MARK: - Filtered Content
-    private var filteredContent: some View {
-        LazyVGrid(columns: [
-            GridItem(.flexible()),
-            GridItem(.flexible())
-        ], spacing: 16) {
-            ForEach(vm.filteredPlants(in: catalog)) { plant in
-                NavigationLink(value: plant) {
-                    TypePlantCard(plant: plant)
-                }
-            }
-        }
-        .padding(16)
-    }
-    private var searchContent: some View {
-        let results = vm.searchResults(in: catalog)
-        return VStack(alignment: .leading) {
-            Text("Results for \"\(vm.searchText)\"")
-                .font(.headline)
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
+    @ViewBuilder
+    private var searchResults: some View {
+        let results = catalog.search(viewModel.searchText)
+
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Text(
+                results.isEmpty
+                ? "No matches for \u{201C}\(viewModel.searchText.trimmed)\u{201D}"
+                : "^[\(results.count) result](inflect: true) for \u{201C}\(viewModel.searchText.trimmed)\u{201D}"
+            )
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(Theme.textSecondary)
+            .padding(.horizontal, Theme.Spacing.lg)
 
             if results.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 50))
-                        .foregroundColor(.gray)
-                    Text("No plants found")
-                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 80)
+                EmptyStateView(
+                    icon: Icons.search,
+                    title: "No plants found",
+                    message: "Try a different name, or browse a category instead.",
+                    actionTitle: "Clear search",
+                    action: viewModel.clearSearch
+                )
             } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 16) {
-                    ForEach(results) { plant in
-                        NavigationLink(value: plant) {
-                            TypePlantCard(plant: plant)
-                        }
-                    }
-                }
-                .padding(16)
+                PlantGrid(listings: catalog.listings(for: results))
             }
         }
+    }
+
+    private var catalogUnavailable: some View {
+        EmptyStateView(
+            icon: "wifi.exclamationmark",
+            title: "Couldn't load the shop",
+            message: catalog.errorMessage.isEmpty
+                ? "Pull down to try again."
+                : catalog.errorMessage,
+            actionTitle: "Try again",
+            action: { Task { await catalog.load() } }
+        )
+    }
+}
+
+#Preview {
+    NavigationStack {
+        HomeView()
+            .environmentObject(PlantsStore())
+            .environmentObject(CartStore())
+            .environmentObject(WishlistStore())
+            .environmentObject(UserStore())
+            .environmentObject(LocationManager())
+            .environmentObject(NotificationsStore())
     }
 }

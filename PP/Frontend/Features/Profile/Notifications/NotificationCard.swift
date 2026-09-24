@@ -1,54 +1,70 @@
 //
-//  NotifactionCard.swift
+//  NotificationCard.swift
 //  PP
 //
-//  Created by Ly Kimheng on 13/6/26.
+//  Created by Ly Kimheng on 26/12/25.
 //
 
 import SwiftUI
 
 struct NotificationCard: View {
     let notification: NotificationModel
-
+    
     var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(notification.type.color.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: notification.type.icon)
-                    .foregroundColor(notification.type.color)
-            }
+        HStack(spacing: Theme.Spacing.md) {
+            Image(systemName: notification.type.icon)
+                .font(.system(size: 16))
+                .foregroundStyle(notification.type.color)
+                .frame(width: 42, height: 42)
+                .background(notification.type.color.opacity(0.14), in: Circle())
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(notification.title)
-                    .font(.subheadline.bold())
-                    .foregroundColor(.black)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+
                 Text(notification.message)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                Text(timeAgo(notification.date))
-                    .font(.caption2)
-                    .foregroundColor(.gray.opacity(0.7))
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(notification.relativeDate)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.textTertiary)
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
             if !notification.isRead {
                 Circle()
-                    .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                    .fill(Theme.brand)
                     .frame(width: 8, height: 8)
+                    .accessibilityLabel("Unread")
             }
         }
-        .padding()
-        .background(notification.isRead ? Color.white : Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.05))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 4)
+        .padding(Theme.Spacing.md)
+        .background(
+            notification.isRead ? Theme.surface : Theme.brandTint,
+            in: RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
+                .strokeBorder(Theme.separator, lineWidth: 0.7)
+        )
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
+}
 
-    func timeAgo(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
+#Preview {
+    VStack {
+        NotificationCard(notification: NotificationModel(
+            title: "Order Placed", message: "Your order #PF-98234 is pending confirmation.", type: .orderPlaced
+        ))
+        NotificationCard(notification: NotificationModel(
+            title: "Delivered", message: "Order #PF-98230 arrived.", type: .orderDelivered, isRead: true
+        ))
     }
+    .padding()
+    .background(Theme.background)
 }

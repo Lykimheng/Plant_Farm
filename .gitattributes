@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Core ML models are protobuf binaries
+*.mlmodel binary

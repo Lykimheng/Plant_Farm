@@ -1,37 +1,39 @@
 //
-//  CategoryButton.swift
+//  CategoryChip.swift
 //  PP
 //
-//  Created by Ly Kimheng on 25/12/25.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
 import SwiftUI
 
-struct CategoryButton: View {
+struct CategoryChip: View {
     let title: String
     var isSelected: Bool = false
     let action: () -> Void
-    
+
     var body: some View {
-        Button{
-            action()
-        } label:{
+        Button(action: action) {
             Text(title)
-                .font(.subheadline)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    isSelected ? Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0) : Color.clear
-                )
-                .foregroundColor(isSelected ? .white : Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0) )
+                .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
+                .foregroundStyle(isSelected ? Theme.onBrand : Theme.brand)
+                .padding(.horizontal, Theme.Spacing.lg)
+                .frame(height: 38)
+                .background(isSelected ? Theme.brand : Theme.surface, in: Capsule())
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0) , lineWidth: 1)
+                    Capsule().strokeBorder(isSelected ? .clear : Theme.brand.opacity(0.35), lineWidth: 1)
                 )
-                .cornerRadius(20)
         }
+        .buttonStyle(.pressable)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
+
 #Preview {
-    CategoryButton(title: "Hello", isSelected: false){}
+    HStack {
+        CategoryChip(title: "All", isSelected: true) {}
+        CategoryChip(title: "Indoor") {}
+    }
+    .padding()
+    .background(Theme.background)
 }

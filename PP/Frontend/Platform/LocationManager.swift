@@ -2,91 +2,98 @@
 //  LocationManager.swift
 //  PP
 //
-//  Created by Ly Kimheng on 5/6/26.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
-import SwiftUI
 import CoreLocation
-import Combine
 import MapKit
+import SwiftUI
+import Combine
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+@MainActor
+final class LocationManager: NSObject, ObservableObject {
+    @Published private(set) var userLocation: CLLocationCoordinate2D?
+    @Published private(set) var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    @Published private(set) var userAddress: String = ""
+
     private let manager = CLLocationManager()
-    
-    @Published var userLocation: CLLocationCoordinate2D? = nil
-    @Published var locationStatus: CLAuthorizationStatus = .notDetermined
-    @Published var userAddress: String = ""
-    
+    private var hasRequestedPermission = false
+
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        authorizationStatus = manager.authorizationStatus
     }
-    
-    // request permission
-    func requestPermission() {
-        manager.requestWhenInUseAuthorization()
+
+    var isDenied: Bool {
+        authorizationStatus == .denied || authorizationStatus == .restricted
     }
-    
-    // start getting location
-    func startUpdating() {
-        manager.startUpdatingLocation()
+
+    var isAuthorized: Bool {
+        authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways
     }
-    
-    func stopUpdating() {
-        manager.stopUpdatingLocation()
-    }
-    
-    // called when permission changes
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        locationStatus = manager.authorizationStatus
-        switch manager.authorizationStatus {
+
+    func requestPermissionIfNeeded() {
+        guard !hasRequestedPermission else {
+            if isAuthorized && userLocation == nil { manager.requestLocation() }
+            return
+        }
+        hasRequestedPermission = true
+
+        switch authorizationStatus {
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
-            startUpdating()                    // start once allowed
-        case .denied, .restricted:
-            userAddress = "Location access denied"
+            manager.requestLocation()
         default:
             break
         }
     }
-    
-    // called when location updates
-    func locationManager(_ manager: CLLocationManager,
-                         didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        DispatchQueue.main.async {
-            self.userLocation = location.coordinate
-        }
-        reverseGeocode(location: location)
-        manager.stopUpdatingLocation()         // stop after getting location
-    }
-    
-    // called on error
-    func locationManager(_ manager: CLLocationManager,
-                         didFailWithError error: Error) {
-        print("Location error: \(error.localizedDescription)")
-    }
-    
-    // convert coordinates to readable address
-    func reverseGeocode(location: CLLocation) {
-        Task {
-            await withCheckedContinuation { continuation in
-                let geocoder = CLGeocoder()
-                geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                    if let placemark = placemarks?.first {
-                        DispatchQueue.main.async {
-                            self.userAddress = [
-                                placemark.subLocality,
-                                placemark.locality,
-                                placemark.country
-                            ]
-                                .compactMap { $0 }
-                                .joined(separator: ", ")
-                        }
-                    }
-                    continuation.resume()
-                }
+}
+
+// MARK: - CLLocationManagerDelegate
+
+extension LocationManager: CLLocationManagerDelegate {
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        Task { @MainActor in
+            self.authorizationStatus = status
+            switch status {
+            case .authorizedWhenInUse, .authorizedAlways:
+                // one-shot: the delivery address doesn't need continuous tracking
+                manager.requestLocation()
+            case .denied, .restricted:
+                self.userAddress = ""
+            default:
+                break
             }
         }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        Task { @MainActor in
+            self.userLocation = location.coordinate
+            await self.resolveAddress(for: location)
+        }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Task { @MainActor in
+            AppLog.warning("Location lookup failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func resolveAddress(for location: CLLocation) async {
+        guard let request = MKReverseGeocodingRequest(location: location),
+              let mapItem = try? await request.mapItems.first else { return }
+
+        let address = mapItem.address
+        let parts = [address?.shortAddress, address?.fullAddress]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+
+        userAddress = parts.first ?? mapItem.name ?? ""
     }
 }

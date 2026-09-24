@@ -6,11 +6,10 @@
 //
 
 import SwiftUI
-import Combine
 
-struct MyPlantModel: Identifiable, Codable {
+nonisolated struct MyPlantModel: Identifiable, Hashable {
     let id: UUID
-    var apiId: Int = 0
+    var apiId: Int
     let image: String
     let name: String
     let species: String
@@ -18,9 +17,17 @@ struct MyPlantModel: Identifiable, Codable {
     let nextWatering: String
     let sunlight: String
     let addedDate: Date
-    
-    init(apiId: Int = 0, image: String, name: String, species: String,
-         careLevel: CareLevel, nextWatering: String, sunlight: String) {
+
+    init(
+        apiId: Int = 0,
+        image: String,
+        name: String,
+        species: String,
+        careLevel: CareLevel,
+        nextWatering: String,
+        sunlight: String,
+        addedDate: Date = Date()
+    ) {
         self.id = UUID()
         self.apiId = apiId
         self.image = image
@@ -29,34 +36,34 @@ struct MyPlantModel: Identifiable, Codable {
         self.careLevel = careLevel
         self.nextWatering = nextWatering
         self.sunlight = sunlight
-        self.addedDate = Date()
+        self.addedDate = addedDate
     }
-    
-    enum CareLevel: String, Codable {
-        case easy = "easy"
-        case moderate = "moderate"
-        case expert = "expert"
-        
+
+    enum CareLevel: String, CaseIterable, Identifiable {
+        case easy, moderate, expert
+
+        var id: String { rawValue }
+
         var displayName: String {
             switch self {
-            case .easy:     return "Easy Care"
-            case .moderate: return "Moderate Care"
-            case .expert:   return "Expert Care"
+            case .easy:     return "Easy care"
+            case .moderate: return "Moderate care"
+            case .expert:   return "Expert care"
             }
         }
-        
+
         var color: Color {
             switch self {
-            case .easy:     return .green
-            case .moderate: return Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255)
-            case .expert:   return .orange
+            case .easy:     return Theme.success
+            case .moderate: return Theme.brand
+            case .expert:   return Theme.warning
             }
         }
-        
+
         var icon: String {
             switch self {
             case .easy:     return "bolt.fill"
-            case .moderate: return "leaf.fill"
+            case .moderate: return Icons.myPlants
             case .expert:   return "flame.fill"
             }
         }

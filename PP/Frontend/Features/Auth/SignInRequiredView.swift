@@ -7,40 +7,53 @@
 
 import SwiftUI
 
-// MARK: - Pop up for Guest
 struct SignInRequiredView: View {
     let message: String
     @State private var showSignIn = false
-    @State private var dummyIsLoggedIn = false
+    @State private var showSignUp = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: Constants.notificationIcon)
-                .font(.system(size: 50))
-                .foregroundColor(.gray)
+        VStack(spacing: Theme.Spacing.lg) {
+            Image(systemName: Icons.userCircle)
+                .font(.system(size: 46, weight: .light))
+                .foregroundStyle(Theme.textTertiary)
+
+            Text("Sign in required")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(Theme.textPrimary)
+
             Text(message)
-                .font(.subheadline)
-                .foregroundColor(.gray)
+                .font(.system(size: 13.5))
+                .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            Button {
-                showSignIn = true
-            } label: {
-                Text("Sign In")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 200, height: 50)
-                    .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    .cornerRadius(10)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(spacing: Theme.Spacing.md) {
+                Button("Sign in") { showSignIn = true }
+                    .buttonStyle(.primary)
+
+                Button("Create an account") { showSignUp = true }
+                    .buttonStyle(.secondary)
             }
+            .padding(.top, Theme.Spacing.xs)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 80)
-        .padding(.bottom, 60)
+        .padding(.horizontal, Theme.Spacing.xl)
+        .frame(maxWidth: 420)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showSignIn) {
-            SigninView(isLoggedIn: $dummyIsLoggedIn, showLogin: $showSignIn)
-                .presentationDetents([.fraction(0.7)])
+            SignInView()
+                .presentationDetents([.height(520), .large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showSignUp) {
+            SignUpView()
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
     }
+}
+
+#Preview {
+    SignInRequiredView(message: "Sign in to manage your profile, orders and saved plants.")
+        .environmentObject(UserStore())
 }

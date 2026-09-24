@@ -1,0 +1,31 @@
+# Pinned so the volume name stays `pp-backend_pp_mysql_data` no matter which
+# folder compose is run from. Without this, renaming/moving the folder would
+# silently point MySQL at a brand-new empty volume.
+name: pp-backend
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pp_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pp_database
+    ports:
+      - "3307:3306"
+    volumes:
+      - pp_mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pp_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+
+volumes:
+  pp_mysql_data:

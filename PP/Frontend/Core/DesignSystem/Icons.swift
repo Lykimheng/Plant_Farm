@@ -1,56 +1,69 @@
 //
-//  Constants.swift
+//  Icons.swift
 //  PP
 //
-//  Created by Ly Kimheng on 24/12/25.
+//  Created by Ly Kimheng on 10/9/26.
 //
 
 import Foundation
 
-struct Constants{
-    
-//navbarString
-    static let homeString = "Home"
-    static let cartString = "Cart"
-    static let scanString = "Scan"
-    static let myPlantString = "My Plant"
-    static let profileString = "Profile"
-    
-//navbarImageString
-    static let homeImageString = "house.fill"
-    static let cartImageString = "cart.fill"
-    static let scanImageString = "qrcode.viewfinder"
-    static let myPlantImageString = "leaf.fill"
-    static let profileImageString = "person.fill"
-    
-//Icon
-    static let favoriteIcon = "heart"
-    static let notificationIcon = "bell"
-    static let searchIcon = "magnifyingglass"
-    static let backIcon = "chevron.left"
-    static let seeLessIcon = "chevron.up"
-    static let seeMoreIcon = "chevron.forward"
-    static let sliderIcon = "slider.horizontal.3"
-    static let cameraIcon = "camera"
-    static let securityIcon = "lock.shield"
-    static let eyeIcon = "eye"
-    static let eyeOffIcon = "eye.slash"
-    static let cardIcon = "creditcard"
-    static let mailIcon = "envelope"
-    static let questionIcon = "questionmark.circle"
-    static let editIcon = "square.and.pencil"
-    static let lockIcon = "lock"
-    static let LogoutIcon = "power.circle"
-    static let userIcon = "person"
-    static let plusIcon = "plus"
-    static let starIcon = "star.fill"
-    static let closeIcon = "xmark"
-    static let closeCircleIcon = "xmark.circle"
-    static let locationIcon = "location1"
-    static let phoneIcon = "phone"
-    static let noNotifaicationIcon = "bell.slash"
-    static let envlopIcon = "envelope.fill"
-    static let noAccountIcon = "person.crop.circle.badge.questionmark"
-    static let defaultUserIcon = "person.fill"
-    static let cartAddIcon = "cart.badge.plus"
+nonisolated enum Icons {
+    // Navigation
+    static let home = "house.fill"
+    static let cart = "cart.fill"
+    static let scan = "qrcode.viewfinder"
+    static let myPlants = "leaf.fill"
+    static let profile = "person.fill"
+
+    // Actions
+    static let search = "magnifyingglass"
+    static let back = "chevron.left"
+    static let forward = "chevron.forward"
+    static let collapse = "chevron.up"
+    static let close = "xmark"
+    static let closeCircle = "xmark.circle.fill"
+    static let plus = "plus"
+    static let edit = "square.and.pencil"
+    static let pencil = "pencil"
+    static let trash = "trash"
+    static let camera = "camera"
+    static let logout = "rectangle.portrait.and.arrow.right"
+
+    // Status & content
+    static let favorite = "heart"
+    static let favoriteFilled = "heart.fill"
+    static let notification = "bell"
+    static let notificationOff = "bell.slash"
+    static let star = "star"
+    static let starFilled = "star.fill"
+    static let leaf = "leaf"
+    static let bag = "bag"
+    static let card = "creditcard"
+    static let mail = "envelope"
+    static let phone = "phone"
+    static let message = "message"
+    static let help = "questionmark.circle"
+    static let lock = "lock"
+    static let eye = "eye"
+    static let eyeOff = "eye.slash"
+    static let user = "person"
+    static let userCircle = "person.crop.circle"
+    static let location = "mappin.circle.fill"
+    static let appearance = "circle.lefthalf.filled"
+    static let verified = "checkmark.seal.fill"
+    static let checkmark = "checkmark"
+    static let cartAdd = "cart.badge.plus"
+    static let calendar = "calendar"
+    static let water = "drop"
+    static let waterFilled = "drop.fill"
+    static let sun = "sun.max.fill"
+    static let truck = "truck.box"
+    static let flashOn = "bolt.fill"
+    static let flashOff = "bolt.slash"
+    static let photoLibrary = "photo.on.rectangle"
+    static let shutter = "camera.fill"
+    static let identified = "sparkles"
+    static let retry = "arrow.counterclockwise"
+    static let health = "stethoscope"
+    static let warning = "exclamationmark.triangle.fill"
 }

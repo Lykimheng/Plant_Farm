@@ -8,40 +8,37 @@
 import SwiftUI
 
 struct PopularSection: View {
-    @EnvironmentObject var catalog: PlantsModel
+    @EnvironmentObject private var catalog: PlantsStore
 
     var body: some View {
-        ZStack{
-            LinearGradient(gradient: Gradient(colors: [Color(.sRGB, red: 171/255, green: 251/255, blue: 255/255, opacity: 1.0), .white]), startPoint: .top, endPoint: .bottom)
-            VStack{
-                HStack{
-                    Text("Popular Plants")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.black)
-                    
-                    Spacer()
-                }
-                .padding(.leading, 16)
-                  
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 20) {
-                            ForEach(catalog.popularPlants) { plant in
-                                NavigationLink(value: plant) {
-                                    PopularCard(plant: plant)
-                                }
-                            }
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            SectionHeader(title: "Popular Plants", showsToggle: false)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: Theme.Spacing.md) {
+                    ForEach(catalog.popularPlants) { plant in
+                        NavigationLink(value: catalog.listing(for: plant)) {
+                            PopularPlantCard(plant: plant)
+                                .frame(width: 296)
                         }
-                        .padding(.bottom, 20)
-                         .padding(.leading ,20)
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.vertical, 2)
             }
+            .scrollClipDisabled()
         }
-        .frame(height: 250)
+        .padding(.vertical, Theme.Spacing.lg)
+        .background(Theme.sectionWash)
     }
 }
 
 #Preview {
-    PopularSection()
-        .environmentObject(PlantsModel())
+    NavigationStack {
+        PopularSection()
+            .environmentObject(PlantsStore())
+            .environmentObject(CartStore())
+            .environmentObject(WishlistStore())
+    }
 }

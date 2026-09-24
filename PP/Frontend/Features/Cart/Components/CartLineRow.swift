@@ -1,73 +1,81 @@
 //
-//  ProductCard.swift
+//  CartLineRow.swift
 //  PP
 //
-//  Created by Ly Kimheng on 25/12/25.
+//  Created by Ly Kimheng on 12/8/26.
 //
+
 import SwiftUI
 
-struct ProductCard: View {
-    let image: String
-    let productName: String
-    let price: String
-    let quantity: Int                  // ← replace @State var ammount
-    var onIncrease: () -> Void         // ← add
-    var onDecrease: () -> Void         // ← add
-    var onDelete: () -> Void           // ← add
+struct CartLineRow: View {
+    let item: CartItem
+    var onIncrease: () -> Void
+    var onDecrease: () -> Void
+    var onDelete: () -> Void
 
     var body: some View {
-        HStack {
-            HStack(spacing: 12) {
-                RemoteImage(urlString: image)
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .padding(10)
+        HStack(alignment: .top, spacing: Theme.Spacing.md) {
+            RemoteImage(urlString: item.plant.image)
+                .scaledToFill()
+                .frame(width: 82, height: 92)
+                .clipped()
+                .background(Theme.surfaceAlt)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
 
-                VStack(alignment: .leading) {
-                    Text(productName)
-                        .font(.headline)
-                    Text("$" + price)
-                        .font(.title2)
-                        .bold()
-                        .padding(2)
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(alignment: .top) {
+                    Text(item.plant.name)
+                        .font(.system(size: 14.5, weight: .semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                        .lineLimit(2)
+
+                    Spacer(minLength: Theme.Spacing.sm)
+
+                    Button(action: onDelete) {
+                        Image(systemName: Icons.close)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(Theme.textTertiary)
+                            .frame(width: 26, height: 26)
+                            .background(Theme.surfaceAlt, in: Circle())
+                    }
+                    .buttonStyle(.pressable)
+                    .accessibilityLabel("Remove \(item.plant.name) from cart")
                 }
-            }
 
-            Spacer()
+                Text("\(item.plant.price.priceText) each")
+                    .font(.system(size: 11.5))
+                    .foregroundStyle(Theme.textTertiary)
 
-            VStack {
-                Button("Trash", systemImage: "trash") {
-                    onDelete()                         // ← call callback
-                }
-                .foregroundColor(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                .labelStyle(.iconOnly)
+                Spacer(minLength: Theme.Spacing.xs)
 
                 HStack {
-                    Button("Decrease", systemImage: "minus.circle.fill") {
-                        onDecrease()                   // ← call callback
-                    }
-                    .foregroundStyle(Color(.sRGB, red: 176/255, green: 176/255, blue: 176/255))
-                    .disabled(quantity == 1)            // ← use quantity
-                    .labelStyle(.iconOnly)
+                    Text(item.lineTotal.priceText)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                        .contentTransition(.numericText())
 
-                    Text(quantity, format: .number.precision(.integerLength(2)))
-                        .font(.title3.bold())
+                    Spacer()
 
-                    Button("Increase", systemImage: "plus.circle.fill") {
-                        onIncrease()                   // ← call callback
-                    }
-                    .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                    .disabled(quantity == 10)           // ← use quantity
-                    .labelStyle(.iconOnly)
+                    QuantityStepper(
+                        quantity: item.quantity,
+                        maximum: CartStore.maximumPerLine,
+                        compact: true,
+                        onDecrement: onDecrease,
+                        onIncrement: onIncrease
+                    )
                 }
-                .padding()
             }
         }
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-        )
-        .padding(.horizontal, 16)
-        .padding(.vertical, 5)
+        .padding(Theme.Spacing.md)
+        .cardBackground()
     }
+}
+
+#Preview {
+    CartLineRow(
+        item: CartItem(plant: .preview, quantity: 2),
+        onIncrease: {}, onDecrease: {}, onDelete: {}
+    )
+    .padding()
+    .background(Theme.background)
 }

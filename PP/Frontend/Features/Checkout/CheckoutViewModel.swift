@@ -8,101 +8,60 @@
 import SwiftUI
 import Combine
 
-class CheckoutViewModel: ObservableObject {
-    @Published var selectedDelivery = "Standard"
-    @Published var selectedPayment = "ABA Pay"
+@MainActor
+final class CheckoutViewModel: ObservableObject {
+    @Published var selectedDelivery: DeliveryOption = .standard
+    @Published var selectedPayment: PaymentMethod = PaymentMethod.all[0]
     @Published var specialNotes = ""
-    @Published var orderPlaced = false
-    @Published var savedItems: [CartItem] = []
-    @Published var isLoading = false
-    @Published var errorMessage = ""
+    @Published var contactPhone = ""
+    @Published var addressOverride = ""
+    @Published private(set) var isPlacingOrder = false
+    @Published private(set) var errorMessage = ""
+    @Published var placedOrder: OrderModel?
 
-    let deliveryOptions: [(name: String, price: Double, duration: String)] = [
-        ("Standard", 1.50, "3-5 Days"),
-        ("Express", 2.00, "Next Day")
-    ]
+    let deliveryOptions = DeliveryOption.all
+    let paymentMethods = PaymentMethod.all
 
-    let paymentMethods: [(name: String, icon: String)] = [
-        ("ABA Pay", "building.columns"),
-        ("KHQR", "qrcode"),
-        ("Visa / Mastercard", "creditcard"),
-        ("Cash on Delivery", "banknote")
-    ]
+    var deliveryFee: Double { selectedDelivery.fee }
 
-    let orderID = "PF-\(Int.random(in: 90000...99999))"
+    func total(subtotal: Double) -> Double { subtotal + deliveryFee }
 
-    var deliveryFee: Double {
-        selectedDelivery == "Standard" ? 1.50 : 2.00
+    func deliveryAddress(from resolved: String) -> String {
+        addressOverride.isBlank ? resolved : addressOverride.trimmed
     }
 
-    func total(cartPrice: Double) -> Double {
-        cartPrice + deliveryFee
+    func canPlaceOrder(cart: CartStore, address: String) -> Bool {
+        !cart.isEmpty && !isPlacingOrder && !deliveryAddress(from: address).isBlank
     }
 
-    // updated to call API
-    func confirmOrder(cart: CartModel, orders: OrdersModel, address: String, userId: Int) async {
-        await MainActor.run {
-            isLoading = true
-            savedItems = cart.items
-        }
+    /// Places the order, empties the cart, and hands back the stored order so
+    /// the success screen can link straight to real tracking.
+    func placeOrder(cart: CartStore, orders: OrdersStore, userId: Int, address: String) async {
+        guard !isPlacingOrder else { return }        // a double-tap must not order twice
 
-        // build items array for API
-        let itemsPayload = cart.items.map { item in
-            [
-                "plant_id":   item.plant.id,
-                "plant_name": item.plant.name,
-                "price":      item.plant.price,
-                "quantity":   item.quantity
-            ] as [String: Any]
-        }
-
-        let body: [String: Any] = [
-            "user_id":          userId,
-            "order_number":     orderID,
-            "total":            total(cartPrice: cart.totalPrice),
-            "delivery_address": address,
-            "items":            itemsPayload
-        ]
-
-        guard let url = URL(string: "\(APIService.shared.baseURL)/orders.php"),
-              let jsonData = try? JSONSerialization.data(withJSONObject: body) else {
-            await MainActor.run { isLoading = false }
+        let deliveryTo = deliveryAddress(from: address)
+        guard !cart.isEmpty, !deliveryTo.isBlank else {
+            errorMessage = "Add a delivery address before placing the order."
             return
         }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
+        isPlacingOrder = true
+        errorMessage = ""
+        defer { isPlacingOrder = false }
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let success = json["success"] as? Bool, success {
-
-                await MainActor.run {
-                    orders.addOrder(
-                        orderNumber: orderID,
-                        items: cart.items,
-                        total: total(cartPrice: cart.totalPrice),
-                        deliveryAddress: address,
-                        userId: userId
-                    )
-                    cart.clearCart()
-                    isLoading = false
-                    orderPlaced = true
-                }
-            } else {
-                await MainActor.run {
-                    isLoading = false
-                    errorMessage = "Failed to place order. Please try again."
-                }
-            }
+            let order = try await orders.placeOrder(
+                userId: userId,
+                orderNumber: OrderNumber.generate(),
+                items: cart.items,
+                total: total(subtotal: cart.subtotal),
+                deliveryAddress: deliveryTo
+            )
+            cart.clear()
+            placedOrder = order
         } catch {
-            await MainActor.run {
-                isLoading = false
-                errorMessage = "Network error: \(error.localizedDescription)"
-            }
+            errorMessage = error.userMessage
+            AppLog.network("place order", error)
         }
     }
 }

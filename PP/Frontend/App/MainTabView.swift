@@ -1,88 +1,86 @@
 //
-//  ContentView.swift
+//  MainTabView.swift
 //  PP
 //
-//  Created by Ly Kimheng on 24/12/25.
+//  Created by Ly Kimheng on 7/8/26.
 //
 
 import SwiftUI
 
-struct ContentView: View {
-    @EnvironmentObject var cart: CartModel
-    @EnvironmentObject var toast: ToastCenter
-    @EnvironmentObject var catalog: PlantsModel
-    @State private var selectedTab = 0
+struct MainTabView: View {
+    @EnvironmentObject private var cart: CartStore
+    @EnvironmentObject private var catalog: PlantsStore
+    @EnvironmentObject private var toast: ToastCenter
+    @EnvironmentObject private var location: LocationManager
+    @EnvironmentObject private var router: AppRouter
 
-    // MARK: - Tapping tabbar to refresh data
-    private var tabSelection: Binding<Int> {
+    private var tabSelection: Binding<AppTab> {
         Binding(
-            get: { selectedTab },
+            get: { router.selectedTab },
             set: { newValue in
-                if newValue == selectedTab && newValue == 0 {
-                    Task { await catalog.fetchPlants() }
+                if newValue == router.selectedTab && newValue == .home {
+                    Task { await catalog.load() }
                 }
-                selectedTab = newValue
+                router.selectedTab = newValue
             }
         )
     }
 
     var body: some View {
         TabView(selection: tabSelection) {
-            NavigationStack{
-                HomeView()
-            }
-            .tabItem {
-                Label(Constants.homeString, systemImage: Constants.homeImageString)
-            }
-            .tag(0)
-            NavigationStack {
+            NavigationStack { HomeView() }
+                .tabItem { Label(AppTab.home.title, systemImage: AppTab.home.icon) }
+                .tag(AppTab.home)
+
+            NavigationStack(path: $router.cartPath) {
                 CartView()
-                    .navigationTitle("My Cart")
-                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationDestination(for: CartRoute.self, destination: destination)
             }
-            .tabItem {
-                Label(Constants.cartString, systemImage: Constants.cartImageString)
-            }
+            .tabItem { Label(AppTab.cart.title, systemImage: AppTab.cart.icon) }
             .badge(cart.totalCount)
-            .tag(1)
+            .tag(AppTab.cart)
 
-            NavigationStack{
-                ScanView()
-                    .navigationTitle("Identify plant")
-                    .navigationBarTitleDisplayMode(.inline)
-            }
-            .tabItem {
-                Label(Constants.scanString, systemImage: Constants.scanImageString)
-            }
-            .tag(2)
+            NavigationStack { ScanView() }
+                .tabItem { Label(AppTab.scan.title, systemImage: AppTab.scan.icon) }
+                .tag(AppTab.scan)
 
-            NavigationStack{
-                MyPlantView()
-            }
-            .tabItem {
-                Label(Constants.myPlantString, systemImage: Constants.myPlantImageString)
-            }
-            .tag(3)
+            NavigationStack { MyPlantsView() }
+                .tabItem { Label(AppTab.myPlants.title, systemImage: AppTab.myPlants.icon) }
+                .tag(AppTab.myPlants)
 
-            NavigationStack{
-                ProfileView()
-            }
-            .tabItem {
-                Label(Constants.profileString, systemImage: Constants.profileImageString)
-            }
-            .tag(4)
-
+            NavigationStack { ProfileView() }
+                .tabItem { Label(AppTab.profile.title, systemImage: AppTab.profile.icon) }
+                .tag(AppTab.profile)
         }
-        .toast(isShowing: $toast.isShowing, message: toast.message)
-        .accentColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+        .tint(Theme.brand)
+        .toast(center: toast)
+        .task { location.requestPermissionIfNeeded() }
+    }
+
+    @ViewBuilder
+    private func destination(for route: CartRoute) -> some View {
+        switch route {
+        case .checkout:
+            CheckoutView()
+        case .orderPlaced(let order):
+            OrderSuccessView(order: order)
+        case .orderDetail(let order):
+            OrderDetailView(order: order)
+        }
     }
 }
 
 #Preview {
-    ContentView()
-        .environmentObject(CartModel())
-        .environmentObject(UserModel())
-        .environmentObject(NotificationsModel())
+    MainTabView()
+        .environmentObject(CartStore())
+        .environmentObject(UserStore())
+        .environmentObject(WishlistStore())
+        .environmentObject(OrdersStore())
+        .environmentObject(NotificationsStore())
+        .environmentObject(MyPlantsStore())
+        .environmentObject(PlantsStore())
+        .environmentObject(LocationManager())
         .environmentObject(ToastCenter())
-        .environmentObject(PlantsModel())
+        .environmentObject(ThemeManager())
+        .environmentObject(AppRouter())
 }

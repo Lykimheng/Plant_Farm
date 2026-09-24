@@ -1,271 +1,171 @@
 //
-//  SuccessView.swift
+//  OrderSuccessView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 30/4/26.
 //
+
 import SwiftUI
 
 struct OrderSuccessView: View {
-    @EnvironmentObject var cart: CartModel
-    @Environment(\.dismiss) private var dismiss
-    let orderID: String
-    let orderItems: [CartItem]
-    let userEmail: String
+    let order: OrderModel
 
-    @State private var showTracking = false
+    @EnvironmentObject private var user: UserStore
+    @EnvironmentObject private var router: AppRouter
+
     @State private var animateCheck = false
     @State private var animateContent = false
 
-    var firstItemName: String {
-        orderItems.first?.plant.name ?? "Plant"
-    }
-
-    var shipmentDescription: String {
-        if orderItems.count == 1 {
-            return firstItemName
-        } else {
-            return "\(firstItemName) & \(orderItems.count - 1) others"
-        }
+    private var shipmentDescription: String {
+        guard let first = order.items.first else { return "Your order" }
+        let others = order.items.count - 1
+        return others > 0 ? "\(first.plant.name) and \(others) more" : first.plant.name
     }
 
     var body: some View {
-        ZStack {
-            // background gradient
+        ScrollView {
+            VStack(spacing: Theme.Spacing.xl) {
+                successMark
+                headline
+                details
+                actions
+                confirmationNote
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
+            .readableWidth(Theme.Layout.compact)
+        }
+        .background(
             LinearGradient(
-                colors: [
-                    Color(.sRGB, red: 220/255, green: 250/255, blue: 255/255),
-                    Color.white
-                ],
+                colors: [Theme.brandTint, Theme.background],
                 startPoint: .top,
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
-            // decorative dots
-            GeometryReader { geo in
-                Group {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        .frame(width: 12, height: 12)
-                        .rotationEffect(.degrees(45))
-                        .position(x: geo.size.width * 0.1, y: geo.size.height * 0.15)
-
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        .frame(width: 8, height: 8)
-                        .rotationEffect(.degrees(45))
-                        .position(x: geo.size.width * 0.85, y: geo.size.height * 0.12)
-
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.5))
-                        .frame(width: 10, height: 10)
-                        .rotationEffect(.degrees(45))
-                        .position(x: geo.size.width * 0.9, y: geo.size.height * 0.22)
-
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.4))
-                        .frame(width: 8, height: 8)
-                        .rotationEffect(.degrees(45))
-                        .position(x: geo.size.width * 0.08, y: geo.size.height * 0.28)
-                }
-            }
-
-            ScrollView {
-                VStack(spacing: 24) {
-
-                    // MARK: - Success Icon
-                    ZStack {
-                        // outer ring
-                        Circle()
-                            .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.2),
-                                    lineWidth: 12)
-                            .frame(width: 160, height: 160)
-
-                        // filled circle
-                        Circle()
-                            .fill(Color(.sRGB, red: 171/255, green: 245/255, blue: 255/255))
-                            .frame(width: 130, height: 130)
-
-                        // checkmark
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 55, weight: .bold))
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            .scaleEffect(animateCheck ? 1.0 : 0.3)
-                            .opacity(animateCheck ? 1.0 : 0)
-                    }
-                    .padding(.top, 40)
-
-                    // MARK: - Title
-                    VStack(spacing: 8) {
-                        Text("Order Placed Successfully")
-                            .font(.title2.bold())
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            .multilineTextAlignment(.center)
-
-                        Text("Your green companions are being\nprepared for their journey to your home.")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-                    }
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 20)
-
-                    // MARK: - Order Info Cards
-                    VStack(spacing: 12) {
-                        // Order ID
-                        HStack(spacing: 16) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                    .frame(width: 44, height: 44)
-                                Image(systemName: "number")
-                                    .foregroundColor(.white)
-                                    .font(.headline)
-                            }
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("ORDER ID")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                Text("#\(orderID)")
-                                    .font(.headline.bold())
-                                    .foregroundColor(.black)
-                            }
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 4)
-
-                        // Estimated Delivery
-                        HStack(spacing: 16) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(.sRGB, red: 171/255, green: 245/255, blue: 255/255))
-                                    .frame(width: 44, height: 44)
-                                Image(systemName: "truck.box")
-                                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                    .font(.headline)
-                            }
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("ESTIMATED DELIVERY")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                Text("2-3 Business Days")
-                                    .font(.headline.bold())
-                                    .foregroundColor(.black)
-                            }
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .shadow(color: .black.opacity(0.05), radius: 4)
-
-                        // Shipment info
-                        HStack(spacing: 16) {
-                            if let firstItem = orderItems.first {
-                                RemoteImage(urlString: firstItem.plant.image)
-                                    .scaledToFill()
-                                    .frame(width: 60, height: 60)
-                                    .cornerRadius(8)
-                            }
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Shipment 1 of 1")
-                                    .font(.caption)
-                                    .foregroundColor(.white.opacity(0.7))
-                                Text(shipmentDescription)
-                                    .font(.subheadline.bold())
-                                    .foregroundColor(.white)
-                            }
-                            Spacer()
-                            Image(systemName: "leaf.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.white.opacity(0.2))
-                        }
-                        .padding()
-                        .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                        .cornerRadius(12)
-                    }
-                    .opacity(animateContent ? 1 : 0)
-                    .offset(y: animateContent ? 0 : 20)
-
-                    // MARK: - Buttons
-                    VStack(spacing: 12) {
-                        // Track Order
-                        Button {
-                            showTracking = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "dot.radiowaves.left.and.right")
-                                Text("Track Order")
-                                    .font(.headline)
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 54)
-                            .foregroundColor(.white)
-                            .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            .cornerRadius(12)
-                        }
-
-                        // Continue Shopping
-                        Button {
-                            dismiss()              // ← go back to home
-                        } label: {
-                            Text("Continue Shopping")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity, minHeight: 54)
-                                .foregroundColor(.black)
-                                .background(Color.white)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color(.systemGray4), lineWidth: 1)
-                                )
-                        }
-                    }
-                    .opacity(animateContent ? 1 : 0)
-
-                    // confirmation email
-                    Text("Confirmation email sent to\n\(userEmail)")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 30)
-                        .opacity(animateContent ? 1 : 0)
-                }
-                .padding(.horizontal, 20)
-            }
-        }
+        )
         .navigationBarBackButtonHidden(true)
-        .onAppear {
-            // animate checkmark first
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.2)) {
+        .toolbar(.hidden, for: .tabBar)
+        .task {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.15)) {
                 animateCheck = true
             }
-            // then animate content
-            withAnimation(.easeOut(duration: 0.5).delay(0.5)) {
+            withAnimation(.easeOut(duration: 0.45).delay(0.4)) {
                 animateContent = true
             }
         }
-        .navigationDestination(isPresented: $showTracking) {
-            OrderDetailView(order: OrderModel(
-                orderNumber: orderID,
-                date: "",
-                status: .pending,
-                items: orderItems,
-                total: orderItems.reduce(0) { $0 + $1.plant.price * Double($1.quantity) },
-                deliveryAddress: ""
-            ))
-            .environmentObject(LocationManager())
+    }
+
+    // MARK: - Pieces
+
+    private var successMark: some View {
+        ZStack {
+            Circle()
+                .stroke(Theme.brand.opacity(0.18), lineWidth: 12)
+                .frame(width: 148, height: 148)
+
+            Circle()
+                .fill(Theme.brandTint)
+                .frame(width: 118, height: 118)
+
+            Image(systemName: Icons.checkmark)
+                .font(.system(size: 50, weight: .bold))
+                .foregroundStyle(Theme.brand)
+                .scaleEffect(animateCheck ? 1 : 0.3)
+                .opacity(animateCheck ? 1 : 0)
         }
-        .preferredColorScheme(.light)
+        .padding(.top, Theme.Spacing.xxl)
+        .accessibilityHidden(true)
+    }
+
+    private var headline: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            Text("Order placed")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Theme.textPrimary)
+
+            Text("Your green companions are being prepared for the journey to your home.")
+                .font(.system(size: 14))
+                .foregroundStyle(Theme.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .opacity(animateContent ? 1 : 0)
+        .offset(y: animateContent ? 0 : 16)
+    }
+
+    private var details: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            infoRow(icon: "number", label: "Order number", value: "#\(order.orderNumber)")
+            infoRow(icon: Icons.truck, label: "Estimated delivery", value: "2–3 business days")
+            infoRow(icon: Icons.bag, label: shipmentDescription, value: order.total.priceText)
+        }
+        .opacity(animateContent ? 1 : 0)
+        .offset(y: animateContent ? 0 : 16)
+    }
+
+    private func infoRow(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(Theme.brand)
+                .frame(width: 42, height: 42)
+                .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label.uppercased())
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(0.5)
+                    .foregroundStyle(Theme.textTertiary)
+                    .lineLimit(1)
+                Text(value)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .cardSurface(padding: Theme.Spacing.md)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var actions: some View {
+        VStack(spacing: Theme.Spacing.md) {
+            Button("Track order") { router.push(.orderDetail(order)) }
+                .buttonStyle(.primary)
+
+            Button("Continue shopping") { router.returnToShop() }
+                .buttonStyle(.secondary)
+        }
+        .opacity(animateContent ? 1 : 0)
+    }
+
+    private var confirmationNote: some View {
+        Text(user.email.isBlank
+             ? "You can follow this order from Profile → My Orders."
+             : "A confirmation was sent to \(user.email).")
+            .font(.system(size: 12))
+            .foregroundStyle(Theme.textTertiary)
+            .multilineTextAlignment(.center)
+            .opacity(animateContent ? 1 : 0)
     }
 }
 
-//#Preview {
-//    NavigationStack {
-//        OrderSuccessView(orderID: "PF-98241", userEmail: "gardener@naturetech.com")
-//            .environmentObject(CartModel())
-//    }
-//}
+#Preview {
+    NavigationStack {
+        OrderSuccessView(
+            order: OrderModel(
+                apiId: 1,
+                orderNumber: "PF-98241",
+                placedAt: Date(),
+                status: .pending,
+                items: [CartItem(plant: .preview, quantity: 2)],
+                total: 51.50,
+                deliveryAddress: "No. 42, St. 271, Phnom Penh"
+            )
+        )
+        .environmentObject(OrdersStore())
+        .environmentObject(UserStore())
+        .environmentObject(LocationManager())
+        .environmentObject(AppRouter())
+    }
+}

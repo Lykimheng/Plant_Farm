@@ -1,289 +1,267 @@
 //
-//  MyOrders.swift
+//  OrderDetailView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 8/6/26.
 //
 
 import SwiftUI
-import MapKit
 
 struct OrderDetailView: View {
     let order: OrderModel
-    @EnvironmentObject var orders: OrdersModel
-    @EnvironmentObject var location: LocationManager
-    @EnvironmentObject var user: UserModel
+
+    @EnvironmentObject private var orders: OrdersStore
+    @EnvironmentObject private var location: LocationManager
+    @EnvironmentObject private var user: UserStore
+
     @State private var showCancelAlert = false
+
+    /// Always read the live copy so a cancel updates this screen immediately.
+    private var current: OrderModel {
+        orders.orders.first { $0.id == order.id } ?? order
+    }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-
-                // MARK: - Map
-                ZStack(alignment: .bottomLeading) {
-                    if let coordinate = location.userLocation {
-                        AppleMapView(coordinate: coordinate)
-                            .frame(height: 200)
-                            .cornerRadius(16)
-                    } else {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(.systemGray5))
-                            .frame(height: 200)
-                            .overlay(ProgressView())
-                    }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Estimated Arrival")
-                            .font(.caption)
-                            .foregroundColor(.gray.opacity(0.8))
-                        Text("2:45 PM Today")
-                            .font(.title3.bold())
-                            .foregroundColor(.gray)
-                    }
-                    .padding()
-
-                    HStack {
-                        Spacer()
-                        Text(order.status.rawValue)
-                            .font(.subheadline.bold())
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(order.status.color)
-                            .cornerRadius(20)
-                            .padding()
-                    }
-                }
-
-                // MARK: - Delivery Address
-                HStack(spacing: 12) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray6))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "mappin.circle")
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    }
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Delivery Address")
-                            .font(.subheadline.bold())
-                        Text(order.deliveryAddress)
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Order Status
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Order Status")
-                        .font(.headline.bold())
-
-                    VStack(spacing: 0) {
-                        ForEach(Array(orderStatuses(for: order.status).enumerated()), id: \.offset) { index, status in
-                            HStack(alignment: .top, spacing: 16) {
-                                VStack(spacing: 0) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(status.isDone ?
-                                                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                                status.isCurrent ? Color.white : Color(.systemGray4))
-                                            .frame(width: 28, height: 28)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(
-                                                        status.isCurrent ?
-                                                        Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                                        Color.clear,
-                                                        lineWidth: 2
-                                                    )
-                                            )
-                                        if status.isDone {
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .bold))
-                                                .foregroundColor(.white)
-                                        } else if status.isCurrent {
-                                            Circle()
-                                                .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                                .frame(width: 10, height: 10)
-                                        }
-                                    }
-                                    if index < orderStatuses(for: order.status).count - 1 {
-                                        Rectangle()
-                                            .fill(status.isDone ?
-                                                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                                Color(.systemGray4))
-                                            .frame(width: 2, height: 36)
-                                    }
-                                }
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(status.title)
-                                        .font(.subheadline.bold())
-                                        .foregroundColor(status.isDone || status.isCurrent ? .black : .gray)
-                                    Text(status.subtitle)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                }
-                                .padding(.top, 4)
-                                Spacer()
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Courier (static for now)
-                HStack(spacing: 16) {
-                    UserAvatarView(avatarURL: user.avatarURL, size: 50)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Your Courier")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
-                        Text("Sok San")
-                            .font(.headline.bold())
-                            .foregroundColor(.white)
-                    }
-                    Spacer()
-                    Button { } label: {
-                        ZStack {
-                            Circle().fill(Color.white.opacity(0.2)).frame(width: 44, height: 44)
-                            Image(systemName: "message").foregroundColor(.white)
-                        }
-                    }
-                    Button { } label: {
-                        ZStack {
-                            Circle().fill(Color.white.opacity(0.2)).frame(width: 44, height: 44)
-                            Image(systemName: "phone").foregroundColor(.white)
-                        }
-                    }
-                }
-                .padding()
-                .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                .cornerRadius(12)
-
-                // MARK: - Order Summary
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("Order Summary")
-                            .font(.headline.bold())
-                        Spacer()
-                        Text("\(order.items.count) Items")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-
-                    ForEach(order.items) { item in
-                        HStack(spacing: 12) {
-                            RemoteImage(urlString: item.plant.image)
-                                .scaledToFill()
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(8)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.plant.name)
-                                    .font(.subheadline.bold())
-                                Text("Qty: \(item.quantity)")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
-                            Text(String(format: "$%.2f", item.plant.price * Double(item.quantity)))
-                                .font(.subheadline.bold())
-                        }
-                        if item.id != order.items.last?.id {
-                            Divider()
-                        }
-                    }
-
-                    Divider()
-
-                    HStack {
-                        Text("Total Amount")
-                            .font(.headline.bold())
-                        Spacer()
-                        Text(String(format: "$%.2f", order.total))
-                            .font(.headline.bold())
-                    }
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.05), radius: 4)
-
-                // MARK: - Cancel Button
-                if order.status == .pending {
-                    Button {
-                        showCancelAlert = true
-                    } label: {
-                        Text("Cancel Order")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, minHeight: 54)
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(.systemGray4), lineWidth: 1)
-                            )
-                    }
-                    .padding(.bottom, 24)
-                } else {
-                    Text(order.status == .cancelled ?
-                         "This order has been cancelled." :
-                         "Order already processed. Cannot be cancelled.")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .padding(.bottom, 24)
-                }
+            VStack(spacing: Theme.Spacing.lg) {
+                statusHeader
+                addressCard
+                timeline
+                itemsCard
+                cancelSection
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.lg)
+            .readableWidth()
         }
-        .background(Color(.systemGray6))
-        .navigationTitle("Order #\(order.orderNumber)")
+        .background(Theme.background)
+        .navigationTitle("Order #\(current.orderNumber)")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.light)
-        .alert("Cancel Order", isPresented: $showCancelAlert) {
-            Button("Cancel Order", role: .destructive) {
-                Task{
-                    await orders.cancelOrder(order, userId: user.id)
-                }
-
+        .toolbar(.hidden, for: .tabBar)
+        .alert("Cancel this order?", isPresented: $showCancelAlert) {
+            Button("Cancel order", role: .destructive) {
+                Task { await orders.cancel(current, userId: user.id) }
             }
-            Button("Keep Order", role: .cancel) { }
+            Button("Keep order", role: .cancel) {}
         } message: {
-            Text("Are you sure you want to cancel this order?")
+            Text("Order #\(current.orderNumber) will be cancelled and won't be delivered.")
         }
     }
 
-    // generate status steps based on current order status
-    func orderStatuses(for status: OrderModel.OrderStatus) -> [(title: String, subtitle: String, isDone: Bool, isCurrent: Bool)] {
-        
-        // handle cancelled/rejected separately
-        if status == .cancelled || status == .rejected {
+    // MARK: - Header
+
+    private var statusHeader: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(headlineText)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Placed \(current.dateText)")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                Spacer()
+                OrderStatusBadge(status: current.status, size: 12.5)
+            }
+
+            if let coordinate = location.userLocation, !current.status.isTerminated {
+                AppleMapView(coordinate: coordinate)
+                    .frame(height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md, style: .continuous))
+            }
+        }
+        .cardSurface(padding: Theme.Spacing.lg)
+    }
+
+    private var headlineText: String {
+        switch current.status {
+        case .pending:   return "Waiting for confirmation"
+        case .confirmed: return "Confirmed"
+        case .preparing: return "Being prepared"
+        case .inTransit: return "On the way"
+        case .delivered: return "Delivered"
+        case .cancelled: return "Cancelled"
+        case .rejected:  return "Rejected"
+        }
+    }
+
+    // MARK: - Address
+
+    private var addressCard: some View {
+        SectionCard(title: "Delivery Address", icon: Icons.location) {
+            Text(current.deliveryAddress.isBlank ? "No address recorded" : current.deliveryAddress)
+                .font(.system(size: 14))
+                .foregroundStyle(current.deliveryAddress.isBlank ? Theme.textTertiary : Theme.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    // MARK: - Timeline
+
+    private var timeline: some View {
+        SectionCard(title: "Progress", icon: "point.topleft.down.to.point.bottomright.curvepath") {
+            VStack(spacing: 0) {
+                ForEach(Array(steps.enumerated()), id: \.element.title) { index, step in
+                    TimelineRow(
+                        step: step,
+                        isLast: index == steps.count - 1
+                    )
+                }
+            }
+        }
+    }
+
+    private struct Step {
+        let title: String
+        let subtitle: String
+        let isDone: Bool
+        let isCurrent: Bool
+    }
+
+    private var steps: [Step] {
+        let status = current.status
+
+        if status.isTerminated {
             return [
-                (title: "Order Placed", subtitle: order.date, isDone: true, isCurrent: false),
-                (title: status.rawValue, subtitle: "Order was \(status.rawValue.lowercased())", isDone: false, isCurrent: true)
+                Step(title: "Order placed", subtitle: current.dateText, isDone: true, isCurrent: false),
+                Step(
+                    title: status.label,
+                    subtitle: "This order was \(status.label.lowercased()).",
+                    isDone: false,
+                    isCurrent: true
+                )
             ]
         }
 
-        let allStatuses: [OrderModel.OrderStatus] = [.pending, .confirmed, .preparing, .inTransit, .delivered]
-        let currentIndex = allStatuses.firstIndex(of: status) ?? 0
+        let all = OrderModel.OrderStatus.fulfilmentSteps
+        let currentIndex = all.firstIndex(of: status) ?? 0
 
-        return allStatuses.map { s in
-            let index = allStatuses.firstIndex(of: s) ?? 0
-            return (
-                title: s.rawValue,
-                subtitle: index <= currentIndex ? order.date : "Pending",
+        return all.enumerated().map { index, step in
+            Step(
+                title: step.label,
+                subtitle: index < currentIndex ? "Done"
+                        : index == currentIndex ? "In progress"
+                        : "Upcoming",
                 isDone: index < currentIndex,
                 isCurrent: index == currentIndex
             )
+        }
+    }
+
+    private struct TimelineRow: View {
+        let step: Step
+        let isLast: Bool
+
+        var body: some View {
+            HStack(alignment: .top, spacing: Theme.Spacing.md) {
+                VStack(spacing: 0) {
+                    ZStack {
+                        Circle()
+                            .fill(step.isDone ? Theme.brand : Theme.surfaceAlt)
+                            .frame(width: 26, height: 26)
+                            .overlay(
+                                Circle().strokeBorder(step.isCurrent ? Theme.brand : .clear, lineWidth: 2)
+                            )
+
+                        if step.isDone {
+                            Image(systemName: Icons.checkmark)
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(Theme.onBrand)
+                        } else if step.isCurrent {
+                            Circle().fill(Theme.brand).frame(width: 9, height: 9)
+                        }
+                    }
+
+                    if !isLast {
+                        Rectangle()
+                            .fill(step.isDone ? Theme.brand : Theme.separator)
+                            .frame(width: 2, height: 30)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(step.title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(step.isDone || step.isCurrent ? Theme.textPrimary : Theme.textTertiary)
+                    Text(step.subtitle)
+                        .font(.system(size: 11.5))
+                        .foregroundStyle(Theme.textTertiary)
+                }
+                .padding(.top, 3)
+
+                Spacer(minLength: 0)
+            }
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    // MARK: - Items
+
+    private var itemsCard: some View {
+        SectionCard(title: "Items", icon: Icons.bag) {
+            VStack(spacing: Theme.Spacing.md) {
+                ForEach(current.items) { item in
+                    HStack(spacing: Theme.Spacing.md) {
+                        RemoteImage(urlString: item.plant.image)
+                            .scaledToFill()
+                            .frame(width: 56, height: 56)
+                            .clipped()
+                            .background(Theme.surfaceAlt)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.plant.name)
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Theme.textPrimary)
+                            Text("\(item.plant.price.priceText) × \(item.quantity)")
+                                .font(.system(size: 11.5))
+                                .foregroundStyle(Theme.textTertiary)
+                        }
+
+                        Spacer()
+
+                        Text(item.lineTotal.priceText)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.textPrimary)
+                    }
+                }
+
+                Divider().overlay(Theme.separator)
+
+                HStack {
+                    Text("Total")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Spacer()
+                    Text(current.total.priceText)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(Theme.brand)
+                }
+            }
+        } accessory: {
+            Text("^[\(current.itemCount) item](inflect: true)")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.textTertiary)
+        }
+    }
+
+    // MARK: - Cancel
+
+    @ViewBuilder
+    private var cancelSection: some View {
+        if current.status.isCancellable {
+            Button("Cancel order") { showCancelAlert = true }
+                .buttonStyle(SecondaryButtonStyle(tint: Theme.danger))
+        } else {
+            Text(current.status.isTerminated
+                 ? "This order was \(current.status.label.lowercased())."
+                 : "This order is already being processed and can no longer be cancelled.")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.textTertiary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
         }
     }
 }
@@ -291,14 +269,12 @@ struct OrderDetailView: View {
 #Preview {
     NavigationStack {
         OrderDetailView(order: OrderModel(
-            orderNumber: "PF-98234",
-            date: "Oct 24, 2023 - 09:15 AM",
-            status: .preparing,
-            items: [],
-            total: 63.00,
-            deliveryAddress: "No. 42, St. 271, Phnom Penh"
+            apiId: 1, orderNumber: "PF-98234", placedAt: Date(), status: .preparing,
+            items: [CartItem(plant: .preview, quantity: 2)],
+            total: 63, deliveryAddress: "No. 42, St. 271, Phnom Penh"
         ))
+        .environmentObject(OrdersStore())
         .environmentObject(LocationManager())
-        .environmentObject(OrdersModel())
+        .environmentObject(UserStore())
     }
 }

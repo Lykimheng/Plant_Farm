@@ -1,5 +1,5 @@
 //
-//  ForgetPassward.swift
+//  ForgotPasswordView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 27/12/25.
@@ -7,98 +7,127 @@
 
 import SwiftUI
 
-struct ForgetPassword: View {
-    @EnvironmentObject var user: UserModel
+struct ForgotPasswordView: View {
+    @EnvironmentObject private var user: UserStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var email = ""
     @State private var newPassword = ""
     @State private var confirmPassword = ""
-    @State private var isSuccess = false
+    @State private var validationMessage = ""
+    @State private var didSucceed = false
+
+    private static let minimumPasswordLength = 6
+
+    private var message: String {
+        validationMessage.isEmpty ? user.errorMessage : validationMessage
+    }
 
     var body: some View {
-        VStack(spacing: 24) {
-            // header
-            VStack(spacing: 8) {
-                Image(systemName: "lock.rotation")
-                    .font(.system(size: 60))
-                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+        ScrollView {
+            VStack(spacing: Theme.Spacing.xl) {
+                VStack(spacing: Theme.Spacing.sm) {
+                    Image(systemName: "lock.rotation")
+                        .font(.system(size: 40, weight: .light))
+                        .foregroundStyle(Theme.brand)
 
-                Text("Reset Password")
-                    .font(.title2.bold())
+                    Text("Reset your password")
+                        .font(.system(size: 21, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
 
-                Text("Enter your email and new password")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.top, 40)
-
-            VStack(spacing: 16) {
-                InputField(icon: Constants.mailIcon,
-                          placeholder: "Email",
-                          text: $email)
-
-                InputPasswardField(password: $newPassword)
-
-                InputPasswardConField(password: $confirmPassword)
-            }
-            .padding(.horizontal, 20)
-
-            // error or success message
-            if !user.errorMessage.isEmpty {
-                Text(user.errorMessage)
-                    .font(.caption)
-                    .foregroundColor(isSuccess ? .green : .red)
-                    .padding(.horizontal, 20)
-            }
-            Spacer()
-
-            // reset button
-            Button {
-                guard newPassword == confirmPassword else {
-                    user.errorMessage = "Passwords do not match."
-                    return
+                    Text("Enter your email and choose a new password.")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
                 }
-                guard newPassword.count >= 6 else {
-                    user.errorMessage = "Password must be at least 6 characters."
-                    return
-                }
-                Task {
-                    await user.forgotPassword(
-                        email: email,
-                        newPassword: newPassword
-                    )
-                    if user.errorMessage == "Password updated successfully." {
-                        isSuccess = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                            dismiss()
+                .padding(.top, Theme.Spacing.xl)
+
+                if didSucceed {
+                    Label("Password updated. You can sign in with it now.", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 13.5, weight: .medium))
+                        .foregroundStyle(Theme.success)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .cardSurface(padding: Theme.Spacing.md)
+                } else {
+                    VStack(spacing: Theme.Spacing.md) {
+                        AppTextField(
+                            placeholder: "Email",
+                            text: $email,
+                            icon: Icons.mail,
+                            kind: .email,
+                            textContentType: .username
+                        )
+                        AppTextField(
+                            placeholder: "New password",
+                            text: $newPassword,
+                            icon: Icons.lock,
+                            kind: .secure,
+                            textContentType: .newPassword
+                        )
+                        AppTextField(
+                            placeholder: "Confirm new password",
+                            text: $confirmPassword,
+                            icon: Icons.lock,
+                            kind: .secure,
+                            textContentType: .newPassword,
+                            submitLabel: .go
+                        )
+                    }
+
+                    if !message.isEmpty {
+                        Label(message, systemImage: "exclamationmark.triangle")
+                            .font(.system(size: 12.5))
+                            .foregroundStyle(Theme.danger)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button(action: submit) {
+                        if user.isLoading {
+                            ProgressView().tint(Theme.onBrand)
+                        } else {
+                            Text("Reset password")
                         }
                     }
-                }
-            } label: {
-                if user.isLoading {
-                    ProgressView()
-                        .frame(width: 200, height: 50)
-                } else {
-                    Text("Reset Password")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 200, height: 50)
-                        .background(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                        .cornerRadius(10)
+                    .buttonStyle(.primary)
+                    .disabled(email.isBlank || newPassword.isEmpty || user.isLoading)
                 }
             }
-            .padding(.bottom, 40)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
+            .readableWidth(Theme.Layout.compact)
         }
-        .preferredColorScheme(.light)
-        .onDisappear {
-            user.errorMessage = ""   // MARK: clear message when leaving
+        .scrollDismissesKeyboard(.interactively)
+        .background(Theme.background)
+        .onDisappear { user.errorMessage = "" }
+    }
+
+    private func submit() {
+        validationMessage = ""
+
+        guard email.looksLikeEmail else {
+            validationMessage = "Enter a valid email address."
+            return
+        }
+        guard newPassword.count >= Self.minimumPasswordLength else {
+            validationMessage = "Use at least \(Self.minimumPasswordLength) characters."
+            return
+        }
+        guard newPassword == confirmPassword else {
+            validationMessage = "The passwords don't match."
+            return
+        }
+
+        Task {
+            if await user.resetPassword(email: email, newPassword: newPassword) {
+                withAnimation { didSucceed = true }
+                try? await Task.sleep(for: .seconds(1.4))
+                dismiss()
+            }
         }
     }
 }
 
 #Preview {
-    ForgetPassword()
-        .environmentObject(UserModel())
+    ForgotPasswordView()
+        .environmentObject(UserStore())
 }

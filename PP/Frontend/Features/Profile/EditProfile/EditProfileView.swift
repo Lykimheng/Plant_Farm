@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct EditProfileView: View {
-    @EnvironmentObject var user: UserModel
+    @EnvironmentObject private var user: UserStore
     @StateObject private var permission = CameraPermissionManager()
     @Environment(\.dismiss) private var dismiss
-    @State private var name: String = ""
+
+    @State private var name = ""
     @State private var isSaving = false
     @State private var isUploadingAvatar = false
     @State private var errorMessage = ""
@@ -20,133 +21,157 @@ struct EditProfileView: View {
     @State private var imagePickerSource: UIImagePickerController.SourceType = .photoLibrary
     @State private var selectedImage: UIImage?
 
+    private var hasChanges: Bool {
+        !name.trimmed.isEmpty && name.trimmed != user.name
+    }
+
     var body: some View {
-        VStack {
-            HStack{
-                Text("Edit Profile")
-                    .font(.title)
-                    .bold()
-            }
-            .padding(.horizontal)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: Theme.Spacing.xl) {
+                    avatarButton
 
-            Button {
-                showPhotoSourceDialog = true
-            } label: {
-                ZStack(alignment: .bottomTrailing) {
-                    if isUploadingAvatar {
-                        Circle()
-                            .fill(Color(.systemGray5))
-                            .frame(width: 120, height: 120)
-                            .overlay(ProgressView())
-                    } else {
-                        UserAvatarView(avatarURL: user.avatarURL, size: 120)
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        Text("Display name")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Theme.textSecondary)
+
+                        AppTextField(
+                            placeholder: "Your name",
+                            text: $name,
+                            icon: Icons.user,
+                            textContentType: .name,
+                            submitLabel: .done
+                        )
                     }
-                    ZStack {
-                        Circle()
-                            .fill(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                            .frame(width: 32, height: 32)
-                        Image(systemName: Constants.cameraIcon)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.white)
+
+                    if !errorMessage.isEmpty {
+                        Label(errorMessage, systemImage: "exclamationmark.triangle")
+                            .font(.system(size: 12.5))
+                            .foregroundStyle(Theme.danger)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
+
+                    Button {
+                        save()
+                    } label: {
+                        if isSaving {
+                            ProgressView().tint(Theme.onBrand)
+                        } else {
+                            Text("Save changes")
+                        }
+                    }
+                    .buttonStyle(.primary)
+                    .disabled(!hasChanges || isSaving)
+                }
+                .padding(Theme.Spacing.lg)
+                .readableWidth(Theme.Layout.compact)
+            }
+            .background(Theme.background)
+            .navigationTitle("Edit Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") { dismiss() }
+                        .disabled(isSaving)
                 }
             }
-            .padding(.top, 8)
-
-            HStack{
-                Text("Name")
-                    .bold()
-
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-
-            NameField(name: $name)
-                .padding(.horizontal)
-
-            if !errorMessage.isEmpty {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
-            }
-
-            Spacer()
-
-            Button{
-                guard !name.isEmpty else { return }
-                isSaving = true
+        }
+        .onAppear { name = user.name }
+        .confirmationDialog("Change profile photo", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
+            Button("Take photo") {
                 Task {
-                    let success = await user.updateProfile(name: name)
-                    isSaving = false
-                    if success {
-                        dismiss()
-                    } else {
-                        errorMessage = user.errorMessage
-                    }
-                }
-            } label: {
-                if isSaving {
-                    ProgressView()
-                        .frame(width: 170, height: 50)
-                } else {
-                    Text("Save")
-                        .bold()
-                        .foregroundColor(.white)
-                        .frame(width: 170, height: 50)
-                }
-            }
-            .disabled(name.isEmpty || isSaving)
-            .background(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255, opacity: 1.0))
-            .cornerRadius(10)
-
-            Spacer()
-
-        }
-        .padding(.top, 20)
-        .preferredColorScheme(.light)
-        .onAppear {
-            name = user.name
-        }
-        .confirmationDialog("Change Profile Photo", isPresented: $showPhotoSourceDialog) {
-            Button("Take Photo") {
-                permission.requestCameraPermission { granted in
-                    if granted {
+                    if await permission.requestCamera() {
                         imagePickerSource = .camera
                         showImagePicker = true
+                    } else {
+                        errorMessage = "Camera access is off. Enable it in Settings to take a photo."
                     }
                 }
             }
-            Button("Choose from Library") {
-                permission.requestPhotoPermission { granted in
-                    if granted {
+            .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+
+            Button("Choose from library") {
+                Task {
+                    if await permission.requestPhotoLibrary() {
                         imagePickerSource = .photoLibrary
                         showImagePicker = true
+                    } else {
+                        errorMessage = "Photo access is off. Enable it in Settings to pick a photo."
                     }
                 }
             }
+
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(selectedImage: $selectedImage, sourceType: imagePickerSource)
+                .ignoresSafeArea()
         }
         .onChange(of: selectedImage) { _, newImage in
             guard let newImage else { return }
-            isUploadingAvatar = true
-            Task {
-                let success = await user.uploadAvatar(newImage)
-                isUploadingAvatar = false
-                if !success {
-                    errorMessage = user.errorMessage
+            uploadAvatar(newImage)
+        }
+    }
+
+    private var avatarButton: some View {
+        Button {
+            showPhotoSourceDialog = true
+        } label: {
+            ZStack(alignment: .bottomTrailing) {
+                if isUploadingAvatar {
+                    Circle()
+                        .fill(Theme.surfaceAlt)
+                        .frame(width: 110, height: 110)
+                        .overlay(ProgressView())
+                } else {
+                    UserAvatarView(avatarURL: user.avatarURL, size: 110)
                 }
-                selectedImage = nil
+
+                Image(systemName: Icons.camera)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Theme.onBrand)
+                    .frame(width: 32, height: 32)
+                    .background(Theme.brand, in: Circle())
+                    .overlay(Circle().strokeBorder(Theme.background, lineWidth: 2))
             }
+        }
+        .buttonStyle(.pressable)
+        .disabled(isUploadingAvatar)
+        .accessibilityLabel("Change profile photo")
+    }
+
+    // MARK: - Actions
+
+    private func save() {
+        errorMessage = ""
+        isSaving = true
+
+        Task {
+            let success = await user.updateProfile(name: name)
+            isSaving = false
+            if success {
+                dismiss()
+            } else {
+                errorMessage = user.errorMessage
+            }
+        }
+    }
+
+    private func uploadAvatar(_ image: UIImage) {
+        errorMessage = ""
+        isUploadingAvatar = true
+
+        Task {
+            let success = await user.uploadAvatar(image)
+            isUploadingAvatar = false
+            selectedImage = nil
+            if !success { errorMessage = user.errorMessage }
         }
     }
 }
 
 #Preview {
     EditProfileView()
-        .environmentObject(UserModel())
+        .environmentObject(UserStore())
 }

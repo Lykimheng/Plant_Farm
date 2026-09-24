@@ -1,169 +1,170 @@
 //
-//  HeroSection.swift
+//  HomeHeader.swift
 //  PP
 //
-//  Created by Ly Kimheng on 24/12/25.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
 import SwiftUI
 
-struct HeroSection: View {
-    @EnvironmentObject var user: UserModel
-    @EnvironmentObject var location: LocationManager
-    @EnvironmentObject var wishlist: WishlistModel
-    @EnvironmentObject var notifications: NotificationsModel
+struct HomeHeader: View {
     @Binding var searchText: String
-    @Binding var isSearching: Bool
-//    @Binding var isScanning: Bool
     var isCollapsed: Bool = false
     var scrollToTop: () -> Void = {}
+
+    @EnvironmentObject private var user: UserStore
+    @EnvironmentObject private var location: LocationManager
+    @EnvironmentObject private var notifications: NotificationsStore
+
     @State private var showWishlist = false
     @State private var showNotifications = false
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
             if isCollapsed {
                 compactBar
             } else {
                 expandedContent
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, isCollapsed ? 8 : 16)
-        .background(
-            Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0)
-                .ignoresSafeArea(edges: .top)
-        )
+        .padding(.horizontal, Theme.Spacing.lg)
+        .padding(.top, Theme.Spacing.sm)
+        .padding(.bottom, isCollapsed ? Theme.Spacing.sm : Theme.Spacing.lg)
+        .readableWidth()
+        .background(Theme.brand.ignoresSafeArea(edges: .top))
         .animation(.easeInOut(duration: 0.25), value: isCollapsed)
-        .sheet(isPresented: $showWishlist){
-            WishlistView()
-                .environmentObject(wishlist)
+        .sheet(isPresented: $showWishlist) {
+            NavigationStack { WishlistView(isModal: true) }
         }
         .sheet(isPresented: $showNotifications) {
-            NavigationStack {
-                NotificationsView()
-                    .environmentObject(notifications)
-            }
+            NavigationStack { NotificationsView() }
         }
-        .task {
-            if user.isLoggedIn {
-                await notifications.fetchNotifications(userId: user.id)
-            }
+        .task(id: user.id) {
+            await notifications.load(userId: user.id)
         }
     }
 
-    // MARK: - Compact navbar (shown while scrolled down)
+    // MARK: - Collapsed
+
     private var compactBar: some View {
-        HStack(spacing: 16) {
-            Image(systemName: "leaf.fill")
-                .foregroundColor(.white)
-                .font(.title3)
+        HStack(spacing: Theme.Spacing.lg) {
+            Label("Plant Farm", systemImage: Icons.myPlants)
+                .labelStyle(.titleAndIcon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Theme.onBrand)
 
             Spacer()
 
-            Button {
-                scrollToTop()
-            } label: {
-                Image(systemName: Constants.searchIcon)
-                    .foregroundColor(.white)
-            }
-            Button {
-                showWishlist = true
-            } label: {
-                Image(systemName: Constants.favoriteIcon)
-                    .foregroundColor(.white)
-            }
+            headerButton(Icons.search, label: "Search plants", action: scrollToTop)
+            headerButton(Icons.favorite, label: "Wishlist") { showWishlist = true }
             notificationButton
         }
         .frame(height: 36)
     }
 
-    // MARK: - Full header (shown at the top of the scroll)
+    // MARK: - Expanded
+
     private var expandedContent: some View {
-        VStack(spacing: 16) {
-            // Header
-            HStack {
-                HStack(spacing: 8) {
-                    UserAvatarView(avatarURL: user.avatarURL, size: 36)
+        VStack(spacing: Theme.Spacing.lg) {
+            HStack(spacing: Theme.Spacing.md) {
+                UserAvatarView(avatarURL: user.avatarURL, size: 38)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Hi! \(user.name)")
-                            .font(.headline)
-                            .foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(user.isLoggedIn ? "Hi, \(user.name)" : "Welcome")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Theme.onBrand)
 
-                        Text(location.userAddress.isEmpty ? user.location : location.userAddress)
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.7))
-                    }
+                    Text(locationText)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.onBrand.opacity(0.75))
+                        .lineLimit(1)
                 }
 
-                Spacer()
+                Spacer(minLength: Theme.Spacing.sm)
 
-                HStack(spacing: 16) {
-                    Button{
-                        showWishlist = true
-                    } label: {
-                        Image(systemName: Constants.favoriteIcon)
-                            .foregroundColor(.white)
-                    }
-                    notificationButton
-                }
+                headerButton(Icons.favorite, label: "Wishlist") { showWishlist = true }
+                notificationButton
             }
 
-            // Search Bar
-            HStack(spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: Constants.searchIcon)
-                        .foregroundColor(.gray)
-
-                    TextField("Search plant", text: $searchText)
-                        .foregroundColor(.gray)
-                        .onTapGesture {
-                            isSearching = true
-                        }
-
-
-                    if !searchText.isEmpty {
-                        Button {
-                            searchText = ""
-                            isSearching = false
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    } else {
-                        Button{
-//                            isScanning = false
-                        } label: {
-                            Image(systemName: Constants.scanImageString)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                .padding(12)
-                .background(Color.white)
-                .cornerRadius(22)
-
-            }
+            searchField
         }
     }
 
-    private var notificationButton: some View {
-        Button{
-            showNotifications = true
-        } label: {
-            ZStack(alignment: .topTrailing) {
-                Image(systemName: Constants.notificationIcon)
-                    .foregroundColor(.white)
+    private var locationText: String {
+        let address = location.userAddress.isBlank ? user.location : location.userAddress
+        return address.isBlank ? "Delivering nearby" : address
+    }
 
-                if notifications.unreadCount > 0 {
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 8, height: 8)
-                        .offset(x: 4, y: -4)
+    private var searchField: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: Icons.search)
+                .foregroundStyle(Theme.textTertiary)
+
+            TextField("Search plants", text: $searchText)
+                .focused($isSearchFocused)
+                .foregroundStyle(Theme.textPrimary)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                    isSearchFocused = false
+                } label: {
+                    Image(systemName: Icons.closeCircle)
+                        .foregroundStyle(Theme.textTertiary)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear search")
             }
         }
+        .padding(.horizontal, Theme.Spacing.md)
+        .frame(height: 46)
+        .background(Theme.surface, in: Capsule())
+    }
+
+    // MARK: - Buttons
+
+    private func headerButton(_ icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Theme.onBrand)
+                .frame(width: Theme.Size.minimumTapTarget, height: Theme.Size.minimumTapTarget)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel(label)
+    }
+
+    private var notificationButton: some View {
+        Button {
+            showNotifications = true
+        } label: {
+            Image(systemName: Icons.notification)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Theme.onBrand)
+                .frame(width: Theme.Size.minimumTapTarget, height: Theme.Size.minimumTapTarget)
+                .overlay(alignment: .topTrailing) {
+                    if notifications.unreadCount > 0 {
+                        Text(notifications.unreadCount > 9 ? "9+" : "\(notifications.unreadCount)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(Theme.onBrand)
+                            .padding(.horizontal, 4)
+                            .frame(minWidth: 15, minHeight: 15)
+                            .background(Theme.danger, in: Capsule())
+                            .offset(x: -4, y: 6)
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel(
+            notifications.unreadCount > 0
+            ? "Notifications, \(notifications.unreadCount) unread"
+            : "Notifications"
+        )
     }
 }

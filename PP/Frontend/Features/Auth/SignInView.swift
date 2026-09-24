@@ -1,111 +1,129 @@
 //
-//  SigninView.swift
+//  SignInView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 26/12/25.
 //
 
 import SwiftUI
-import Combine
 
-struct SigninView: View {
-    
-    @Binding var isLoggedIn: Bool
-    @Binding var showLogin: Bool
-    @EnvironmentObject var user: UserModel
-    
+struct SignInView: View {
+    var onSwitchToSignUp: (() -> Void)?
+
+    @EnvironmentObject private var user: UserStore
+    @Environment(\.dismiss) private var dismiss
+
     @State private var email = ""
     @State private var password = ""
-    @State private var showSignup = false
-    @State private var forgetPassword = false
-    var body: some View {
-        VStack(spacing: 10) {
-            Text("Welcome Back")
-                .font(.title.bold())
-                .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-            
-            Text("Login to your account")
-                .font(.subheadline.bold())
-                .foregroundStyle(Color.gray)
-            
-            VStack(spacing: 16) {
-                InputField(icon: Constants.mailIcon, placeholder: "Email", text: $email)
-                InputPasswardField(password: $password)
-                
-                HStack {
-                    Spacer()
-                    Button {
-                        forgetPassword = true
-                    } label: {
-                        Text("Forget Password?")
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                    }
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 30)
-            
-            Spacer()
-            
-            if !user.errorMessage.isEmpty {
-                Text(user.errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal, 20)
-            }
-            
-            Button {
-                Task {
-                    await user.login(email: email, password: password)
-                    if user.isLoggedIn {
-                        showLogin = false
-                        isLoggedIn = true
-                    }
-                }
-            } label: {
-                if user.isLoading {
-                    ProgressView()
-                        .frame(width: 200, height: 50)
-                } else {
-                    Text("Log in")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 200, height: 50)
-                        .background(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                        .cornerRadius(10)
-                }
-            }
-            .padding(.bottom, 5)
-            
-            HStack(spacing: 10) {
-                Text("Don't have an account?")
-                    .font(.system(size: 15))
-                Button {
-                    showSignup = true
-                } label: {
-                    Text("Sign up")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                }
-            }
-            .padding(.bottom, 50)
-            
-            Spacer()
-        }
-        .preferredColorScheme(.light)
-        .sheet(isPresented: $forgetPassword) {
-            ForgetPassword()
-                .environmentObject(user)
-                .presentationDetents([.fraction(0.7)])
-                .presentationDragIndicator(.visible)
-        }
-        .sheet(isPresented: $showSignup) {
-            SignupView()
-                .navigationTitle(Text("Sign up"))
-                .presentationDetents([.fraction(0.9)])
-                .presentationDragIndicator(.visible)
-        }
-        .padding(.top, 20)
+    @State private var showForgotPassword = false
+    @State private var validationMessage = ""
+
+    private var canSubmit: Bool {
+        !email.isBlank && !password.isEmpty && !user.isLoading
     }
+
+    private var message: String {
+        validationMessage.isEmpty ? user.errorMessage : validationMessage
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: Theme.Spacing.xl) {
+                VStack(spacing: Theme.Spacing.xs) {
+                    Text("Welcome back")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Sign in to your Plant Farm account")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .padding(.top, Theme.Spacing.xl)
+
+                VStack(spacing: Theme.Spacing.md) {
+                    AppTextField(
+                        placeholder: "Email",
+                        text: $email,
+                        icon: Icons.mail,
+                        kind: .email,
+                        textContentType: .username
+                    )
+
+                    AppTextField(
+                        placeholder: "Password",
+                        text: $password,
+                        icon: Icons.lock,
+                        kind: .secure,
+                        textContentType: .password,
+                        submitLabel: .go
+                    )
+
+                    HStack {
+                        Spacer()
+                        Button("Forgot password?") { showForgotPassword = true }
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Theme.brand)
+                    }
+                }
+
+                if !message.isEmpty {
+                    Label(message, systemImage: "exclamationmark.triangle")
+                        .font(.system(size: 12.5))
+                        .foregroundStyle(Theme.danger)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Button(action: submit) {
+                    if user.isLoading {
+                        ProgressView().tint(Theme.onBrand)
+                    } else {
+                        Text("Sign in")
+                    }
+                }
+                .buttonStyle(.primary)
+                .disabled(!canSubmit)
+
+                if let onSwitchToSignUp {
+                    HStack(spacing: 5) {
+                        Text("Don't have an account?")
+                            .foregroundStyle(Theme.textSecondary)
+                        Button("Sign up", action: onSwitchToSignUp)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Theme.brand)
+                    }
+                    .font(.system(size: 14))
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
+            .readableWidth(Theme.Layout.compact)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .background(Theme.background)
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView()
+                .presentationDetents([.height(520), .large])
+                .presentationDragIndicator(.visible)
+        }
+        .onDisappear { user.errorMessage = "" }
+    }
+
+    private func submit() {
+        validationMessage = ""
+
+        guard email.looksLikeEmail else {
+            validationMessage = "Enter a valid email address."
+            return
+        }
+
+        Task {
+            if await user.login(email: email, password: password) {
+                dismiss()
+            }
+        }
+    }
+}
+
+#Preview {
+    SignInView(onSwitchToSignUp: {})
+        .environmentObject(UserStore())
 }

@@ -9,113 +9,105 @@ import SwiftUI
 
 struct MyPlantCard: View {
     let plant: MyPlantModel
-    var notifaction: Bool = false
     var onDelete: () -> Void
-    var onToggle: () -> Void = { }
+
+    @State private var showDeleteConfirm = false
 
     var body: some View {
         VStack(spacing: 0) {
+            RemoteImage(urlString: plant.image)
+                .scaledToFill()
+                .frame(height: 168)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .background(Theme.surfaceAlt)
+                .overlay(alignment: .bottomLeading) { careBadge }
 
-            // MARK: - Image
-            ZStack(alignment: .bottomLeading) {
-                RemoteImage(urlString: plant.image)
-                    .scaledToFill()
-                    .frame(height: 180)
-                    .clipped()
-
-                // care level badge
-                HStack(spacing: 4) {
-                    Image(systemName: plant.careLevel.icon)
-                        .font(.caption.bold())
-                    Text(plant.careLevel.rawValue)
-                        .font(.caption.bold())
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(plant.careLevel.color)
-                .cornerRadius(20)
-                .padding(12)
-
-                // notification bell
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button { } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.white.opacity(0.8))
-                                    .frame(width: 36, height: 36)
-                                Image(systemName: notifaction ? Constants.notificationIcon : Constants.notificationIcon )
-                                    .foregroundColor(.gray)
-                                    .font(.system(size: 14))
-                            }
-                        }
-                        .padding(12)
-                    }
-                    Spacer()
-                }
-            }
-            .frame(height: 180)
-            .clipped()
-
-            // MARK: - Info
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(plant.name)
-                            .font(.headline.bold())
-                        Text(plant.species)
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
-                    Button { } label: {
-                        Image(systemName: "calendar")
-                            .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    }
-                }
-
-                Divider()
-
-                // watering or sunlight info
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("WATERING")
-                            .font(.caption2)
-                            .foregroundColor(.gray)
-                            .tracking(1)
-                        Text(plant.nextWatering)
-                            .font(.subheadline.bold())
-                    }
-                    Spacer()
-                    Button { } label: {
-                        ZStack {
-                            Circle()
-                                .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255), lineWidth: 1.5)
-                                .frame(width: 36, height: 36)
-                            Image(systemName: "drop")
-                                .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                                .font(.system(size: 14))
-                        }
-                    }
-                }
-            }
-            .padding(16)
-            .background(Color.white)
+            details
         }
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.08), radius: 6)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0) , lineWidth: 1)
-        )
+        .cardBackground()
+        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
         .contextMenu {
-            Button(role: .destructive) {
-                onDelete()
-            } label: {
-                Label("Remove Plant", systemImage: "trash")
+            Button("Remove plant", systemImage: Icons.trash, role: .destructive) {
+                showDeleteConfirm = true
             }
+        }
+        .confirmationDialog(
+            "Remove \(plant.name)?",
+            isPresented: $showDeleteConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove", role: .destructive, action: onDelete)
+            Button("Keep", role: .cancel) {}
+        } message: {
+            Text("It will be removed from your plant tracker.")
         }
     }
+
+    private var careBadge: some View {
+        Label(plant.careLevel.displayName, systemImage: plant.careLevel.icon)
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(Theme.onBrand)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(plant.careLevel.color, in: Capsule())
+            .padding(Theme.Spacing.md)
+    }
+
+    private var details: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(plant.name)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+                Text(plant.species.isBlank ? "Species not set" : plant.species)
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.textTertiary)
+            }
+
+            Divider().overlay(Theme.separator)
+
+            HStack(spacing: Theme.Spacing.lg) {
+                careFact(icon: Icons.waterFilled, label: "Watering", value: plant.nextWatering)
+                careFact(icon: Icons.sun, label: "Light", value: plant.sunlight)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Theme.Spacing.lg)
+    }
+
+    private func careFact(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.brand)
+                .frame(width: 28, height: 28)
+                .background(Theme.brandTint, in: Circle())
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(label.uppercased())
+                    .font(.system(size: 9.5, weight: .semibold))
+                    .tracking(0.5)
+                    .foregroundStyle(Theme.textTertiary)
+                Text(value.isBlank ? "Not set" : value)
+                    .font(.system(size: 12.5, weight: .medium))
+                    .foregroundStyle(Theme.textPrimary)
+                    .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+#Preview {
+    MyPlantCard(
+        plant: MyPlantModel(
+            image: "", name: "Monstera", species: "Monstera deliciosa",
+            careLevel: .moderate, nextWatering: "In 3 days", sunlight: "Partial"
+        ),
+        onDelete: {}
+    )
+    .padding()
+    .background(Theme.background)
 }

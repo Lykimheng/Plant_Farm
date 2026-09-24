@@ -1,5 +1,5 @@
 //
-//  NotifactionView.swift
+//  NotificationsView.swift
 //  PP
 //
 //  Created by Ly Kimheng on 26/12/25.
@@ -8,30 +8,25 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @EnvironmentObject var notifications: NotificationsModel
-    @EnvironmentObject var user: UserModel
+    @EnvironmentObject private var notifications: NotificationsStore
+    @EnvironmentObject private var user: UserStore
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Group {
-            if notifications.notifications.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "bell.slash")
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray.opacity(0.4))
-                    Text("No notifications yet")
-                        .font(.title3)
-                        .foregroundColor(.gray)
-                    Text("Updates about your orders will appear here")
-                        .font(.caption)
-                        .foregroundColor(.gray.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemGray6))
+            if notifications.isLoading && notifications.isEmpty {
+                SkeletonList(count: 4, height: 78)
+                    .padding(Theme.Spacing.lg)
+            } else if notifications.isEmpty {
+                EmptyStateView(
+                    icon: Icons.notificationOff,
+                    title: "No notifications yet",
+                    message: "Updates about your orders will show up here."
+                )
+                .frame(maxHeight: .infinity)
             } else {
                 ScrollView {
-                    VStack(spacing: 12) {
+                    LazyVStack(spacing: Theme.Spacing.md) {
                         ForEach(notifications.notifications) { notification in
                             NotificationCard(notification: notification)
                                 .onTapGesture {
@@ -39,33 +34,44 @@ struct NotificationsView: View {
                                 }
                         }
                     }
-                    .padding(16)
+                    .padding(Theme.Spacing.lg)
+                    .readableWidth()
                 }
-                .background(Color(.systemGray6))
+                .refreshable { await notifications.load(userId: user.id) }
             }
         }
+        .background(Theme.background)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.light)
         .toolbar {
-            if !notifications.notifications.isEmpty {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Clear All") {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Done") { dismiss() }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button("Mark all as read", systemImage: Icons.checkmark) {
+                        Task { await notifications.markAllAsRead(userId: user.id) }
+                    }
+                    .disabled(notifications.unreadCount == 0)
+
+                    Button("Clear all", systemImage: Icons.trash, role: .destructive) {
                         Task { await notifications.deleteAll(userId: user.id) }
                     }
-                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
+                .disabled(notifications.isEmpty)
             }
         }
-        .onAppear {
-            Task { await notifications.markAllAsRead(userId: user.id) }
-        }
+        .task { await notifications.load(userId: user.id) }
     }
 }
+
 #Preview {
     NavigationStack {
         NotificationsView()
-            .environmentObject(NotificationsModel())
-            .environmentObject(UserModel())
+            .environmentObject(NotificationsStore())
+            .environmentObject(UserStore())
     }
 }

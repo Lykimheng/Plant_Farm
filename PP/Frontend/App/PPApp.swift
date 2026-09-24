@@ -9,34 +9,37 @@ import SwiftUI
 
 @main
 struct PPApp: App {
-    @StateObject private var user = UserModel()
-    @StateObject private var cart = CartModel()
+    @StateObject private var user = UserStore()
+    @StateObject private var cart = CartStore()
+    @StateObject private var wishlist = WishlistStore()
+    @StateObject private var orders = OrdersStore()
+    @StateObject private var notifications = NotificationsStore()
+    @StateObject private var myPlants = MyPlantsStore()
+    @StateObject private var catalog = PlantsStore()
     @StateObject private var location = LocationManager()
-    @StateObject private var wishlist = WishlistModel()
-    @StateObject private var orders = OrdersModel()
-    @StateObject private var notifactions = NotificationsModel()
-    @StateObject private var myPlants = MyPlantsModel()
-    @StateObject private var catalog = PlantsModel()
     @StateObject private var toast = ToastCenter()
+    @StateObject private var theme = ThemeManager()
+    @StateObject private var router = AppRouter()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(user)
                 .environmentObject(cart)
-                .environmentObject(location)
                 .environmentObject(wishlist)
                 .environmentObject(orders)
-                .environmentObject(notifactions)
+                .environmentObject(notifications)
                 .environmentObject(myPlants)
                 .environmentObject(catalog)
+                .environmentObject(location)
                 .environmentObject(toast)
-                .onAppear{
-                    location.requestPermission()
-                    orders.notifications = notifactions
-                    cart.toastCenter = toast
+                .environmentObject(theme)
+                .environmentObject(router)
+                .preferredColorScheme(theme.colorScheme)
+                .task {
+                    cart.connect(toastCenter: toast)
+                    orders.connect(notifications: notifications)
                 }
         }
     }
 }
-

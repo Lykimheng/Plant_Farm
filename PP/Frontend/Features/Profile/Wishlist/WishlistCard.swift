@@ -1,5 +1,5 @@
 //
-//  FavoriteCard.swift
+//  WishlistCard.swift
 //  PP
 //
 //  Created by Ly Kimheng on 8/6/26.
@@ -9,79 +9,69 @@ import SwiftUI
 
 struct WishlistCard: View {
     let plant: PlantModel
-    @EnvironmentObject var wishlist: WishlistModel
-    @EnvironmentObject var cart: CartModel
+
+    @EnvironmentObject private var wishlist: WishlistStore
+    @EnvironmentObject private var cart: CartStore
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .topTrailing) {
-                // plant image
-                RemoteImage(urlString: plant.image)
-                    .scaledToFill()
-                    .frame(height: 160)
-                    .clipped()
-                    .cornerRadius(12, corners: [.topLeft, .topRight])
-
-                // remove button
-                Button {
-                    wishlist.removeItem(plant: plant)
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 32, height: 32)
-                            .shadow(radius: 2)
-                        Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.red)
-                    }
-                }
-                .padding(8)
-            }
-            .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+            RemoteImage(urlString: plant.image)
+                .scaledToFill()
+                .frame(height: 138)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .background(Theme.surfaceAlt)
+                .overlay(alignment: .topTrailing) { removeButton }
 
             VStack(alignment: .leading, spacing: 6) {
-                // rating
-                HStack(spacing: 4) {
-                    Image(systemName: "star")
-                        .font(.caption)
-                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    Text(String(format: "%.1f", plant.rating))
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-
-                // name
                 Text(plant.name)
-                    .font(.headline)
-                    .foregroundColor(.black)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)
 
-                // price
-                Text(String(format: "$%.2f", plant.price))
-                    .font(.subheadline.bold())
-                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+                RatingView(rating: plant.rating, reviewsCount: plant.counting)
 
-                // add to cart button
+                PriceLabel(price: plant.price, size: 15)
+
                 Button {
-                    cart.addItem(plant: plant)
+                    cart.add(plant)
                 } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "cart")
-                        Text("Add to Cart")
-                            .font(.subheadline.bold())
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 40)
-                    .foregroundColor(.white)
-                    .background(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    .cornerRadius(8)
+                    Label("Add to cart", systemImage: Icons.cart)
+                        .font(.system(size: 12.5, weight: .semibold))
+                        .foregroundStyle(Theme.onBrand)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Theme.brand, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
                 }
+                .buttonStyle(.pressable)
             }
-            .padding(10)
-            .background(Color.white)
-            .cornerRadius(12, corners: [.bottomLeft, .bottomRight])
+            .padding(Theme.Spacing.md)
         }
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.08), radius: 6)
+        .cardBackground()
+        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
     }
+
+    private var removeButton: some View {
+        Button {
+            withAnimation { wishlist.remove(plant) }
+        } label: {
+            Image(systemName: Icons.close)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(Theme.danger)
+                .frame(width: 28, height: 28)
+                .background(.ultraThinMaterial, in: Circle())
+        }
+        .buttonStyle(.pressable)
+        .padding(8)
+        .accessibilityLabel("Remove \(plant.name) from wishlist")
+    }
+}
+
+#Preview {
+    WishlistCard(plant: .preview)
+        .frame(width: 180)
+        .padding()
+        .background(Theme.background)
+        .environmentObject(WishlistStore())
+        .environmentObject(CartStore())
 }

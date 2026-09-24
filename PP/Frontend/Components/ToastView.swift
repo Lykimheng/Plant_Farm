@@ -11,21 +11,40 @@ struct ToastView: View {
     let message: String
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: Constants.cartAddIcon)
-                .foregroundColor(.white)
-                .font(.title3)
+        HStack(spacing: Theme.Spacing.sm) {
+            Image(systemName: Icons.cartAdd)
+                .font(.system(size: 15, weight: .semibold))
             Text(message)
-                .foregroundColor(.white)
-                .font(.subheadline.bold())
+                .font(.system(size: 14, weight: .semibold))
+                .lineLimit(2)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(
-            Capsule()
-                .fill(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255))
-                .shadow(radius: 10)
-        )
+        .foregroundStyle(Theme.onBrand)
+        .padding(.horizontal, Theme.Spacing.lg)
+        .padding(.vertical, Theme.Spacing.md)
+        .background(Theme.brand, in: Capsule())
+        .softShadow(radius: 12, y: 6)
+        .padding(.horizontal, Theme.Spacing.lg)
     }
 }
 
+extension View {
+    func toast(center: ToastCenter) -> some View {
+        overlay(alignment: .top) {
+            if center.isShowing {
+                ToastView(message: center.message)
+                    .padding(.top, Theme.Spacing.sm)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .onTapGesture { center.dismiss() }
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+    }
+}
+
+#Preview {
+    Color.gray.toast(center: {
+        let center = ToastCenter()
+        center.show("Golden Barrel Cactus added to cart")
+        return center
+    }())
+}

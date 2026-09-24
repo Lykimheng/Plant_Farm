@@ -1,92 +1,135 @@
 //
-//  Orders.swift
+//  OrdersStore.swift
 //  PP
 //
-//  Created by Ly Kimheng on 13/6/26.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
-import Foundation
-import Combine
 import SwiftUI
+import Combine
 
-final class OrdersModel: ObservableObject {
-    @Published var orders: [OrderModel] = []
-    @Published var isLoading = false
-    var notifications: NotificationsModel?
+@MainActor
+final class OrdersStore: ObservableObject {
+    @Published private(set) var orders: [OrderModel] = []
+    @Published private(set) var isLoading = false
+    @Published private(set) var errorMessage = ""
 
-    // MARK: fetch from API
-    func fetchOrders(userId: Int) async {
-        await MainActor.run { isLoading = true }
+    private let client: APIClient
+    private weak var notifications: NotificationsStore?
 
-        guard let url = URL(string: "\(APIService.shared.baseURL)/orders.php?user_id=\(userId)") else { return }
+    init(client: APIClient = .shared) {
+        self.client = client
+    }
+
+    func connect(notifications: NotificationsStore) {
+        self.notifications = notifications
+    }
+
+    func order(withNumber number: String) -> OrderModel? {
+        orders.first { $0.orderNumber == number }
+    }
+
+    func clearLocally() {
+        orders.removeAll()
+    }
+
+    // MARK: - Server
+
+    func load(userId: Int) async {
+        guard userId != 0 else { return }
+        isLoading = true
+        defer { isLoading = false }
 
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(OrdersResponse.self, from: data)
-            await MainActor.run {
-                self.orders = response.orders.map { $0.toOrderModel() }
-                self.isLoading = false
-            }
+            let response: OrdersResponse = try await client.get(
+                API.Path.orders,
+                query: ["user_id": String(userId)]
+            )
+            orders = response.orders.map(\.order)
+            errorMessage = ""
         } catch {
-            await MainActor.run { isLoading = false }
-            print("Fetch orders error: \(error)")
+            errorMessage = error.userMessage
+            AppLog.network("load orders", error)
         }
     }
 
-    // MARK: save locally (API call is handled by CheckoutViewModel)
-    @MainActor
-    func addOrder(orderNumber: String, items: [CartItem], total: Double, deliveryAddress: String, userId: Int = 0) {
-        let newOrder = OrderModel(
+    /// Places the order and returns the stored copy so the caller can navigate
+    /// straight to it. Throws so the checkout screen can surface the reason.
+    @discardableResult
+    func placeOrder(
+        userId: Int,
+        orderNumber: String,
+        items: [CartItem],
+        total: Double,
+        deliveryAddress: String
+    ) async throws -> OrderModel {
+        let response: PlaceOrderResponse = try await client.send(
+            API.Path.orders,
+            method: .post,
+            body: PlaceOrderRequest(
+                userId: userId,
+                orderNumber: orderNumber,
+                total: total,
+                deliveryAddress: deliveryAddress,
+                items: items.map {
+                    .init(
+                        plantId: $0.plant.id,
+                        plantName: $0.plant.name,
+                        price: $0.plant.price,
+                        quantity: $0.quantity
+                    )
+                }
+            )
+        )
+
+        let order = OrderModel(
+            apiId: response.orderId ?? 0,
             orderNumber: orderNumber,
-            date: formattedDate(),
+            placedAt: Date(),
             status: .pending,
             items: items,
             total: total,
             deliveryAddress: deliveryAddress
         )
-        orders.insert(newOrder, at: 0)
-        notifications?.add(NotificationModel(
-            title: "Order Placed",
-            message: "Your order #\(orderNumber) is pending.",
-            type: .orderPlaced
-        ))
+
+        orders.insert(order, at: 0)
+        notifications?.add(
+            NotificationModel(
+                title: "Order Placed",
+                message: "Your order #\(orderNumber) is pending confirmation.",
+                type: .orderPlaced
+            )
+        )
+        return order
     }
-    func cancelOrder(_ order: OrderModel, userId: Int) async {
+
+    func cancel(_ order: OrderModel, userId: Int) async {
         guard let index = orders.firstIndex(where: { $0.id == order.id }) else { return }
 
-        await MainActor.run {
-            orders[index].status = .cancelled
-        }
-
-        let body: [String: Any] = [
-            "order_id": index + 1,
-            "status": "cancelled",
-            "user_id": userId
-        ]
-
-        guard let url = URL(string: "\(APIService.shared.baseURL)/orders.php"),
-              let jsonData = try? JSONSerialization.data(withJSONObject: body) else { return }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
+        let previousStatus = orders[index].status
+        orders[index].status = .cancelled
 
         do {
-            let (_, _) = try await URLSession.shared.data(for: request)
-            notifications?.add(NotificationModel(
-                title: "Order Cancelled",
-                message: "You cancelled order #\(order.orderNumber).",
-                type: .orderCancelled
-            ))
+            let _: StatusResponse = try await client.send(
+                API.Path.orders,
+                method: .put,
+                body: UpdateOrderStatusRequest(
+                    orderId: order.apiId,
+                    status: OrderModel.OrderStatus.cancelled.apiValue,
+                    userId: userId
+                )
+            )
+            notifications?.add(
+                NotificationModel(
+                    title: "Order Cancelled",
+                    message: "You cancelled order #\(order.orderNumber).",
+                    type: .orderCancelled
+                )
+            )
         } catch {
-            print("Cancel order error: \(error)")
+            orders[index].status = previousStatus
+            errorMessage = error.userMessage
+            AppLog.network("cancel order", error)
         }
-    }
-
-    private func formattedDate() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, yyyy - hh:mm a"
-        return formatter.string(from: Date())
     }
 }

@@ -1,39 +1,36 @@
 //
-//  FavoriteModel.swift
+//  WishlistStore.swift
 //  PP
 //
-//  Created by Ly Kimheng on 8/6/26.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
 import SwiftUI
 import Combine
 
-class WishlistModel: ObservableObject {
-    @Published var items: [PlantModel] = []
-    
-    func addItem(plant: PlantModel) {
-        if !items.contains(where: { $0.id == plant.id }) {
+@MainActor
+final class WishlistStore: ObservableObject {
+    @Published private(set) var items: [PlantModel] = []
+
+    var isEmpty: Bool { items.isEmpty }
+
+    func contains(_ plant: PlantModel) -> Bool {
+        items.contains { $0.id == plant.id }
+    }
+
+    func toggle(_ plant: PlantModel) {
+        if let index = items.firstIndex(where: { $0.id == plant.id }) {
+            items.remove(at: index)
+        } else {
             items.append(plant)
         }
     }
-    
-    func removeItem(plant: PlantModel) {
+
+    func remove(_ plant: PlantModel) {
         items.removeAll { $0.id == plant.id }
     }
-    
-    func toggleItem(plant: PlantModel) {
-        if isWishlisted(plant) {
-            removeItem(plant: plant)
-        } else {
-            addItem(plant: plant)
-        }
-    }
-    
-    func isWishlisted(_ plant: PlantModel) -> Bool {
-        items.contains(where: { $0.id == plant.id })
-    }
-    
-    func clearAll() {
+
+    func clear() {
         items.removeAll()
     }
 }

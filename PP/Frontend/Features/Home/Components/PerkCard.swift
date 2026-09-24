@@ -1,46 +1,47 @@
 //
-//  DiscountCard.swift
+//  PerkCard.swift
 //  PP
 //
-//  Created by Ly Kimheng on 22/1/26.
+//  Created by Ly Kimheng on 12/8/26.
 //
 
 import SwiftUI
 
-struct DiscountCard: View {
+struct PerkCard: View {
+    let icon: String
     let title: String
     let subtitle: String
 
     var body: some View {
-        VStack{
-            Text(title)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.title.bold())
-                .padding(.top, 20)
-                .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255, opacity: 1.0) )
-            Text(subtitle)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.subheadline.bold())
-                .foregroundStyle(Color.gray)
-                .padding(.bottom, 20)
-            
+        HStack(spacing: Theme.Spacing.lg) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(Theme.brand)
+                .frame(width: 44, height: 44)
+                .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+                Text(subtitle)
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 16)
-        .frame(width: 400, height: 120, alignment: .leading)
-        .background(Color.white)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color(.sRGB, red: 32/255, green: 169/255, blue: 172/255, opacity: 1.0) , lineWidth: 6)
-            )
-            .cornerRadius(20)
+        .cardSurface(padding: Theme.Spacing.md)
+        .accessibilityElement(children: .combine)
     }
 }
 
 #Preview {
-    VStack(spacing: 20){
-        DiscountCard(title: "Membership", subtitle: "Discount 20% for every purchase.")
-        DiscountCard(title: "Free 5 coupons", subtitle: "For new user.")
-        DiscountCard(title: "Free delivery", subtitle: "For under 3km")
+    VStack(spacing: 12) {
+        PerkCard(icon: Icons.verified, title: "Membership", subtitle: "20% off every purchase.")
+        PerkCard(icon: Icons.truck, title: "Free delivery", subtitle: "On any address within 3 km.")
     }
-
+    .padding()
+    .background(Theme.background)
 }

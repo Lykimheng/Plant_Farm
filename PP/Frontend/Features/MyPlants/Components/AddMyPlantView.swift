@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct AddMyPlantView: View {
-    @EnvironmentObject var myPlants: MyPlantsModel
-    @EnvironmentObject var user: UserModel
-    @EnvironmentObject var catalog: PlantsModel
+    @EnvironmentObject private var myPlants: MyPlantsStore
+    @EnvironmentObject private var user: UserStore
+    @EnvironmentObject private var catalog: PlantsStore
     @Environment(\.dismiss) private var dismiss
 
-    @State private var species = ""
-    @State private var selectedCare: MyPlantModel.CareLevel = .easy
-    @State private var nextWatering = "Next in 3 days"
-    @State private var sunlight = "Partial Sunlight"
     @State private var selectedPlant: PlantModel?
+    @State private var species = ""
+    @State private var careLevel: MyPlantModel.CareLevel = .easy
+    @State private var wateringInterval = WateringInterval.weekly
+    @State private var sunlight = SunlightNeed.partial
     @State private var isSaving = false
-
     private var availablePlants: [PlantModel] {
         var seen = Set<String>()
         return catalog.plants.filter { seen.insert($0.name).inserted }
@@ -28,77 +27,147 @@ struct AddMyPlantView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Plant Info") {
-                    Picker("Plant name", selection: $selectedPlant) {
-                        Text("Select a plant").tag(nil as PlantModel?)
+                Section("Plant") {
+                    Picker("From the catalog", selection: $selectedPlant) {
+                        Text("Choose a plant").tag(nil as PlantModel?)
                         ForEach(availablePlants) { plant in
                             Text(plant.name).tag(plant as PlantModel?)
                         }
                     }
-                    TextField("Species", text: $species)
+
+                    TextField("Species (optional)", text: $species)
+                        .autocorrectionDisabled()
                 }
 
-                Section("Care Level") {
-                    Picker("Care Level", selection: $selectedCare) {
-                        Text("Easy Care").tag(MyPlantModel.CareLevel.easy)
-                        Text("Moderate Care").tag(MyPlantModel.CareLevel.moderate)
-                        Text("Expert Care").tag(MyPlantModel.CareLevel.expert)
+                Section("Care") {
+                    Picker("Care level", selection: $careLevel) {
+                        ForEach(MyPlantModel.CareLevel.allCases) { level in
+                            Text(level.displayName).tag(level)
+                        }
                     }
                     .pickerStyle(.segmented)
-                }
 
-                Section("Schedule") {
-                    TextField("Next watering", text: $nextWatering)
-                    TextField("Sunlight needs", text: $sunlight)
+                    Picker("Watering", selection: $wateringInterval) {
+                        ForEach(WateringInterval.allCases) { interval in
+                            Text(interval.label).tag(interval)
+                        }
+                    }
+
+                    Picker("Sunlight", selection: $sunlight) {
+                        ForEach(SunlightNeed.allCases) { need in
+                            Text(need.label).tag(need)
+                        }
+                    }
                 }
 
                 if let selectedPlant {
-                    Section("Image Preview") {
-                        RemoteImage(urlString: selectedPlant.image)
-                            .scaledToFit()
-                            .frame(height: 120)
-                            .frame(maxWidth: .infinity)
+                    Section("Preview") {
+                        HStack(spacing: Theme.Spacing.md) {
+                            RemoteImage(urlString: selectedPlant.image)
+                                .scaledToFill()
+                                .frame(width: 64, height: 64)
+                                .clipped()
+                                .background(Theme.surfaceAlt)
+                                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(selectedPlant.name)
+                                    .font(.system(size: 15, weight: .semibold))
+                                Text("\(wateringInterval.label) · \(sunlight.label)")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
+                        }
+                    }
+                }
+
+                if !myPlants.errorMessage.isEmpty {
+                    Section {
+                        Label(myPlants.errorMessage, systemImage: "exclamationmark.triangle")
+                            .font(.system(size: 12.5))
+                            .foregroundStyle(Theme.danger)
                     }
                 }
             }
-            .navigationTitle("Add Plant")
+            .navigationTitle("Add a plant")
             .navigationBarTitleDisplayMode(.inline)
-            .task {
-                if catalog.plants.isEmpty {
-                    await catalog.fetchPlants()
-                }
-            }
+            .task { await catalog.loadIfNeeded() }
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
                         .disabled(isSaving)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     if isSaving {
                         ProgressView()
                     } else {
-                        Button("Save") {
-                            guard let selectedPlant else { return }
-                            isSaving = true
-                            Task {
-                                await myPlants.addPlant(
-                                    MyPlantModel(
-                                        image: selectedPlant.image,
-                                        name: selectedPlant.name,
-                                        species: species,
-                                        careLevel: selectedCare,
-                                        nextWatering: nextWatering,
-                                        sunlight: sunlight
-                                    ),
-                                    userId: user.id
-                                )
-                                dismiss()
-                            }
-                        }
-                        .disabled(selectedPlant == nil)
+                        Button("Save", action: save)
+                            .fontWeight(.semibold)
+                            .disabled(selectedPlant == nil)
                     }
                 }
             }
         }
     }
+
+    private func save() {
+        guard let selectedPlant else { return }
+        isSaving = true
+
+        Task {
+            let added = await myPlants.add(
+                MyPlantModel(
+                    image: selectedPlant.image,
+                    name: selectedPlant.name,
+                    species: species.trimmed,
+                    careLevel: careLevel,
+                    nextWatering: wateringInterval.label,
+                    sunlight: sunlight.label
+                ),
+                userId: user.id
+            )
+            isSaving = false
+            if added { dismiss() }
+        }
+    }
+}
+
+// MARK: - Options
+
+enum WateringInterval: String, CaseIterable, Identifiable {
+    case everyOtherDay, twiceWeekly, weekly, fortnightly, monthly
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .everyOtherDay: return "Every other day"
+        case .twiceWeekly:   return "Twice a week"
+        case .weekly:        return "Weekly"
+        case .fortnightly:   return "Every two weeks"
+        case .monthly:       return "Monthly"
+        }
+    }
+}
+
+enum SunlightNeed: String, CaseIterable, Identifiable {
+    case full, partial, shade, indirect
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .full:     return "Full sun"
+        case .partial:  return "Partial sun"
+        case .shade:    return "Shade"
+        case .indirect: return "Bright indirect"
+        }
+    }
+}
+
+#Preview {
+    AddMyPlantView()
+        .environmentObject(MyPlantsStore())
+        .environmentObject(UserStore())
+        .environmentObject(PlantsStore())
 }

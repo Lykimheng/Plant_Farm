@@ -5,186 +5,610 @@
 //  Created by Ly Kimheng on 26/12/25.
 //
 
-import SwiftUI
 import AVFoundation
-import PhotosUI
+import SwiftUI
 
 struct ScanView: View {
     @StateObject private var camera = CameraViewModel()
     @StateObject private var permission = CameraPermissionManager()
-    @State private var selectedImage: UIImage? = nil
+    @StateObject private var viewModel = ScanViewModel()
+    @EnvironmentObject private var catalog: PlantsStore
+    @EnvironmentObject private var toast: ToastCenter
+
+    @State private var pickedImage: UIImage?
     @State private var showPhotoLibrary = false
-    @State private var isScanning = false
-    @State private var scanOffset: CGFloat = -150
-    let scanSize: CGFloat = 280
+    @State private var isAnimatingScanLine = false
+    @State private var resultDetent: PresentationDetent = .medium
+
+    private let frameSize: CGFloat = 280
+
     var body: some View {
         ZStack {
-            // MARK: - Camera Background
-            CameraPreview(session: camera.session)
+            if permission.isCameraAuthorized {
+                CameraPreview(session: camera.session)
+                    .ignoresSafeArea()
+            } else {
+                Theme.textPrimary.opacity(0.9).ignoresSafeArea()
+            }
+
+            if permission.isCameraAuthorized {
+                
+                scannerOverlay
+            } else {
+                permissionPrompt
+            }
+        }
+        .navigationTitle("Identify a plant")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .task {
+            await permission.requestCamera()
+            if permission.isCameraAuthorized { camera.start() }
+            // The result sheet links into the shop, so have the catalog ready.
+            await catalog.loadIfNeeded()
+        }
+        .onDisappear { camera.stop() }
+        .sheet(isPresented: $showPhotoLibrary) {
+            ImagePicker(selectedImage: $pickedImage, sourceType: .photoLibrary)
                 .ignoresSafeArea()
-            
-            // MARK: - Dark overlay outside scan area
-            Color.black.opacity(0.4)
+        }
+        .sheet(isPresented: $viewModel.isShowingResult, onDismiss: { resultDetent = .medium }) {
+            ScanResultSheet(viewModel: viewModel, detent: $resultDetent)
+                .presentationDetents([.medium, .large], selection: $resultDetent)
+                .presentationDragIndicator(.visible)
+        }
+        .onChange(of: pickedImage) { _, image in
+            guard let image else { return }
+            pickedImage = nil   // so picking the same photo twice still triggers
+            Task { await viewModel.identify(image) }
+        }
+    }
+
+    private func capture() {
+        Task {
+            if let image = await camera.capturePhoto() {
+                await viewModel.identify(image)
+            } else {
+                toast.show("Couldn't take a photo. Try again or pick one from your library.")
+            }
+        }
+    }
+
+    // MARK: - Overlay
+
+    private var scannerOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.45)
                 .ignoresSafeArea()
                 .mask(
                     ZStack {
                         Rectangle()
-                        RoundedRectangle(cornerRadius: 16)
-                            .frame(width: 280, height: 280)
+                        RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
+                            .frame(width: frameSize, height: frameSize)
                             .blendMode(.destinationOut)
                     }
-                        .compositingGroup()
+                    .compositingGroup()
                 )
-            
-            // MARK: - Scan frame corners
-            RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.clear, lineWidth: 0)
-                    .frame(width: scanSize, height: scanSize)
-                    .overlay(
-                        ZStack {
-                            // top left
-                            ScanCorner()
-                                .frame(width: 24, height: 24)
-                                .offset(x: -2, y: -2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity,
-                                       alignment: .topLeading)
 
-                            // top right
-                            ScanCorner()
-                                .rotationEffect(.degrees(90))
-                                .frame(width: 24, height: 24)
-                                .offset(x: 2, y: -2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity,
-                                       alignment: .topTrailing)
+            ScanFrame(size: frameSize)
+                .frame(width: frameSize, height: frameSize)
+                .overlay(alignment: .top) { scanLine }
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
 
-                            // bottom left
-                            ScanCorner()
-                                .rotationEffect(.degrees(270))
-                                .frame(width: 24, height: 24)
-                                .offset(x: -2, y: 2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity,
-                                       alignment: .bottomLeading)
-
-                            // bottom right
-                            ScanCorner()
-                                .rotationEffect(.degrees(180))
-                                .frame(width: 24, height: 24)
-                                .offset(x: 2, y: 2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity,
-                                       alignment: .bottomTrailing)
-                        }
-                    )
-            
-            // MARK: - Scanning line animation
-            if isScanning {
-                Rectangle()
-                    .fill(
-                        LinearGradient(
-                            colors: [.clear,
-                                     Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255).opacity(0.8),
-                                     .clear],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: 260, height: 3)
-                    .offset(y: scanOffset)
-                    .animation(
-                        .easeInOut(duration: 1.5).repeatForever(autoreverses: true),
-                        value: scanOffset
-                    )
-            }
-            
-            // MARK: - Bottom controls
             VStack {
+                Text("Center the plant inside the frame")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.horizontal, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.sm)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .padding(.top, Theme.Spacing.xxl)
+
                 Spacer()
-                HStack {
-                    // Flash button
-                    Button {
-                        camera.toggleFlash()
-                    } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: camera.isFlashOn ? "bolt.fill" : "bolt.slash")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                            Text("Flash")
-                                .font(.caption)
-                                .foregroundColor(.white)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Image library button
-                    Button {
-                        permission.requestPhotoPermission { granted in
-                            if granted {
-                                showPhotoLibrary = true
-                            }
-                        }
-                    } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: "photo.on.rectangle")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                            Text("Image")
-                                .font(.caption)
-                                .foregroundColor(.white)
-                        }
-                    }
-                }
-                .padding(.horizontal, 60)
-                .padding(.bottom, 40)
+
+                controls
             }
         }
-        .onAppear {
-            permission.requestCameraPermission { granted in
-                if granted {
-                    camera.setupCamera()
-                    startScanning()
-                }
-            }
-        }
-        .onDisappear {
-            camera.stopCamera()
-        }
-        .sheet(isPresented: $showPhotoLibrary) {
-            ImagePicker(selectedImage: $selectedImage, sourceType: .photoLibrary)
-        }
-        .preferredColorScheme(.light)
     }
-    
-    // MARK: - Start scanning animation
-    func startScanning() {
-        isScanning = true
-        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-            scanOffset = 150
+
+    private var scanLine: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [.clear, Theme.brandAccent, .clear],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .frame(height: 2.5)
+            .offset(y: isAnimatingScanLine ? frameSize - 2.5 : 0)
+            .animation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true), value: isAnimatingScanLine)
+            .onAppear { isAnimatingScanLine = true }
+    }
+
+    private var controls: some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+            controlButton(
+                icon: camera.isFlashOn ? Icons.flashOn : Icons.flashOff,
+                label: "Flash",
+                isActive: camera.isFlashOn
+            ) {
+                camera.toggleFlash()
+            }
+
+            shutterButton
+
+            controlButton(icon: Icons.photoLibrary, label: "Photos", isActive: false) {
+                Task {
+                    if await permission.requestPhotoLibrary() {
+                        showPhotoLibrary = true
+                    }
+                }
+            }
+        }
+        .padding(.bottom, Theme.Spacing.xxl + Theme.Spacing.lg)
+    }
+
+    private var shutterButton: some View {
+        Button(action: capture) {
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle()
+                        .strokeBorder(.white, lineWidth: 4)
+                        .frame(width: 76, height: 76)
+                    Circle()
+                        .fill(camera.isCapturing ? Theme.brandAccent.opacity(0.6) : .white)
+                        .frame(width: 62, height: 62)
+                    Image(systemName: Icons.shutter)
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(Theme.brand)
+                }
+                Text("Identify")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.85))
+            }
+        }
+        .buttonStyle(.pressable)
+        .disabled(!camera.isRunning || camera.isCapturing)
+        .opacity(camera.isRunning ? 1 : 0.5)
+        .accessibilityLabel("Take a photo to identify the plant")
+        .offset(y: -8)
+    }
+
+    private func controlButton(
+        icon: String,
+        label: String,
+        isActive: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(isActive ? Theme.brandAccent : .white)
+                    .frame(width: 52, height: 52)
+                    .background(.ultraThinMaterial, in: Circle())
+                Text(label)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.85))
+            }
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel(label)
+    }
+
+    private var permissionPrompt: some View {
+        VStack(spacing: Theme.Spacing.lg) {
+            Image(systemName: Icons.camera)
+                .font(.system(size: 44, weight: .light))
+                .foregroundStyle(.white.opacity(0.8))
+
+            Text(permission.isCameraDenied ? "Camera access is off" : "Camera access needed")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(.white)
+
+            Text("Allow the camera so you can point it at a plant to identify it. You can also pick a photo instead.")
+                .font(.system(size: 13))
+                .foregroundStyle(.white.opacity(0.75))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, Theme.Spacing.xxl)
+
+            VStack(spacing: Theme.Spacing.md) {
+                if permission.isCameraDenied {
+                    Button("Open Settings") { permission.openSettings() }
+                        .buttonStyle(PrimaryButtonStyle(fullWidth: false))
+                } else {
+                    Button("Allow camera") {
+                        Task {
+                            if await permission.requestCamera() { camera.start() }
+                        }
+                    }
+                    .buttonStyle(PrimaryButtonStyle(fullWidth: false))
+                }
+
+                Button("Choose a photo") {
+                    Task {
+                        if await permission.requestPhotoLibrary() { showPhotoLibrary = true }
+                    }
+                }
+                .buttonStyle(SecondaryButtonStyle(fullWidth: false, tint: .white))
+            }
+        }
+        .padding(Theme.Spacing.lg)
+    }
+}
+
+// MARK: - Frame corners
+
+private struct ScanFrame: View {
+    let size: CGFloat
+    private let cornerLength: CGFloat = 26
+    private let thickness: CGFloat = 4
+
+    var body: some View {
+        ZStack {
+            corner.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            corner.rotationEffect(.degrees(90))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            corner.rotationEffect(.degrees(180))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            corner.rotationEffect(.degrees(270))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var corner: some View {
+        Path { path in
+            path.move(to: CGPoint(x: 0, y: cornerLength))
+            path.addLine(to: .zero)
+            path.addLine(to: CGPoint(x: cornerLength, y: 0))
+        }
+        .stroke(Theme.brandAccent, style: StrokeStyle(lineWidth: thickness, lineCap: .round, lineJoin: .round))
+        .frame(width: cornerLength, height: cornerLength)
+    }
+}
+
+// MARK: - Results
+
+private struct ScanResultSheet: View {
+    @ObservedObject var viewModel: ScanViewModel
+    @Binding var detent: PresentationDetent
+
+    @EnvironmentObject private var catalog: PlantsStore
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var path: [PlantListing] = []
+    @State private var chosen: PlantPrediction?
+
+    /// The candidate being shown: the model's best guess unless the user picked another.
+    private var current: PlantPrediction? {
+        chosen.flatMap { pick in viewModel.predictions.first { $0.id == pick.id } } ?? viewModel.bestMatch
+    }
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            ScrollView {
+                VStack(spacing: Theme.Spacing.lg) {
+                    photo
+                    content
+                }
+                .padding(Theme.Spacing.lg)
+                .readableWidth(760)
+            }
+            .background(Theme.background)
+            .navigationTitle("Scan result")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .navigationDestination(for: PlantListing.self) { listing in
+                PlantDetailView(listing: listing)
+            }
+        }
+        // A product page needs the full sheet; drop back when the user returns.
+        .onChange(of: path) { _, path in
+            detent = path.isEmpty ? .medium : .large
+        }
+        .onChange(of: viewModel.predictions) { _, _ in chosen = nil }
+    }
+
+    // MARK: Pieces
+
+    @ViewBuilder
+    private var photo: some View {
+        if let image = viewModel.image {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(height: 180)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.isIdentifying {
+            ProgressView("Identifying…")
+                .tint(Theme.brand)
+                .foregroundStyle(Theme.textSecondary)
+                .padding(.vertical, Theme.Spacing.xxl)
+        } else if let message = viewModel.errorMessage {
+            EmptyStateView(
+                icon: Icons.leaf,
+                title: "Couldn't identify this photo",
+                message: message,
+                actionTitle: "Try again",
+                action: { Task { await viewModel.retry() } }
+            )
+        } else if let current {
+            matchCard(for: current)
+            if viewModel.predictions.count > 1 { alternatives(besides: current) }
+            if let verdict = viewModel.healthVerdict { healthCard(for: verdict) }
+            careCard(for: current.species)
+            shopSection(for: current.species)
+        } else {
+            EmptyStateView(
+                icon: Icons.leaf,
+                title: "No plant recognised",
+                message: "Try a closer photo of a single plant in good light."
+            )
+        }
+    }
+
+    private func matchCard(for prediction: PlantPrediction) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Label(headline(for: prediction), systemImage: Icons.identified)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(prediction.certainty == .low ? Theme.warning : Theme.brand)
+
+            Text(prediction.species.displayName)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(Theme.textPrimary)
+
+            Text(prediction.species.scientificName)
+                .font(.system(size: 13))
+                .italic()
+                .foregroundStyle(Theme.textSecondary)
+
+            ConfidenceBar(prediction: prediction)
+                .padding(.top, Theme.Spacing.xs)
+
+            if prediction.certainty == .low {
+                Text("Fill the frame with one plant in good light for a clearer answer.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardSurface()
+        .accessibilityElement(children: .combine)
+    }
+
+    private func headline(for prediction: PlantPrediction) -> String {
+        switch prediction.certainty {
+        case .high:   return "Looks like a"
+        case .likely: return "Probably a"
+        case .low:    return "Not sure — maybe a"
+        }
+    }
+
+    private func alternatives(besides current: PlantPrediction) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text("Not it? It could also be")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+
+            HStack(spacing: Theme.Spacing.sm) {
+                ForEach(viewModel.predictions.filter { $0.id != current.id }) { prediction in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) { chosen = prediction }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Text(prediction.species.displayName)
+                            Text(prediction.percentText).foregroundStyle(Theme.textTertiary)
+                        }
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Theme.textPrimary)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(Theme.surface, in: Capsule())
+                        .overlay(Capsule().strokeBorder(Theme.separator, lineWidth: 0.7))
+                    }
+                    .buttonStyle(.pressable)
+                    .accessibilityLabel("Show \(prediction.species.displayName), \(prediction.percentText)")
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func healthCard(for verdict: HealthPrediction) -> some View {
+        let isHealthy = verdict.symptom == .healthy
+        let isUnsure = verdict.confidence < 0.45
+        let tint = isHealthy ? Theme.success : Theme.warning
+
+        return VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Label("Health check", systemImage: Icons.health)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: isHealthy ? Icons.verified : Icons.warning)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(tint)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isHealthy ? verdict.symptom.displayName
+                                   : (isUnsure ? "Might be showing: " : "Possible issue: ") + verdict.symptom.displayName.lowercased())
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("\(verdict.percentText) match")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.textTertiary)
+                        .monospacedDigit()
+                }
+            }
+
+            if !isHealthy {
+                healthRow(title: "Usually means", detail: verdict.symptom.likelyCause)
+                healthRow(title: "What to do", detail: verdict.symptom.whatToDo)
+            } else {
+                Text(verdict.symptom.likelyCause)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            let others = viewModel.health.dropFirst().prefix(2).filter { $0.confidence >= 0.15 }
+            if !others.isEmpty {
+                Text("Also possible: " + others.map { "\($0.symptom.displayName.lowercased()) \($0.percentText)" }.joined(separator: ", "))
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardSurface()
+//        .overlay(alignment: .leading) {
+//            RoundedRectangle(cornerRadius: 2).fill(tint).frame(width: 4).padding(.vertical, Theme.Spacing.md)
+//        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func healthRow(title: String, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Theme.textTertiary)
+            Text(detail)
+                .font(.system(size: 14))
+                .foregroundStyle(Theme.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func careCard(for species: PlantSpecies) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            Text("Caring for a \(species.displayName)")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Theme.textPrimary)
+
+            careRow(icon: Icons.sun, title: "Light", detail: species.light)
+            careRow(icon: Icons.waterFilled, title: "Water", detail: species.water)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .cardSurface()
+    }
+
+    private func careRow(icon: String, title: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: Theme.Spacing.md) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Theme.brand)
+                .frame(width: 30, height: 30)
+                .background(Theme.brandTint, in: Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Theme.textTertiary)
+                Text(detail)
+                    .font(.system(size: 14))
+                    .foregroundStyle(Theme.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private func shopSection(for species: PlantSpecies) -> some View {
+        let matches = catalog.listings(for: catalog.plants(matching: species))
+
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            if matches.isEmpty {
+                Text("You might also like")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+
+                Text("We don't have \(species.displayName) in the shop right now — here are some popular picks instead.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                grid(of: catalog.listings(for: Array(fallbackPlants.prefix(4))))
+            } else {
+                Text("In our shop")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+
+                grid(of: matches)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, Theme.Spacing.sm)
+    }
+
+    private var fallbackPlants: [PlantModel] {
+        catalog.popularPlants.isEmpty ? catalog.plants : catalog.popularPlants
+    }
+
+    @ViewBuilder
+    private func grid(of listings: [PlantListing]) -> some View {
+        if listings.isEmpty {
+            EmptyStateView(
+                icon: Icons.bag,
+                title: "Shop unavailable",
+                message: "Open the Home tab once so the catalog is loaded."
+            )
+        } else {
+            LazyVGrid(columns: .plantGrid, spacing: Theme.Spacing.lg) {
+                ForEach(listings) { listing in
+                    PlantLink(listing: listing)
+                }
+            }
         }
     }
 }
-// MARK: - Corner shape
-struct ScanCorner: View {
-    var size: CGFloat = 24
-    var thickness: CGFloat = 4
-    var color: Color = Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255)
+
+private struct ConfidenceBar: View {
+    let prediction: PlantPrediction
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: size))
-                path.addLine(to: CGPoint(x: 0, y: 0))
-                path.addLine(to: CGPoint(x: size, y: 0))
+        HStack(spacing: Theme.Spacing.md) {
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Theme.surfaceAlt)
+                    Capsule()
+                        .fill(prediction.certainty == .low ? Theme.warning : Theme.brand)
+                        .frame(width: proxy.size.width * prediction.confidence)
+                }
             }
-            .stroke(color, style: StrokeStyle(
-                lineWidth: thickness,
-                lineCap: .round,
-                lineJoin: .round
-            ))
+            .frame(height: 8)
+
+            Text("\(prediction.percentText) match")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Theme.textSecondary)
+                .monospacedDigit()
         }
-        .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(prediction.percentText) match")
     }
 }
 
 #Preview {
-    ScanView()
+    NavigationStack {
+        ScanView()
+            .environmentObject(PlantsStore())
+            .environmentObject(CartStore())
+            .environmentObject(WishlistStore())
+            .environmentObject(UserStore())
+            .environmentObject(ToastCenter())
+    }
 }

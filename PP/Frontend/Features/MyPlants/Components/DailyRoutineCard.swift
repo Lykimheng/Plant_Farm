@@ -1,5 +1,5 @@
 //
-//  DailyTask.swift
+//  DailyRoutineCard.swift
 //  PP
 //
 //  Created by Ly Kimheng on 9/6/26.
@@ -7,68 +7,127 @@
 
 import SwiftUI
 
-struct DailyTask: Identifiable {
-    let id = UUID()
+struct DailyTask: Identifiable, Hashable {
+    let id: String
     let title: String
     let time: String
     var isDone: Bool = false
 }
 
 struct DailyRoutineCard: View {
-    @State private var tasks: [DailyTask] = [
-        DailyTask(title: "Water Orchid", time: "08:00 AM", isDone: true),
-        DailyTask(title: "Mist Ferns", time: "10:30 AM"),
-        DailyTask(title: "Check Monstera", time: "02:00 PM"),
-    ]
+    @EnvironmentObject private var myPlants: MyPlantsStore
 
-    var remainingCount: Int {
-        tasks.filter { !$0.isDone }.count
-    }
+    @AppStorage("dailyRoutineCompletions") private var completionsData = ""
+
+    @State private var tasks: [DailyTask] = []
+
+    private var remaining: Int { tasks.count { !$0.isDone } }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            HStack(spacing: Theme.Spacing.sm) {
+                Image(systemName: "checklist")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.brand)
+
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Daily Routine")
-                        .font(.headline.bold())
-                        .foregroundColor(Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255))
-                    Text("\(remainingCount) tasks remaining for today")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                    Text("Today's routine")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text(remaining == 0
+                         ? "All done — nice work."
+                         : "^[\(remaining) task](inflect: true) left today")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.textSecondary)
                 }
+
+                Spacer()
             }
 
-            Divider()
+            Divider().overlay(Theme.separator)
 
             ForEach($tasks) { $task in
-                HStack(spacing: 12) {
-                    Button {
+                Button {
+                    withAnimation(.easeOut(duration: 0.15)) {
                         task.isDone.toggle()
-                    } label: {
-                        Image(systemName: task.isDone ? "checkmark.square.fill" : "square")
-                            .foregroundColor(task.isDone ?
-                                Color(.sRGB, red: 23/255, green: 105/255, blue: 110/255) :
-                                .gray)
-                            .font(.title3)
+                        persist()
                     }
+                } label: {
+                    HStack(spacing: Theme.Spacing.md) {
+                        Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 19))
+                            .foregroundStyle(task.isDone ? Theme.brand : Theme.textTertiary)
 
-                    Text(task.title)
-                        .font(.subheadline)
-                        .strikethrough(task.isDone)
-                        .foregroundColor(task.isDone ? .gray : .black)
+                        Text(task.title)
+                            .font(.system(size: 14))
+                            .strikethrough(task.isDone)
+                            .foregroundStyle(task.isDone ? Theme.textTertiary : Theme.textPrimary)
 
-                    Spacer()
+                        Spacer()
 
-                    Text(task.time)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        Text(task.time)
+                            .font(.system(size: 11.5))
+                            .foregroundStyle(Theme.textTertiary)
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(16)
-        .background(Color(.systemGray6))
-        .cornerRadius(16)
+        .cardSurface(padding: Theme.Spacing.lg)
+        .onAppear(perform: buildTasks)
+        .onChange(of: myPlants.plants) { _, _ in buildTasks() }
     }
+
+    // MARK: - Tasks
+
+    private func buildTasks() {
+        let done = completedIDsForToday()
+
+        let generated: [DailyTask] = myPlants.plants.prefix(4).enumerated().map { index, plant in
+            DailyTask(
+                id: "plant-\(plant.apiId)",
+                title: "Check \(plant.name)",
+                time: ["08:00", "10:30", "14:00", "17:30"][index % 4]
+            )
+        }
+
+        let base = generated.isEmpty
+            ? [
+                DailyTask(id: "starter-water", title: "Water anything looking dry", time: "08:00"),
+                DailyTask(id: "starter-light", title: "Rotate pots toward the light", time: "12:00"),
+                DailyTask(id: "starter-leaves", title: "Wipe dust off broad leaves", time: "17:00")
+              ]
+            : generated
+
+        tasks = base.map { task in
+            var copy = task
+            copy.isDone = done.contains(task.id)
+            return copy
+        }
+    }
+
+    // MARK: - Persistence
+
+    private func completedIDsForToday() -> Set<String> {
+        let parts = completionsData.split(separator: "|", maxSplits: 1).map(String.init)
+        guard parts.count == 2, parts[0] == Self.todayKey else { return [] }
+        return Set(parts[1].split(separator: ",").map(String.init))
+    }
+
+    private func persist() {
+        let done = tasks.filter(\.isDone).map(\.id).joined(separator: ",")
+        completionsData = "\(Self.todayKey)|\(done)"
+    }
+
+    private static var todayKey: String {
+        Date().formatted(.iso8601.year().month().day().dateSeparator(.dash))
+    }
+}
+
+#Preview {
+    DailyRoutineCard()
+        .environmentObject(MyPlantsStore())
+        .padding()
+        .background(Theme.background)
 }

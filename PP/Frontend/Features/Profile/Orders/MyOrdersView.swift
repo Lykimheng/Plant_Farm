@@ -1,42 +1,31 @@
 //
-//  OrderView.swift
+//  MyOrdersView.swift
 //  PP
 //
-//  Created by Ly Kimheng on 8/6/26.
+//  Created by Ly Kimheng on 26/12/25.
 //
 
 import SwiftUI
 
 struct MyOrdersView: View {
-    @EnvironmentObject var cart: CartModel
-    @EnvironmentObject var orders: OrdersModel
-    @EnvironmentObject var location: LocationManager
-    @EnvironmentObject var user: UserModel
+    @EnvironmentObject private var orders: OrdersStore
+    @EnvironmentObject private var user: UserStore
+
     var body: some View {
         Group {
             if orders.isLoading && orders.orders.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(.systemGray6))
+                SkeletonList(count: 3, height: 132)
+                    .padding(Theme.Spacing.lg)
             } else if orders.orders.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: Constants.notificationIcon)
-                        .font(.system(size: 60))
-                        .foregroundColor(.gray.opacity(0.4))
-                    Text("No orders yet")
-                        .font(.title3)
-                        .foregroundColor(.gray)
-                    Text("Your orders will appear here after checkout")
-                        .font(.caption)
-                        .foregroundColor(.gray.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemGray6))
+                EmptyStateView(
+                    icon: Icons.bag,
+                    title: "No orders yet",
+                    message: "Orders you place will appear here with live delivery status."
+                )
+                .frame(maxHeight: .infinity)
             } else {
                 ScrollView {
-                    VStack(spacing: 12) {
+                    LazyVStack(spacing: Theme.Spacing.md) {
                         ForEach(orders.orders) { order in
                             NavigationLink {
                                 OrderDetailView(order: order)
@@ -46,26 +35,24 @@ struct MyOrdersView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .padding(16)
+                    .padding(Theme.Spacing.lg)
+                    .readableWidth()
                 }
-                .background(Color(.systemGray6))
+                .refreshable { await orders.load(userId: user.id) }
             }
         }
+        .background(Theme.background)
         .navigationTitle("My Orders")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.light)
-        .onAppear {
-            Task {
-                await orders.fetchOrders(userId: user.id)
-            }
-        }
+        .task { await orders.load(userId: user.id) }
     }
 }
 
 #Preview {
     NavigationStack {
         MyOrdersView()
-            .environmentObject(CartModel())
+            .environmentObject(OrdersStore())
+            .environmentObject(UserStore())
             .environmentObject(LocationManager())
     }
 }
