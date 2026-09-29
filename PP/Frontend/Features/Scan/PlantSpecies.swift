@@ -21,7 +21,7 @@ nonisolated enum PlantSpecies: String, CaseIterable, Hashable, Sendable {
     case spiderPlant = "spider_plant"
     case zzPlant = "zz_plant"
 
-    var displayName: String {
+    var displayName: LocalizedStringResource {
         switch self {
         case .aloeVera:         return "Aloe Vera"
         case .cactus:           return "Cactus"
@@ -72,7 +72,7 @@ nonisolated enum PlantSpecies: String, CaseIterable, Hashable, Sendable {
         }
     }
 
-    var light: String {
+    var light: LocalizedStringResource {
         switch self {
         case .aloeVera, .fiddleLeafFig, .luckyBamboo, .monstera, .spiderPlant:
             return "Bright, indirect light"
@@ -87,7 +87,7 @@ nonisolated enum PlantSpecies: String, CaseIterable, Hashable, Sendable {
         }
     }
 
-    var water: String {
+    var water: LocalizedStringResource {
         switch self {
         case .aloeVera:         return "Every 2–3 weeks, once the soil is fully dry"
         case .cactus:           return "Every 2–4 weeks; barely at all in winter"

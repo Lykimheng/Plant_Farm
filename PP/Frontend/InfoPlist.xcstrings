@@ -1,0 +1,114 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "PP"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PP"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm uses the camera to identify plants and check their health, and to take a profile photo."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm ប្រើកាមេរ៉ាដើម្បីកំណត់ប្រភេទរុក្ខជាតិ ពិនិត្យមើលសុខភាពរបស់ពួកវា និងថតរូបសម្រាប់ប្រវត្តិរូប។"
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Privacy - Local Network Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm connects to the shop server on your local network to load plants, orders and notifications."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm ភ្ជាប់ទៅកាន់ម៉ាស៊ីនសឺវឺ របស់ហាងនៅលើបណ្តាញក្នុងស្រុករបស់អ្នក ដើម្បីផ្ទុកទិន្នន័យរុក្ខជាតិ ការបញ្ជាទិញ និងការជូនដំណឹង។"
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Privacy - Location When In Use Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm uses your location to fill in your delivery address at checkout."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm ប្រើប្រាស់ទីតាំងរបស់អ្នកដើម្បីបំពេញអាសយដ្ឋានដឹកជញ្ជូននៅពេលទូទាត់ប្រាក់។"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryUsageDescription" : {
+      "comment" : "Privacy - Photo Library Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm opens your photo library so you can identify a plant from a picture or choose a profile photo."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm បើកបណ្ណាល័យរូបថតរបស់អ្នក ដើម្បីឱ្យអ្នកអាចកំណត់ប្រភេទរុក្ខជាតិពីក្នុងរូបភាព ឬជ្រើសរើសរូបភាពប្រវត្តិរូប។"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

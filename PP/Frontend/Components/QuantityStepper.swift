@@ -31,7 +31,7 @@ struct QuantityStepper: View {
                 action: onDecrement
             )
 
-            Text("\(quantity)")
+            Text(quantity, format: .number)
                 .font(.system(size: compact ? 14 : 16, weight: .semibold))
                 .foregroundStyle(Theme.textPrimary)
                 .contentTransition(.numericText())

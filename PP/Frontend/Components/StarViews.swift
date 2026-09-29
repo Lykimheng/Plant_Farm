@@ -47,7 +47,7 @@ struct StarRatingInput: View {
                         .scaleEffect(star == rating ? 1.12 : 1)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("\(star) star\(star == 1 ? "" : "s")")
+                .accessibilityLabel("^[\(star) star](inflect: true)")
             }
         }
     }
@@ -60,7 +60,7 @@ struct RatingBreakdown: View {
         VStack(spacing: 4) {
             ForEach((1...5).reversed(), id: \.self) { star in
                 HStack(spacing: 6) {
-                    Text("\(star)")
+                    Text(star, format: .number)
                         .font(.system(size: 10.5))
                         .foregroundStyle(Theme.textTertiary)
                         .frame(width: 8)
@@ -76,7 +76,7 @@ struct RatingBreakdown: View {
                     }
                     .frame(height: 6)
 
-                    Text("\(summary.count(forStar: star))")
+                    Text(summary.count(forStar: star), format: .number)
                         .font(.system(size: 10.5))
                         .foregroundStyle(Theme.textTertiary)
                         .frame(width: 18, alignment: .trailing)

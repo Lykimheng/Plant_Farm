@@ -50,6 +50,7 @@ nonisolated enum Icons {
     static let userCircle = "person.crop.circle"
     static let location = "mappin.circle.fill"
     static let appearance = "circle.lefthalf.filled"
+    static let language = "globe"
     static let verified = "checkmark.seal.fill"
     static let checkmark = "checkmark"
     static let cartAdd = "cart.badge.plus"

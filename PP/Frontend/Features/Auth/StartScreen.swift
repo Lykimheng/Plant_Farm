@@ -20,10 +20,13 @@ struct StartScreen: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             .background { backdrop }
+            .overlay(alignment: .topTrailing) {
+                LanguageMenuButton()
+                    .padding(Theme.Spacing.lg)
+            }
             .sheet(isPresented: $showSignIn) {
                 SignInView(onSwitchToSignUp: {
                     showSignIn = false
-                    // let the first sheet finish dismissing before presenting the next
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showSignUp = true }
                 })
                 .presentationDetents([.height(520), .large])

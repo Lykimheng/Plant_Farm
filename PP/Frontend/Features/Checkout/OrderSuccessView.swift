@@ -16,10 +16,10 @@ struct OrderSuccessView: View {
     @State private var animateCheck = false
     @State private var animateContent = false
 
-    private var shipmentDescription: String {
-        guard let first = order.items.first else { return "Your order" }
+    private var shipmentDescription: Text {
+        guard let first = order.items.first else { return Text("Your order") }
         let others = order.items.count - 1
-        return others > 0 ? "\(first.plant.name) and \(others) more" : first.plant.name
+        return others > 0 ? Text("\(first.plant.name) and \(others) more") : Text(first.plant.name)
     }
 
     var body: some View {
@@ -95,15 +95,15 @@ struct OrderSuccessView: View {
 
     private var details: some View {
         VStack(spacing: Theme.Spacing.md) {
-            infoRow(icon: "number", label: "Order number", value: "#\(order.orderNumber)")
-            infoRow(icon: Icons.truck, label: "Estimated delivery", value: "2–3 business days")
-            infoRow(icon: Icons.bag, label: shipmentDescription, value: order.total.priceText)
+            infoRow(icon: "number", label: Text("Order number"), value: Text(verbatim: "#\(order.orderNumber)"))
+            infoRow(icon: Icons.truck, label: Text("Estimated delivery"), value: Text("2–3 business days"))
+            infoRow(icon: Icons.bag, label: shipmentDescription, value: Text(order.total.priceText))
         }
         .opacity(animateContent ? 1 : 0)
         .offset(y: animateContent ? 0 : 16)
     }
 
-    private func infoRow(icon: String, label: String, value: String) -> some View {
+    private func infoRow(icon: String, label: Text, value: Text) -> some View {
         HStack(spacing: Theme.Spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
@@ -112,12 +112,13 @@ struct OrderSuccessView: View {
                 .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(label.uppercased())
+                label
+                    .textCase(.uppercase)
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.5)
                     .foregroundStyle(Theme.textTertiary)
                     .lineLimit(1)
-                Text(value)
+                value
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Theme.textPrimary)
             }

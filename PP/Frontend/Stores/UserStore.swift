@@ -13,11 +13,11 @@ final class UserStore: ObservableObject {
     @Published private(set) var id: Int = 0
     @Published private(set) var name: String = "Guest"
     @Published private(set) var email: String = ""
-    @Published private(set) var location: String = "Unknown"
+    @Published private(set) var location: String = ""
     @Published private(set) var avatarURL: String = ""
     @Published private(set) var isLoggedIn: Bool = false
     @Published private(set) var isLoading: Bool = false
-    @Published var errorMessage: String = ""
+    @Published var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
 
@@ -56,7 +56,7 @@ final class UserStore: ObservableObject {
     
     func resetPassword(email: String, newPassword: String) async -> Bool {
         isLoading = true
-        errorMessage = ""
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
@@ -76,10 +76,10 @@ final class UserStore: ObservableObject {
         id = 0
         name = "Guest"
         email = ""
-        location = "Unknown"
+        location = ""
         avatarURL = ""
         isLoggedIn = false
-        errorMessage = ""
+        errorMessage = nil
     }
 
     // MARK: - Profile
@@ -92,7 +92,7 @@ final class UserStore: ObservableObject {
         }
 
         isLoading = true
-        errorMessage = ""
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
@@ -116,7 +116,7 @@ final class UserStore: ObservableObject {
         }
 
         isLoading = true
-        errorMessage = ""
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
@@ -137,13 +137,13 @@ final class UserStore: ObservableObject {
 
     private func authenticate(_ request: () async throws -> UserResponse) async -> Bool {
         isLoading = true
-        errorMessage = ""
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
             let response = try await request()
             guard let user = response.user else {
-                errorMessage = response.message ?? "Something went wrong. Please try again."
+                errorMessage = response.message.map { .dynamic($0) } ?? "Something went wrong. Please try again."
                 return false
             }
             apply(user)
@@ -161,6 +161,6 @@ final class UserStore: ObservableObject {
         location = user.location
         avatarURL = user.avatar ?? ""
         isLoggedIn = true
-        errorMessage = ""
+        errorMessage = nil
     }
 }

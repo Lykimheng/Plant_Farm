@@ -1,0 +1,4403 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "(%lld)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%lld)"
+          }
+        }
+      }
+    },
+    "(optional)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(ស្រេចចិត្ត)"
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %@"
+          }
+        }
+      }
+    },
+    "%@ added to cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបន្ថែម %@ ទៅកន្ត្រក"
+          }
+        }
+      }
+    },
+    "%@ and %lld more" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ and %2$lld more"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ និង %lld ផ្សេងទៀត"
+          }
+        }
+      }
+    },
+    "%@ delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការដឹកជញ្ជូន %@"
+          }
+        }
+      }
+    },
+    "%@ each" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ក្នុងមួយ"
+          }
+        }
+      }
+    },
+    "%@ isn't included in this build." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ មិនត្រូវបានរួមបញ្ចូលនៅក្នុងការបង្កើតនេះទេ។"
+          }
+        }
+      }
+    },
+    "%@ match" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ត្រូវគ្នា %@"
+          }
+        }
+      }
+    },
+    "%@, reduced from %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, reduced from %2$@"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ បញ្ចុះពី %2$@"
+          }
+        }
+      }
+    },
+    "%lld%% OFF" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ចុះ %lld%%"
+          }
+        }
+      }
+    },
+    "^[%lld item](inflect: true)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld របស់របរ"
+          }
+        }
+      }
+    },
+    "^[%lld plant](inflect: true) saved for later" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានរក្សាទុករុក្ខជាតិ %lld ដើម សម្រាប់ពេលក្រោយ"
+          }
+        }
+      }
+    },
+    "^[%lld result](inflect: true) for “%@”" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^[%1$lld result](inflect: true) for “%2$@”"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld លទ្ធផលសម្រាប់ “%@”"
+          }
+        }
+      }
+    },
+    "^[%lld review](inflect: true)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ការវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "^[%lld star](inflect: true)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ផ្កាយ"
+          }
+        }
+      }
+    },
+    "^[%lld task](inflect: true) left today" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "នៅសល់ %lld កិច្ចការថ្ងៃនេះ"
+          }
+        }
+      }
+    },
+    "+%lld" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        }
+      }
+    },
+    "2–3 business days" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2–3 ថ្ងៃធ្វើការ"
+          }
+        }
+      }
+    },
+    "3–5 days" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3–5 ថ្ងៃ"
+          }
+        }
+      }
+    },
+    "20% off every purchase." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ចុះ 20% គ្រប់ការទិញ។"
+          }
+        }
+      }
+    },
+    "A confirmation was sent to %@." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាក់ត្រូវបានផ្ញើទៅ %@។"
+          }
+        }
+      }
+    },
+    "A welcome gift for new gardeners." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អំណោយស្វាគមន៍សម្រាប់អ្នកដាំដុះថ្មី។"
+          }
+        }
+      }
+    },
+    "A white, powdery fungus that thrives in warm, humid, still air." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ផ្សិតម្សៅពណ៌សដែលរីកលូតលាស់បានល្អក្នុងបរិយាកាសក្តៅ សើម និងគ្មានខ្យល់បក់។"
+          }
+        }
+      }
+    },
+    "ABA Pay" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ABA Pay"
+          }
+        }
+      }
+    },
+    "Accepted at checkout" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទទួលយកនៅពេលទូទាត់ប្រាក់"
+          }
+        }
+      }
+    },
+    "Account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "គណនី"
+          }
+        }
+      }
+    },
+    "Add %@ to cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែម %@ ទៅកន្ត្រក"
+          }
+        }
+      }
+    },
+    "Add a delivery address before placing the order." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមបន្ថែមអាសយដ្ឋានដឹកជញ្ជូន មុនពេលធ្វើការបញ្ជាទិញ។"
+          }
+        }
+      }
+    },
+    "Add a delivery address to continue" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែមអាសយដ្ឋានដឹកជញ្ជូនដើម្បីបន្ត"
+          }
+        }
+      }
+    },
+    "Add a plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែមរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Add a plant from the shop catalog to start tracking its watering schedule." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែមរុក្ខជាតិមួយពីកាតាឡុករបស់ហាង ដើម្បីចាប់ផ្តើមតាមដានកាលវិភាគស្រោចទឹករបស់វា។"
+          }
+        }
+      }
+    },
+    "Add to cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែមទៅកន្ត្រក"
+          }
+        }
+      }
+    },
+    "Add to Cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្ថែមទៅកន្ត្រក"
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទាំងអស់"
+          }
+        }
+      }
+    },
+    "All done — nice work." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រួចរាល់ហើយ — ល្អណាស់!"
+          }
+        }
+      }
+    },
+    "All Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិទាំងអស់"
+          }
+        }
+      }
+    },
+    "Allow camera" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អនុញ្ញាតកាមេរ៉ា"
+          }
+        }
+      }
+    },
+    "Allow the camera so you can point it at a plant to identify it. You can also pick a photo instead." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អនុញ្ញាតឱ្យប្រើកាមេរ៉ា ដើម្បីឱ្យអ្នកអាចចង្អុលវាទៅកាន់រុក្ខជាតិមួយ ហើយសម្គាល់ប្រភេទរបស់វាបាន។ អ្នកក៏អាចជ្រើសរើសរូបថតជំនួសវិញបានដែរ។"
+          }
+        }
+      }
+    },
+    "Aloe Vera" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រទាលកន្ទុយក្រពើ"
+          }
+        }
+      }
+    },
+    "Already have an account?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មានគណនីរួចហើយ?"
+          }
+        }
+      }
+    },
+    "Also possible: %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អាចជា៖ %@"
+          }
+        }
+      }
+    },
+    "An admin hid this review, so it isn't shown to others or counted in the rating." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកគ្រប់គ្រងបានលាក់ការវាយតម្លៃនេះ ដូច្នេះវាមិនត្រូវបានបង្ហាញដល់អ្នកដទៃ ឬរាប់បញ្ចូលក្នុងការវាយតម្លៃឡើយ។"
+          }
+        }
+      }
+    },
+    "Answers to the questions we get most, and a way to reach us if yours isn't here." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចម្លើយចំពោះសំណួរដែលយើងទទួលបានញឹកញាប់បំផុត និងវិធីទាក់ទងមកយើង ប្រសិនបើមិនមានសំណួររបស់អ្នកនៅទីនេះ។"
+          }
+        }
+      }
+    },
+    "Anyone signed in can rate and review a plant, and you can edit or delete your own review at any time from the plant's page." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកដែលបានចូលប្រើប្រាស់អាចវាយតម្លៃ និងសរសេរមតិយោបល់លើរុក្ខជាតិបាន ហើយអ្នកអាចកែសម្រួល ឬលុបមតិយោបល់របស់អ្នកនៅពេលណាក៏បានពីទំព័ររបស់រុក្ខជាតិនោះ។"
+          }
+        }
+      }
+    },
+    "Anything from low light to full sun" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចាប់ពីកន្លែងដែលមានពន្លឺតិច រហូតដល់កន្លែងដែលមានពន្លឺថ្ងៃពេញលេញ"
+          }
+        }
+      }
+    },
+    "App" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កម្មវិធី"
+          }
+        }
+      }
+    },
+    "Appearance" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រូបរាង"
+          }
+        }
+      }
+    },
+    "Aquatic" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ក្នុងទឹក"
+          }
+        }
+      }
+    },
+    "Aquatic Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិក្នុងទឹក"
+          }
+        }
+      }
+    },
+    "At least %lld characters" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "យ៉ាងតិច %lld តួអក្សរ"
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថយក្រោយ"
+          }
+        }
+      }
+    },
+    "Be the first to share how this plant is doing." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ក្លាយជាអ្នកដំបូងគេដែលចែករំលែកពីស្ថានភាពរបស់រុក្ខជាតិនេះ។"
+          }
+        }
+      }
+    },
+    "Being prepared" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងរៀបចំ"
+          }
+        }
+      }
+    },
+    "Big Tree" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមឈើធំ"
+          }
+        }
+      }
+    },
+    "Big Trees" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមឈើធំៗ"
+          }
+        }
+      }
+    },
+    "Bright" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភ្លឺ"
+          }
+        }
+      }
+    },
+    "Bright indirect" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភ្លឺដោយប្រយោល"
+          }
+        }
+      }
+    },
+    "Bright, indirect light" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺភ្លឺ មិនប៉ះផ្ទាល់"
+          }
+        }
+      }
+    },
+    "Brown, crispy tips" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចុងស្លឹកពណ៌ត្នោត និងស្ងួត"
+          }
+        }
+      }
+    },
+    "Cactus" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមដំបងយក្ស"
+          }
+        }
+      }
+    },
+    "Call the shop" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទូរស័ព្ទទៅហាង"
+          }
+        }
+      }
+    },
+    "Camera access is off" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការចូលប្រើកាមេរ៉ាត្រូវបានបិទ"
+          }
+        }
+      }
+    },
+    "Camera access is off. Enable it in Settings to take a photo." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការចូលប្រើកាមេរ៉ាត្រូវបានបិទ។ សូមបើកវានៅក្នុងផ្នែកការកំណត់ ដើម្បីថតរូប។"
+          }
+        }
+      }
+    },
+    "Camera access needed" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ត្រូវការសិទ្ធិប្រើកាមេរ៉ា"
+          }
+        }
+      }
+    },
+    "Can I cancel or change an order?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើខ្ញុំបោះបង់ចោល ឬផ្លាស់ប្ដូរការបញ្ជាទិញបានទេ?"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បោះបង់"
+          }
+        }
+      }
+    },
+    "Cancel order" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បោះបង់ចោលការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Cancel this order?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បោះបង់ចោលការបញ្ជាទិញនេះ?"
+          }
+        }
+      }
+    },
+    "Cancelled" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបោះបង់ចោល"
+          }
+        }
+      }
+    },
+    "Care" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការថែទាំ"
+          }
+        }
+      }
+    },
+    "Care level" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កម្រិតថែទាំ"
+          }
+        }
+      }
+    },
+    "Care Level" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កម្រិតថែទាំ"
+          }
+        }
+      }
+    },
+    "Caring for a %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការថែទាំ %@"
+          }
+        }
+      }
+    },
+    "Cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កន្ត្រក"
+          }
+        }
+      }
+    },
+    "Cash on Delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទូទាត់សាច់ប្រាក់ពេលទទួល"
+          }
+        }
+      }
+    },
+    "Center the plant inside the frame" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដាក់រុក្ខជាតិនៅកណ្ដាលស៊ុម"
+          }
+        }
+      }
+    },
+    "Change profile photo" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្ដូររូបប្រវត្តិរូប"
+          }
+        }
+      }
+    },
+    "Check %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពិនិត្យ %@"
+          }
+        }
+      }
+    },
+    "Checkout" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទូទាត់ប្រាក់"
+          }
+        }
+      }
+    },
+    "Chinese Evergreen" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិ Chinese Evergreen"
+          }
+        }
+      }
+    },
+    "Choose a photo" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជ្រើសរើសរូបថត"
+          }
+        }
+      }
+    },
+    "Choose a plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជ្រើសរើសរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Choose from library" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជ្រើសរើសពីរូបថត"
+          }
+        }
+      }
+    },
+    "City" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទីក្រុង"
+          }
+        }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សម្អាត"
+          }
+        }
+      }
+    },
+    "Clear all" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សម្អាតទាំងអស់"
+          }
+        }
+      }
+    },
+    "Clear search" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សម្អាតការស្វែងរក"
+          }
+        }
+      }
+    },
+    "Collapse %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្រួម %@"
+          }
+        }
+      }
+    },
+    "Common questions" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សំណួរញឹកញាប់"
+          }
+        }
+      }
+    },
+    "Confirm new password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ជាក់ពាក្យសម្ងាត់ថ្មី"
+          }
+        }
+      }
+    },
+    "Confirm password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ជាក់ពាក្យសម្ងាត់"
+          }
+        }
+      }
+    },
+    "Confirmed" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបញ្ជាក់"
+          }
+        }
+      }
+    },
+    "Contact phone" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លេខទូរស័ព្ទទំនាក់ទំនង"
+          }
+        }
+      }
+    },
+    "Continue as guest" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្តជាភ្ញៀវ"
+          }
+        }
+      }
+    },
+    "Continue shopping" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្តទិញទំនិញ"
+          }
+        }
+      }
+    },
+    "Couldn't identify this photo" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចស្គាល់រូបថតនេះបានទេ"
+          }
+        }
+      }
+    },
+    "Couldn't load the shop" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចផ្ទុកហាងបានទេ"
+          }
+        }
+      }
+    },
+    "Couldn't take a photo. Try again or pick one from your library." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចថតរូបបានទេ។ សូមព្យាយាមម្តងទៀត ឬជ្រើសរើសរូបភាពមួយពីបណ្ណាល័យរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "Create account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្កើតគណនី"
+          }
+        }
+      }
+    },
+    "Create an account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្កើតគណនី"
+          }
+        }
+      }
+    },
+    "Create your account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្កើតគណនីរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Credit or debit card" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កាតឥណទាន ឬកាតឥណពន្ធ"
+          }
+        }
+      }
+    },
+    "Cut off affected leaves, improve airflow, avoid wetting the foliage, and treat with a fungicide." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កាត់ចេញស្លឹកដែលរងផលប៉ះពាល់ បង្កើនការចេញចូលនៃខ្យល់ ជៀសវាងកុំឱ្យស្លឹកសើម និងព្យាបាលដោយថ្នាំសម្លាប់ផ្សិត។"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ងងឹត"
+          }
+        }
+      }
+    },
+    "Deeply once or twice a week while young" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្រោចឲ្យជោគ ម្ដង ឬពីរដងក្នុងមួយសប្ដាហ៍ ពេលនៅខ្ចី"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លុប"
+          }
+        }
+      }
+    },
+    "Delete my review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លុបការវាយតម្លៃរបស់ខ្ញុំ"
+          }
+        }
+      }
+    },
+    "Delete your review?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លុបការវាយតម្លៃរបស់អ្នក?"
+          }
+        }
+      }
+    },
+    "Delivered" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានដឹកដល់"
+          }
+        }
+      }
+    },
+    "Delivering nearby" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដឹកជញ្ជូនក្បែរៗនេះ"
+          }
+        }
+      }
+    },
+    "Delivery (%@)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការដឹកជញ្ជូន (%@)"
+          }
+        }
+      }
+    },
+    "Delivery Address" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អាសយដ្ឋានដឹកជញ្ជូន"
+          }
+        }
+      }
+    },
+    "Delivery Speed" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ល្បឿនដឹកជញ្ជូន"
+          }
+        }
+      }
+    },
+    "Description" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការពិពណ៌នា"
+          }
+        }
+      }
+    },
+    "Display name" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឈ្មោះបង្ហាញ"
+          }
+        }
+      }
+    },
+    "Don't have an account?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានគណនី?"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រួចរាល់"
+          }
+        }
+      }
+    },
+    "Dry air, uneven watering, or salts building up from tap water and fertiliser." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ខ្យល់ស្ងួត ការស្រោចទឹកមិនស្មើគ្នា ឬការកកកុញនៃជាតិអំបិលដែលបណ្តាលមកពីទឹកម៉ាស៊ីន និងជី។"
+          }
+        }
+      }
+    },
+    "Dry soil: water thoroughly. Wet soil: let it dry out, check the roots, and repot into fresh mix if they're brown and mushy." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដីស្ងួត៖ ស្រោចទឹកឱ្យជោក។ ប្រសិនបើដីសើម៖ ទុកឱ្យដីស្ងួតសិន រួចពិនិត្យមើលឫស ហើយប្តូរទៅដាក់ក្នុងដីថ្មី ប្រសិនបើឫសមានពណ៌ត្នោត និងទន់រលួយ។"
+          }
+        }
+      }
+    },
+    "E.g. leave with the guard, handle carefully…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឧ. ទុកនៅសន្តិសុខ, សូមប្រុងប្រយ័ត្ន…"
+          }
+        }
+      }
+    },
+    "Easy" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ងាយស្រួល"
+          }
+        }
+      }
+    },
+    "Easy care" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ងាយថែទាំ"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កែសម្រួល"
+          }
+        }
+      }
+    },
+    "Edit Profile" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កែប្រវត្តិរូប"
+          }
+        }
+      }
+    },
+    "Edit profile photo and name" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កែរូប និងឈ្មោះប្រវត្តិរូប"
+          }
+        }
+      }
+    },
+    "Edit review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កែការវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "Edit your review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កែការវាយតម្លៃរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Either thirst or the opposite — roots rotting in soggy soil. Feel the soil to tell which." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អាចជាការខ្វះទឹក ឬផ្ទុយទៅវិញ គឺឫសរលួយដោយសារដីជោកទឹក។ សូមសាកល្បងស្ទាបដីដើម្បីដឹងថាវាស្ថិតក្នុងករណីមួយណា។"
+          }
+        }
+      }
+    },
+    "Email" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ៊ីមែល"
+          }
+        }
+      }
+    },
+    "Email already registered." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ៊ីមែលនេះត្រូវបានចុះឈ្មោះរួចហើយ។"
+          }
+        }
+      }
+    },
+    "Email and new password are required." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តម្រូវឲ្យមានអ៊ីមែល និងពាក្យសម្ងាត់ថ្មី។"
+          }
+        }
+      }
+    },
+    "Email and password are required." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តម្រូវឲ្យមានអ៊ីមែល និងពាក្យសម្ងាត់។"
+          }
+        }
+      }
+    },
+    "Email support" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ៊ីមែលទៅផ្នែកជំនួយ"
+          }
+        }
+      }
+    },
+    "Enter a valid email address." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលឲ្យត្រឹមត្រូវ។"
+          }
+        }
+      }
+    },
+    "Enter your email and choose a new password." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ចូលអ៊ីមែលរបស់អ្នក ហើយជ្រើសរើសពាក្យសម្ងាត់ថ្មី។"
+          }
+        }
+      }
+    },
+    "Estimated delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានប៉ាន់ស្មានពេលដឹកជញ្ជូន"
+          }
+        }
+      }
+    },
+    "Every 1–2 weeks when the soil is dry" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 1–2 សប្ដាហ៍ ពេលដីស្ងួត"
+          }
+        }
+      }
+    },
+    "Every 2–3 weeks, once the soil is fully dry" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 2–3 សប្ដាហ៍ ពេលដីស្ងួតទាំងស្រុង"
+          }
+        }
+      }
+    },
+    "Every 2–3 weeks; let it dry out completely" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 2–3 សប្ដាហ៍ ទុកឲ្យស្ងួតទាំងស្រុងសិន"
+          }
+        }
+      }
+    },
+    "Every 2–4 weeks; barely at all in winter" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 2–4 សប្ដាហ៍ ស្ទើរតែមិនស្រោចសោះនៅរដូវរងា"
+          }
+        }
+      }
+    },
+    "Every 2–4 weeks; overwatering is the main risk" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 2–4 សប្ដាហ៍ ការស្រោចទឹកច្រើនពេកជាហានិភ័យចម្បង"
+          }
+        }
+      }
+    },
+    "Every 7–10 days when the top 2 inches are dry" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រៀងរាល់ 7–10 ថ្ងៃ ពេលដីខាងលើ 2 អ៊ីញស្ងួត"
+          }
+        }
+      }
+    },
+    "Every other day" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពីរថ្ងៃម្ដង"
+          }
+        }
+      }
+    },
+    "Every two weeks" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពីរសប្ដាហ៍ម្ដង"
+          }
+        }
+      }
+    },
+    "Excellent" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ល្អឥតខ្ចោះ"
+          }
+        }
+      }
+    },
+    "Expert care" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថែទាំកម្រិតជំនាញ"
+          }
+        }
+      }
+    },
+    "Explore care guides" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្វែងយល់ការណែនាំថែទាំ"
+          }
+        }
+      }
+    },
+    "Express" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រហ័ស"
+          }
+        }
+      }
+    },
+    "Failed to save image." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចរក្សាទុករូបភាពបានទេ។"
+          }
+        }
+      }
+    },
+    "Fiddle Leaf Fig" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើម Fiddle Leaf Fig"
+          }
+        }
+      }
+    },
+    "Fill the frame with one plant in good light for a clearer answer." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមថតរូបឱ្យពេញស៊ុមដោយផ្តោតលើរុក្ខជាតិមួយដើមក្នុងកម្រិតពន្លឺល្អ ដើម្បីទទួលបានចម្លើយដែលកាន់តែច្បាស់លាស់។"
+          }
+        }
+      }
+    },
+    "Finding your location…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងស្វែងរកទីតាំងរបស់អ្នក…"
+          }
+        }
+      }
+    },
+    "Five free coupons" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "គូប៉ុងឥតគិតថ្លៃ"
+          }
+        }
+      }
+    },
+    "Forgot password?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភ្លេចពាក្យសម្ងាត់?"
+          }
+        }
+      }
+    },
+    "Free delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដឹកជញ្ជូនឥតគិតថ្លៃ"
+          }
+        }
+      }
+    },
+    "From the catalog" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពីបញ្ជីទំនិញ"
+          }
+        }
+      }
+    },
+    "Full name" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឈ្មោះពេញ"
+          }
+        }
+      }
+    },
+    "Full sun" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺថ្ងៃពេញ"
+          }
+        }
+      }
+    },
+    "Good" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ល្អ"
+          }
+        }
+      }
+    },
+    "Health check" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពិនិត្យសុខភាព"
+          }
+        }
+      }
+    },
+    "Help Center" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មជ្ឈមណ្ឌលជំនួយ"
+          }
+        }
+      }
+    },
+    "Hi, %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សួស្ដី %@"
+          }
+        }
+      }
+    },
+    "Hidden" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានលាក់"
+          }
+        }
+      }
+    },
+    "Hide password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លាក់ពាក្យសម្ងាត់"
+          }
+        }
+      }
+    },
+    "Home" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទំព័រដើម"
+          }
+        }
+      }
+    },
+    "How can we help?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើយើងអាចជួយអ្វីបាន?"
+          }
+        }
+      }
+    },
+    "How is it growing? Anything others should know?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើវាលូតលាស់យ៉ាងដូចម្ដេច? មានអ្វីដែលអ្នកដទៃគួរដឹងទេ?"
+          }
+        }
+      }
+    },
+    "How long does delivery take?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើការដឹកជញ្ជូនចំណាយពេលប៉ុន្មាន?"
+          }
+        }
+      }
+    },
+    "How often should I water a new plant?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើខ្ញុំគួរស្រោចទឹករុក្ខជាតិថ្មីញឹកញាប់ប៉ុណ្ណា?"
+          }
+        }
+      }
+    },
+    "Identify" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំណត់អត្តសញ្ញាណ"
+          }
+        }
+      }
+    },
+    "Identify a plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំណត់អត្តសញ្ញាណរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Identifying…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងកំណត់អត្តសញ្ញាណ…"
+          }
+        }
+      }
+    },
+    "In our shop" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "នៅក្នុងហាងយើង"
+          }
+        }
+      }
+    },
+    "In progress" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងដំណើរការ"
+          }
+        }
+      }
+    },
+    "In Transit" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងដឹកជញ្ជូន"
+          }
+        }
+      }
+    },
+    "Indoor" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ក្នុងផ្ទះ"
+          }
+        }
+      }
+    },
+    "Indoor Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិក្នុងផ្ទះ"
+          }
+        }
+      }
+    },
+    "Invalid email format." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទម្រង់អ៊ីមែលមិនត្រឹមត្រូវ។"
+          }
+        }
+      }
+    },
+    "Invalid email or password." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។"
+          }
+        }
+      }
+    },
+    "Invalid image data." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទិន្នន័យរូបភាពមិនត្រឹមត្រូវ។"
+          }
+        }
+      }
+    },
+    "Isolate the plant, wipe the leaves with soapy water or neem oil, and repeat weekly until it's clear." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ញែករុក្ខជាតិនោះចេញពីដើមផ្សេងទៀត ជូតសម្អាតស្លឹកដោយទឹកសាប៊ូ ឬប្រេងនីម ហើយធ្វើបែបនេះជារៀងរាល់សប្តាហ៍រហូតទាល់តែវាលែងមានបញ្ហា។"
+          }
+        }
+      }
+    },
+    "It will be removed from your plant tracker." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វានឹងត្រូវដកចេញពីបញ្ជីតាមដានរុក្ខជាតិរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "ITE Member" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សមាជិក ITE"
+          }
+        }
+      }
+    },
+    "Items" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទំនិញ"
+          }
+        }
+      }
+    },
+    "Keep" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រក្សាទុក"
+          }
+        }
+      }
+    },
+    "Keep doing what you're doing. Check the care tips above if you're unsure about light or watering." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បន្តថែទាំដូចដែលអ្នកកំពុងធ្វើ។ សូមមើលគន្លឹះថែទាំខាងលើ ប្រសិនបើអ្នកមិនប្រាកដអំពីពន្លឺ ឬការស្រោចទឹក។"
+          }
+        }
+      }
+    },
+    "Keep order" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រក្សាការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Keep roots in 1–2 inches of clean water; change it weekly" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទុកឫសក្នុងទឹកស្អាតជម្រៅ 1–2 អ៊ីញ ហើយប្ដូរទឹករៀងរាល់សប្ដាហ៍"
+          }
+        }
+      }
+    },
+    "KHQR" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "KHQR"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភាសា"
+          }
+        }
+      }
+    },
+    "Let the top few centimetres of soil dry out before watering again, make sure the pot drains, and move it somewhere brighter." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទុកឱ្យស្រទាប់ដីផ្នែកខាងលើកម្រាស់ពីរបីសង់ទីម៉ែត្រស្ងួតសិនមុននឹងស្រោចទឹកម្តងទៀត ត្រូវប្រាកដថាកូនផើងអាចបង្ហូរទឹកចេញបានល្អ ហើយផ្លាស់ទីវាទៅដាក់នៅកន្លែងដែលមានពន្លឺភ្លឺជាងមុន។"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺ"
+          }
+        }
+      }
+    },
+    "Loading…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងផ្ទុក…"
+          }
+        }
+      }
+    },
+    "Location is off — type your address below." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទីតាំងត្រូវបានបិទ — សូមវាយអាសយដ្ឋានរបស់អ្នកខាងក្រោម។"
+          }
+        }
+      }
+    },
+    "Log out" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចាកចេញ"
+          }
+        }
+      }
+    },
+    "Log out?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចាកចេញ?"
+          }
+        }
+      }
+    },
+    "Looks healthy" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មើលទៅមានសុខភាពល្អ"
+          }
+        }
+      }
+    },
+    "Looks like a" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មើលទៅដូចជា"
+          }
+        }
+      }
+    },
+    "Low to bright indirect light" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺតិច ដល់ពន្លឺភ្លឺមិនផ្ទាល់"
+          }
+        }
+      }
+    },
+    "Low to medium indirect light" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺតិច ដល់មធ្យមមិនផ្ទាល់"
+          }
+        }
+      }
+    },
+    "Lucky Bamboo" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឫស្សីសំណាង "
+          }
+        }
+      }
+    },
+    "Lvl %lld" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កម្រិត %lld"
+          }
+        }
+      }
+    },
+    "Manage your garden's health and care schedule." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "គ្រប់គ្រងសុខភាព និងកាលវិភាគថែទាំសួនរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "Mango Tree" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមស្វាយ"
+          }
+        }
+      }
+    },
+    "Mark all as read" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សម្គាល់ទាំងអស់ថាបានអាន"
+          }
+        }
+      }
+    },
+    "Membership" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សមាជិកភាព"
+          }
+        }
+      }
+    },
+    "Might be showing: %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រហែលជាមាន៖ %@"
+          }
+        }
+      }
+    },
+    "Missing required fields." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ខ្វះព័ត៌មានដែលត្រូវការ។"
+          }
+        }
+      }
+    },
+    "Moderate care" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថែទាំមធ្យម"
+          }
+        }
+      }
+    },
+    "Monstera" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ម៉ុនស្ទេរ៉ា"
+          }
+        }
+      }
+    },
+    "Monthly" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំខែ"
+          }
+        }
+      }
+    },
+    "More Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិផ្សេងទៀត"
+          }
+        }
+      }
+    },
+    "Most indoor plants want a drink when the top 2 cm of soil is dry — usually once a week. Succulents and cacti prefer every two to three weeks. Each plant's detail page lists its own schedule." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិក្នុងផ្ទះភាគច្រើនត្រូវការស្រោចទឹកនៅពេលដែលស្រទាប់ដីផ្នែកខាងលើកម្រាស់ ២ សង់ទីម៉ែត្រស្ងួត ដែលជាធម្មតាគឺមួយសប្តាហ៍ម្តង។ រុក្ខជាតិប្រភេទស៊ូគូលែន និងដើមការកទូស ចូលចិត្តការស្រោចទឹកក្នុងរយៈពេលរៀងរាល់ ២ ទៅ ៣ សប្តាហ៍ម្តង។ កាលវិភាគស្រោចទឹកជាក់លាក់សម្រាប់រុក្ខជាតិនីមួយៗមានបញ្ជាក់នៅក្នុងទំព័រព័ត៌មានលម្អិតរបស់រុក្ខជាតិនោះ។"
+          }
+        }
+      }
+    },
+    "Most often overwatering or a pot that doesn't drain; sometimes too little light or a lack of nutrients." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភាគច្រើនមកពីការស្រោចទឹកច្រើនពេក ឬផើងមិនបង្ហូរទឹក ពេលខ្លះមកពីពន្លឺតិចពេក ឬខ្វះសារធាតុចិញ្ចឹម។"
+          }
+        }
+      }
+    },
+    "My Cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កន្ត្រករបស់ខ្ញុំ"
+          }
+        }
+      }
+    },
+    "My Orders" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់ខ្ញុំ"
+          }
+        }
+      }
+    },
+    "My plant arrived damaged. What now?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិរបស់ខ្ញុំមកដល់ខូចខាត។ តើត្រូវធ្វើយ៉ាងណា?"
+          }
+        }
+      }
+    },
+    "My Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិរបស់ខ្ញុំ"
+          }
+        }
+      }
+    },
+    "Name can't be empty." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឈ្មោះមិនអាចទទេបានទេ។"
+          }
+        }
+      }
+    },
+    "Name is required." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តម្រូវឲ្យមានឈ្មោះ។"
+          }
+        }
+      }
+    },
+    "Name, email and password are required." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តម្រូវឲ្យមានឈ្មោះ អ៊ីមែល និងពាក្យសម្ងាត់។"
+          }
+        }
+      }
+    },
+    "New password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពាក្យសម្ងាត់ថ្មី"
+          }
+        }
+      }
+    },
+    "New to plants? Our care guides cover watering, light and the first month with a new pot." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទើបនឹងចាប់ផ្ដើមដាំដុះ? ការណែនាំថែទាំរបស់យើងនិយាយពីការស្រោចទឹក ពន្លឺ និងខែដំបូងជាមួយផើងថ្មី។"
+          }
+        }
+      }
+    },
+    "Next day" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថ្ងៃបន្ទាប់"
+          }
+        }
+      }
+    },
+    "No account found with this email." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រកមិនឃើញគណនីដែលប្រើអ៊ីមែលនេះទេ។"
+          }
+        }
+      }
+    },
+    "No address recorded" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនមានអាសយដ្ឋានកត់ត្រា"
+          }
+        }
+      }
+    },
+    "No address yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានអាសយដ្ឋាន"
+          }
+        }
+      }
+    },
+    "No connection. Check your network and try again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "គ្មានការតភ្ជាប់។ សូមពិនិត្យបណ្ដាញរបស់អ្នក ហើយព្យាយាមម្ដងទៀត។"
+          }
+        }
+      }
+    },
+    "No matches for “%@”" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រកមិនឃើញ “%@”"
+          }
+        }
+      }
+    },
+    "No notifications yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានការជូនដំណឹង"
+          }
+        }
+      }
+    },
+    "No orders yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "No plant recognised" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនស្គាល់រុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "No plants found" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រកមិនឃើញរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "No plants saved yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានរុក្ខជាតិដែលបានរក្សាទុក"
+          }
+        }
+      }
+    },
+    "No plants yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "No ratings yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានការដាក់ពិន្ទុ"
+          }
+        }
+      }
+    },
+    "No reviews yet" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានការវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "No sign of the common problems the scanner knows about." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនឃើញសញ្ញានៃបញ្ហាទូទៅ ដែលកម្មវិធីស្កេនស្គាល់ទេ។"
+          }
+        }
+      }
+    },
+    "Not great" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនសូវល្អ"
+          }
+        }
+      }
+    },
+    "Not it? It could also be" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនមែន? វាក៏អាចជា"
+          }
+        }
+      }
+    },
+    "Not set" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនបានកំណត់"
+          }
+        }
+      }
+    },
+    "Not sure — maybe a" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនប្រាកដ — ប្រហែលជា"
+          }
+        }
+      }
+    },
+    "Nothing to check out" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "គ្មានអ្វីសម្រាប់ទូទាត់"
+          }
+        }
+      }
+    },
+    "Notifications" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការជូនដំណឹង"
+          }
+        }
+      }
+    },
+    "Notifications, %lld unread" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការជូនដំណឹង, %lld មិនទាន់អាន"
+          }
+        }
+      }
+    },
+    "Okay" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ធម្មតា"
+          }
+        }
+      }
+    },
+    "On any address within 3 km." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សម្រាប់អាសយដ្ឋានណាមួយក្នុងចម្ងាយ 3 គីឡូម៉ែត្រ។"
+          }
+        }
+      }
+    },
+    "On the way" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងធ្វើដំណើរ"
+          }
+        }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បើកការកំណត់"
+          }
+        }
+      }
+    },
+    "Open the Home tab once so the catalog is loaded." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមបើកផ្ទាំងទំព័រដើមម្ដង ដើម្បីផ្ទុកបញ្ជីទំនិញ។"
+          }
+        }
+      }
+    },
+    "Order #%@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញ #%@"
+          }
+        }
+      }
+    },
+    "Order #%@ will be cancelled and won't be delivered." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញ #%@ នឹងត្រូវលុបចោល ហើយនឹងមិនត្រូវដឹកជញ្ជូនទេ។"
+          }
+        }
+      }
+    },
+    "Order Cancelled" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញត្រូវបានលុបចោល"
+          }
+        }
+      }
+    },
+    "Order Confirmed" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញត្រូវបានបញ្ជាក់"
+          }
+        }
+      }
+    },
+    "Order Delivered" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញត្រូវបានដឹកដល់"
+          }
+        }
+      }
+    },
+    "Order number" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លេខការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Order placed" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Order Placed" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Order Rejected" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញត្រូវបានបដិសេធ"
+          }
+        }
+      }
+    },
+    "Order Summary" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សង្ខេបការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Orders" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Orders you place will appear here with live delivery status." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកនឹងបង្ហាញនៅទីនេះ ជាមួយស្ថានភាពដឹកជញ្ជូនបច្ចុប្បន្ន។"
+          }
+        }
+      }
+    },
+    "Other" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ផ្សេងៗ"
+          }
+        }
+      }
+    },
+    "Outdoor" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ក្រៅផ្ទះ"
+          }
+        }
+      }
+    },
+    "Outdoor Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិក្រៅផ្ទះ"
+          }
+        }
+      }
+    },
+    "Partial sun" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺថ្ងៃខ្លះ"
+          }
+        }
+      }
+    },
+    "Password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពាក្យសម្ងាត់"
+          }
+        }
+      }
+    },
+    "Password length looks good" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រវែងពាក្យសម្ងាត់ល្អ"
+          }
+        }
+      }
+    },
+    "Password updated. You can sign in with it now." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពាក្យសម្ងាត់ត្រូវបានធ្វើបច្ចុប្បន្នភាព។ អ្នកអាចចូលគណនីជាមួយវាបានឥឡូវនេះ។"
+          }
+        }
+      }
+    },
+    "Pay from your ABA account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទូទាត់ពីគណនី ABA របស់អ្នក"
+          }
+        }
+      }
+    },
+    "Pay the courier on arrival" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទូទាត់ជូនអ្នកដឹកជញ្ជូនពេលមកដល់"
+          }
+        }
+      }
+    },
+    "Payment Method" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វិធីទូទាត់"
+          }
+        }
+      }
+    },
+    "Payment Methods" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វិធីទូទាត់"
+          }
+        }
+      }
+    },
+    "Peace Lily" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ផ្កាលីលីសន្តិភាព"
+          }
+        }
+      }
+    },
+    "Pending" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងរង់ចាំ"
+          }
+        }
+      }
+    },
+    "Photo access is off. Enable it in Settings to pick a photo." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការចូលប្រើរូបថតត្រូវបានបិទ។ សូមបើកវានៅក្នុង ការកំណត់ ដើម្បីជ្រើសរើសរូបថត។"
+          }
+        }
+      }
+    },
+    "Pick between 1 and 5 stars." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមជ្រើសរើសពី 1 ដល់ 5 ផ្កាយ។"
+          }
+        }
+      }
+    },
+    "Place Order · %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ជាទិញ · %@"
+          }
+        }
+      }
+    },
+    "Placed %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បានបញ្ជាទិញ %@"
+          }
+        }
+      }
+    },
+    "Plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Plant Farm" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm"
+          }
+        }
+      }
+    },
+    "Plant Farm %@ · Built for urban gardeners" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm %@ · បង្កើតឡើងសម្រាប់អ្នកដាំដុះរុក្ខជាតិក្នុងទីក្រុង"
+          }
+        }
+      }
+    },
+    "Plant Farm never stores card numbers. Payment is completed in your bank's own app or page when you place an order." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plant Farm មិនដែលរក្សាទុកលេខកាតទេ។ ការទូទាត់ត្រូវបានបញ្ចប់នៅក្នុងកម្មវិធី ឬទំព័ររបស់ធនាគារអ្នក ពេលអ្នកបញ្ជាទិញ។"
+          }
+        }
+      }
+    },
+    "Plant not found." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រកមិនឃើញរុក្ខជាតិ។"
+          }
+        }
+      }
+    },
+    "Plants you add from the shop will show up here." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិដែលអ្នកបន្ថែមពីហាងនឹងបង្ហាញនៅទីនេះ។"
+          }
+        }
+      }
+    },
+    "Poor" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ខ្សោយ"
+          }
+        }
+      }
+    },
+    "Popular Plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិពេញនិយម"
+          }
+        }
+      }
+    },
+    "Possible issue: %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ហាដែលអាចមាន៖ %@"
+          }
+        }
+      }
+    },
+    "Post" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្ហោះ"
+          }
+        }
+      }
+    },
+    "Pothos" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វល្លិពូថូស"
+          }
+        }
+      }
+    },
+    "Powdery mildew" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ផ្សិតម្សៅ"
+          }
+        }
+      }
+    },
+    "Preparing" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងរៀបចំ"
+          }
+        }
+      }
+    },
+    "Preview" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មើលជាមុន"
+          }
+        }
+      }
+    },
+    "Probably a" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រហែលជា"
+          }
+        }
+      }
+    },
+    "Profile" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រវត្តិរូប"
+          }
+        }
+      }
+    },
+    "Progress" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វឌ្ឍនភាព"
+          }
+        }
+      }
+    },
+    "Promotion %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Promotion %1$lld of %2$lld"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការផ្សព្វផ្សាយ %lld ក្នុងចំណោម %lld"
+          }
+        }
+      }
+    },
+    "Pull down to try again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទាញចុះក្រោម ដើម្បីព្យាយាមម្ដងទៀត។"
+          }
+        }
+      }
+    },
+    "Quantity" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បរិមាណ"
+          }
+        }
+      }
+    },
+    "Ratings & Reviews" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពិន្ទុ និងការវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "Read more" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អានបន្ថែម"
+          }
+        }
+      }
+    },
+    "Rejected" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ត្រូវបានបដិសេធ"
+          }
+        }
+      }
+    },
+    "Remove" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដកចេញ"
+          }
+        }
+      }
+    },
+    "Remove %@ from cart" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដក %@ ចេញពីកន្ត្រក"
+          }
+        }
+      }
+    },
+    "Remove %@ from wishlist" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដក %@ ចេញពីបញ្ជីចំណូលចិត្ត"
+          }
+        }
+      }
+    },
+    "Remove %@?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដក %@ ចេញ?"
+          }
+        }
+      }
+    },
+    "Remove plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដករុក្ខជាតិចេញ"
+          }
+        }
+      }
+    },
+    "Remove the worst leaves, keep water off the foliage, improve airflow, and use a fungicide if it keeps spreading." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដកស្លឹកដែលខូចខ្លាំងចេញ កុំឲ្យទឹកប៉ះស្លឹក បង្កើនលំហូរខ្យល់ ហើយប្រើថ្នាំសម្លាប់ផ្សិត ប្រសិនបើវានៅតែរាលដាល។"
+          }
+        }
+      }
+    },
+    "Reset password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំណត់ពាក្យសម្ងាត់ឡើងវិញ"
+          }
+        }
+      }
+    },
+    "Reset your password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញ"
+          }
+        }
+      }
+    },
+    "Rotate pots toward the light" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្វិលផើងទៅរកពន្លឺ"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រក្សាទុក"
+          }
+        }
+      }
+    },
+    "Save %@ to wishlist" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រក្សាទុក %@ ក្នុងបញ្ជីចំណូលចិត្ត"
+          }
+        }
+      }
+    },
+    "Save changes" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រក្សាទុកការផ្លាស់ប្ដូរ"
+          }
+        }
+      }
+    },
+    "Saving %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សន្សំបាន %@"
+          }
+        }
+      }
+    },
+    "Scan" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្កេន"
+          }
+        }
+      }
+    },
+    "Scan result" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លទ្ធផលស្កេន"
+          }
+        }
+      }
+    },
+    "Scan to pay with any bank app" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្កេនដើម្បីទូទាត់ជាមួយកម្មវិធីធនាគារណាមួយ"
+          }
+        }
+      }
+    },
+    "Search plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្វែងរករុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "See all" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មើលទាំងអស់"
+          }
+        }
+      }
+    },
+    "See less" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មើលតិចជាង"
+          }
+        }
+      }
+    },
+    "Send a photo within 48 hours of delivery and we'll replace it on the next run at no cost. Leaves sometimes bruise in transit — most plants recover within a fortnight, and we'd rather advise than replace unnecessarily." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមផ្ញើរូបថតក្នុងរយៈពេល 48 ម៉ោងបន្ទាប់ពីទទួលបាន ហើយយើងនឹងប្ដូរជូនថ្មីក្នុងការដឹកជញ្ជូនលើកក្រោយ ដោយឥតគិតថ្លៃ។ ពេលខ្លះស្លឹកអាចជាំក្នុងពេលដឹកជញ្ជូន — រុក្ខជាតិភាគច្រើនជាសះស្បើយវិញក្នុងរយៈពេលពីរសប្ដាហ៍ ហើយយើងចូលចិត្តផ្ដល់ដំបូន្មាន ជាជាងប្ដូរដោយមិនចាំបាច់។"
+          }
+        }
+      }
+    },
+    "Shade" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ម្លប់"
+          }
+        }
+      }
+    },
+    "Shop unavailable" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ហាងមិនមាន"
+          }
+        }
+      }
+    },
+    "Shop, track and care for every plant in your home." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទិញ តាមដាន និងថែទាំរុក្ខជាតិគ្រប់ដើម នៅក្នុងផ្ទះរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "Show %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show %1$@, %2$@"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្ហាញ %@, %@"
+          }
+        }
+      }
+    },
+    "Show all %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្ហាញ %@ ទាំងអស់"
+          }
+        }
+      }
+    },
+    "Show less" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្ហាញតិចជាង"
+          }
+        }
+      }
+    },
+    "Show password" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បង្ហាញពាក្យសម្ងាត់"
+          }
+        }
+      }
+    },
+    "Sign in" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនី"
+          }
+        }
+      }
+    },
+    "Sign in required" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តម្រូវឲ្យចូលគណនី"
+          }
+        }
+      }
+    },
+    "Sign in to check out and place your order." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនី ដើម្បីទូទាត់ និងបញ្ជាទិញ។"
+          }
+        }
+      }
+    },
+    "Sign in to checkout" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនីដើម្បីទូទាត់"
+          }
+        }
+      }
+    },
+    "Sign in to leave a review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនីដើម្បីវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "Sign in to leave a review." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនីដើម្បីវាយតម្លៃ។"
+          }
+        }
+      }
+    },
+    "Sign in to manage your profile, orders and saved plants." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនី ដើម្បីគ្រប់គ្រងប្រវត្តិរូប ការបញ្ជាទិញ និងរុក្ខជាតិដែលបានរក្សាទុក។"
+          }
+        }
+      }
+    },
+    "Sign in to track and care for your plants." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនី ដើម្បីតាមដាន និងថែទាំរុក្ខជាតិរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "Sign in to your Plant Farm account" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចូលគណនី Plant Farm របស់អ្នក"
+          }
+        }
+      }
+    },
+    "Sign up" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចុះឈ្មោះ"
+          }
+        }
+      }
+    },
+    "Signs of pests" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សញ្ញានៃសត្វល្អិត"
+          }
+        }
+      }
+    },
+    "Snake Plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមអណ្ដាតពស់"
+          }
+        }
+      }
+    },
+    "Something went wrong while looking at the photo. Please try again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មានបញ្ហាពេលពិនិត្យរូបថត។ សូមព្យាយាមម្ដងទៀត។"
+          }
+        }
+      }
+    },
+    "Something went wrong. Please try again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្ដងទៀត។"
+          }
+        }
+      }
+    },
+    "Sorry, your order was rejected." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមអភ័យទោស ការបញ្ជាទិញរបស់អ្នកត្រូវបានបដិសេធ។"
+          }
+        }
+      }
+    },
+    "Special Notes" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំណត់ចំណាំពិសេស"
+          }
+        }
+      }
+    },
+    "Special Offers" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការផ្ដល់ជូនពិសេស"
+          }
+        }
+      }
+    },
+    "Species (optional)" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រភេទ (ស្រេចចិត្ត)"
+          }
+        }
+      }
+    },
+    "Species not set" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនបានកំណត់ប្រភេទ"
+          }
+        }
+      }
+    },
+    "Spider Plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ដើមពីងពាង"
+          }
+        }
+      }
+    },
+    "Spots on the leaves" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្នាមអុចៗលើស្លឹក"
+          }
+        }
+      }
+    },
+    "Standard" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ធម្មតា"
+          }
+        }
+      }
+    },
+    "Standard delivery arrives in 3–5 days for %@. Express arrives the next day for %@. Both are free on membership orders over $50." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Standard delivery arrives in 3–5 days for %1$@. Express arrives the next day for %2$@. Both are free on membership orders over $50."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការដឹកជញ្ជូនធម្មតាមកដល់ក្នុងរយៈពេល 3–5 ថ្ងៃ ក្នុងតម្លៃ %@។ ការដឹកជញ្ជូនរហ័សមកដល់នៅថ្ងៃបន្ទាប់ ក្នុងតម្លៃ %@។ ទាំងពីរឥតគិតថ្លៃ សម្រាប់ការបញ្ជាទិញរបស់សមាជិកដែលលើសពី $50។"
+          }
+        }
+      }
+    },
+    "Still need help?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "នៅតែត្រូវការជំនួយ?"
+          }
+        }
+      }
+    },
+    "Street, house, floor" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ផ្លូវ ផ្ទះ ជាន់"
+          }
+        }
+      }
+    },
+    "Subtotal" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សរុបរង"
+          }
+        }
+      }
+    },
+    "Sunlight" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពន្លឺថ្ងៃ"
+          }
+        }
+      }
+    },
+    "System" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តាមប្រព័ន្ធ"
+          }
+        }
+      }
+    },
+    "Take a photo to identify the plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថតរូប ដើម្បីស្គាល់ប្រភេទរុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Take photo" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ថតរូប"
+          }
+        }
+      }
+    },
+    "Tap a star to rate" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចុចលើផ្កាយ ដើម្បីដាក់ពិន្ទុ"
+          }
+        }
+      }
+    },
+    "Tap the heart on any plant to keep it here for later." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ចុចលើបេះដូងនៃរុក្ខជាតិណាមួយ ដើម្បីរក្សាទុកវានៅទីនេះសម្រាប់ពេលក្រោយ។"
+          }
+        }
+      }
+    },
+    "That image couldn't be prepared for upload." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចរៀបចំរូបភាពនោះសម្រាប់ផ្ទុកឡើងបានទេ។"
+          }
+        }
+      }
+    },
+    "That photo couldn't be read. Try another one." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនអាចអានរូបថតនោះបានទេ។ សូមសាកល្បងរូបផ្សេង។"
+          }
+        }
+      }
+    },
+    "The best app\nfor your plants" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កម្មវិធីល្អបំផុត\nសម្រាប់រុក្ខជាតិរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "The passwords don't match." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពាក្យសម្ងាត់មិនដូចគ្នាទេ។"
+          }
+        }
+      }
+    },
+    "The server sent something we couldn't read." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ម៉ាស៊ីនមេបានផ្ញើទិន្នន័យ ដែលយើងមិនអាចអានបាន។"
+          }
+        }
+      }
+    },
+    "theme.light" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Light"
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ភ្លឺ"
+          }
+        }
+      }
+    },
+    "This order is already being processed and can no longer be cancelled." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញនេះកំពុងដំណើរការហើយ មិនអាចលុបចោលបានទៀតទេ។"
+          }
+        }
+      }
+    },
+    "This order was cancelled." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញនេះត្រូវបានលុបចោល។"
+          }
+        }
+      }
+    },
+    "This order was rejected." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញនេះត្រូវបានបដិសេធ។"
+          }
+        }
+      }
+    },
+    "This removes your rating from %@." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "វានឹងដកពិន្ទុរបស់អ្នកចេញពី %@។"
+          }
+        }
+      }
+    },
+    "Today's routine" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទម្លាប់ថ្ងៃនេះ"
+          }
+        }
+      }
+    },
+    "Total" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សរុប"
+          }
+        }
+      }
+    },
+    "Track order" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តាមដានការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Track your plants and keep your orders in one place" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តាមដានរុក្ខជាតិ និងការបញ្ជាទិញរបស់អ្នក នៅកន្លែងតែមួយ"
+          }
+        }
+      }
+    },
+    "Try a closer photo of a single plant in good light." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមថតរូបរុក្ខជាតិតែមួយឲ្យជិតជាងនេះ ក្នុងពន្លឺល្អ។"
+          }
+        }
+      }
+    },
+    "Try a different name, or browse a category instead." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សាកល្បងឈ្មោះផ្សេង ឬរកមើលតាមប្រភេទវិញ។"
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ព្យាយាមម្ដងទៀត"
+          }
+        }
+      }
+    },
+    "Twice a week" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពីរដងក្នុងមួយសប្ដាហ៍"
+          }
+        }
+      }
+    },
+    "Unread" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់អាន"
+          }
+        }
+      }
+    },
+    "Up to %lld per order" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រហូតដល់ %lld ក្នុងមួយការបញ្ជាទិញ"
+          }
+        }
+      }
+    },
+    "Upcoming" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "នឹងមកដល់"
+          }
+        }
+      }
+    },
+    "Updates about your orders will show up here." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ព័ត៌មានថ្មីៗអំពីការបញ្ជាទិញរបស់អ្នក នឹងបង្ហាញនៅទីនេះ។"
+          }
+        }
+      }
+    },
+    "Use at least %lld characters for your password." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមប្រើយ៉ាងតិច %lld តួអក្សរសម្រាប់ពាក្យសម្ងាត់។"
+          }
+        }
+      }
+    },
+    "Use at least %lld characters." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមប្រើយ៉ាងតិច %lld តួអក្សរ។"
+          }
+        }
+      }
+    },
+    "Usually a fungal or bacterial leaf-spot infection, encouraged by wet leaves and still air." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជាធម្មតាជាការឆ្លងមេរោគផ្សិត ឬបាក់តេរីលើស្លឹក ដែលកើតឡើងដោយសារស្លឹកសើម និងខ្យល់មិនចេញចូល។"
+          }
+        }
+      }
+    },
+    "Usually means" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជាធម្មតាមានន័យថា"
+          }
+        }
+      }
+    },
+    "Visa / Mastercard" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visa / Mastercard"
+          }
+        }
+      }
+    },
+    "Waiting for confirmation" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កំពុងរង់ចាំការបញ្ជាក់"
+          }
+        }
+      }
+    },
+    "Water" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទឹក"
+          }
+        }
+      }
+    },
+    "Water anything looking dry" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្រោចទឹករុក្ខជាតិណាដែលមើលទៅស្ងួត"
+          }
+        }
+      }
+    },
+    "Water more evenly, raise humidity by misting or grouping plants, and flush the soil with plenty of water every few months." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្រោចទឹកឲ្យស្មើជាងមុន បង្កើនសំណើមដោយបាញ់ទឹក ឬដាក់រុក្ខជាតិជាក្រុម ហើយលាងដីដោយទឹកច្រើន រៀងរាល់ពីរបីខែម្ដង។"
+          }
+        }
+      }
+    },
+    "Watering" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការស្រោចទឹក"
+          }
+        }
+      }
+    },
+    "We couldn't place your order. Please try again." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "យើងមិនអាចបញ្ជាទិញបានទេ។ សូមព្យាយាមម្ដងទៀត។"
+          }
+        }
+      }
+    },
+    "We don't have %@ in the shop right now — here are some popular picks instead." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ហាងយើងមិនទាន់មាន %@ នៅពេលនេះទេ — នេះជារុក្ខជាតិពេញនិយមមួយចំនួនជំនួសវិញ។"
+          }
+        }
+      }
+    },
+    "We're here to help you" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "យើងនៅទីនេះដើម្បីជួយអ្នក"
+          }
+        }
+      }
+    },
+    "Webbing, white fluff, sticky residue or tiny dots point to spider mites, mealybugs, scale or aphids." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សរសៃដូចសំណាញ់ពីងពាង រោមពណ៌ស កាកសំណល់ស្អិត ឬចំណុចតូចៗ បង្ហាញថាមានចៃពីងពាង ចៃម្សៅ ចៃស្រកា ឬចៃស្លឹក។"
+          }
+        }
+      }
+    },
+    "Weekly" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំសប្ដាហ៍"
+          }
+        }
+      }
+    },
+    "Weekly, or as soon as the leaves start to droop" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំសប្ដាហ៍ ឬភ្លាមៗពេលស្លឹកចាប់ផ្ដើមស្រពោន"
+          }
+        }
+      }
+    },
+    "Weekly, when the top inch of soil is dry" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំសប្ដាហ៍ ពេលដីខាងលើមួយអ៊ីញស្ងួត"
+          }
+        }
+      }
+    },
+    "Weekly; keep the soil lightly moist" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំសប្ដាហ៍ រក្សាដីឲ្យសើមបន្តិច"
+          }
+        }
+      }
+    },
+    "Weekly; let the top few inches dry out first" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រចាំសប្ដាហ៍ ទុកឲ្យដីខាងលើពីរបីអ៊ីញស្ងួតសិន"
+          }
+        }
+      }
+    },
+    "Welcome" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមស្វាគមន៍"
+          }
+        }
+      }
+    },
+    "Welcome back" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សូមស្វាគមន៍ការត្រឡប់មកវិញ"
+          }
+        }
+      }
+    },
+    "What to do" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្វីដែលត្រូវធ្វើ"
+          }
+        }
+      }
+    },
+    "Who can leave a review?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "តើអ្នកណាអាចវាយតម្លៃបាន?"
+          }
+        }
+      }
+    },
+    "Wilting or drooping" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្វិត ឬស្រពោន"
+          }
+        }
+      }
+    },
+    "Wipe dust off broad leaves" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ជូតធូលីចេញពីស្លឹកធំៗ"
+          }
+        }
+      }
+    },
+    "Wishlist" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បញ្ជីចំណូលចិត្ត"
+          }
+        }
+      }
+    },
+    "Write a review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "សរសេរការវាយតម្លៃ"
+          }
+        }
+      }
+    },
+    "Yellowing leaves" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ស្លឹកឡើងលឿង"
+          }
+        }
+      }
+    },
+    "Yes, while an order is still pending. Open Profile → My Orders, choose the order and tap Cancel order. Once the shop confirms it and starts preparing, cancelling is no longer possible — email us and we'll help." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បាន ខណៈពេលដែលការបញ្ជាទិញនៅរង់ចាំ។ បើក ប្រវត្តិរូប → ការបញ្ជាទិញរបស់ខ្ញុំ ជ្រើសរើសការបញ្ជាទិញ ហើយចុច លុបចោលការបញ្ជាទិញ។ នៅពេលហាងបញ្ជាក់ ហើយចាប់ផ្ដើមរៀបចំ អ្នកមិនអាចលុបចោលបានទៀតទេ — សូមផ្ញើអ៊ីមែលមកយើង យើងនឹងជួយ។"
+          }
+        }
+      }
+    },
+    "You" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នក"
+          }
+        }
+      }
+    },
+    "You can follow this order from Profile → My Orders." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកអាចតាមដានការបញ្ជាទិញនេះពី ប្រវត្តិរូប → ការបញ្ជាទិញរបស់ខ្ញុំ។"
+          }
+        }
+      }
+    },
+    "You might also like" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកប្រហែលជាចូលចិត្តផងដែរ"
+          }
+        }
+      }
+    },
+    "You save %@ per plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកសន្សំបាន %@ ក្នុងមួយដើម"
+          }
+        }
+      }
+    },
+    "You'll need to sign in again to see your orders and saved plants." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "អ្នកនឹងត្រូវចូលគណនីម្ដងទៀត ដើម្បីមើលការបញ្ជាទិញ និងរុក្ខជាតិដែលបានរក្សាទុក។"
+          }
+        }
+      }
+    },
+    "Your cart is empty" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កន្ត្រករបស់អ្នកទទេ"
+          }
+        }
+      }
+    },
+    "Your cart is empty." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "កន្ត្រករបស់អ្នកទទេ។"
+          }
+        }
+      }
+    },
+    "Your details stay with your bank" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ព័ត៌មានរបស់អ្នកនៅជាមួយធនាគាររបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Your green companions are being prepared for the journey to your home." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិត្តបៃតងរបស់អ្នកកំពុងត្រូវបានរៀបចំ សម្រាប់ដំណើរមកកាន់ផ្ទះរបស់អ្នក។"
+          }
+        }
+      }
+    },
+    "Your name" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ឈ្មោះរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Your order" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Your order has been cancelled." : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានលុបចោល។"
+          }
+        }
+      }
+    },
+    "Your order has been confirmed!" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានបញ្ជាក់ហើយ!"
+          }
+        }
+      }
+    },
+    "Your order has been delivered!" : {
+      "comment" : "Sent by the Laravel backend; displayed via LocalizedStringResource.dynamic.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានដឹកជញ្ជូនរួចរាល់ហើយ!"
+          }
+        }
+      }
+    },
+    "Your rating" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការវាយតម្លៃរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Your review" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការវាយតម្លៃរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "ZZ Plant" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិ ZZ"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

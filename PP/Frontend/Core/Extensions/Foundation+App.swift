@@ -23,7 +23,7 @@ nonisolated extension Double {
 }
 
 nonisolated extension Error {
-    var userMessage: String {
+    var userMessage: LocalizedStringResource {
         (self as? APIError)?.message ?? "Something went wrong. Please try again."
     }
 }

@@ -18,8 +18,7 @@ nonisolated enum ImageClassifierError: LocalizedError {
     case modelMissing(String)
     case unreadableImage
     case inferenceFailed
-
-    var errorDescription: String? {
+    var message: LocalizedStringResource {
         switch self {
         case .modelMissing(let name):
             return "\(name) isn't included in this build."
@@ -27,12 +26,14 @@ nonisolated enum ImageClassifierError: LocalizedError {
             return "That photo couldn't be read. Try another one."
         case .inferenceFailed:
             #if targetEnvironment(simulator)
-            return "Plant recognition can't run in the iOS Simulator. Run the app on an phone to try it."
+            return "Plant recognition can't run in the iOS Simulator. Run the app on a phone to try it."
             #else
             return "Something went wrong while looking at the photo. Please try again."
             #endif
         }
     }
+
+    var errorDescription: String? { String(localized: message) }
 }
 actor ImageClassifier {
     static let species = ImageClassifier(modelName: "PlantClassifier")
@@ -84,9 +85,6 @@ actor ImageClassifier {
         self.request = request
         return request
     }
-
-    /// Redraws the photo the right way up at a sensible size, so EXIF orientation
-    /// from the camera or photo library never has to be threaded through Vision.
     private static func upright(_ image: UIImage, maxDimension: CGFloat) -> CGImage? {
         let longestSide = max(image.size.width, image.size.height)
         guard longestSide > 0 else { return nil }

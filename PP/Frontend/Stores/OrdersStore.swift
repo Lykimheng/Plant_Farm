@@ -12,7 +12,7 @@ import Combine
 final class OrdersStore: ObservableObject {
     @Published private(set) var orders: [OrderModel] = []
     @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage = ""
+    @Published private(set) var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
     private weak var notifications: NotificationsStore?
@@ -46,15 +46,13 @@ final class OrdersStore: ObservableObject {
                 query: ["user_id": String(userId)]
             )
             orders = response.orders.map(\.order)
-            errorMessage = ""
+            errorMessage = nil
         } catch {
             errorMessage = error.userMessage
             AppLog.network("load orders", error)
         }
     }
-
-    /// Places the order and returns the stored copy so the caller can navigate
-    /// straight to it. Throws so the checkout screen can surface the reason.
+    
     @discardableResult
     func placeOrder(
         userId: Int,

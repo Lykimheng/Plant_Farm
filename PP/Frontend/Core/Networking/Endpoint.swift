@@ -22,7 +22,7 @@ nonisolated enum API {
         if let override, let url = URL(string: override) {
             return url
         }
-        return URL(string: "http://192.168.1.45:8001")! //MARK: Machin IP here
+        return URL(string: "http://172.20.10.13:8001")! //MARK: Machin IP here
     }()
 
     static var apiURL: URL { baseURL.appendingPathComponent("api") }

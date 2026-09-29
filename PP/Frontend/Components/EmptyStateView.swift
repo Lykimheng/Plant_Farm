@@ -9,9 +9,9 @@ import SwiftUI
 
 struct EmptyStateView: View {
     let icon: String
-    let title: String
-    var message: String?
-    var actionTitle: String?
+    let title: LocalizedStringResource
+    var message: LocalizedStringResource?
+    var actionTitle: LocalizedStringResource?
     var action: (() -> Void)?
 
     var body: some View {
@@ -33,7 +33,7 @@ struct EmptyStateView: View {
             }
 
             if let actionTitle, let action {
-                Button(actionTitle, action: action)
+                Button(action: action) { Text(actionTitle) }
                     .buttonStyle(SecondaryButtonStyle(fullWidth: false))
                     .padding(.top, Theme.Spacing.xs)
             }
@@ -46,7 +46,7 @@ struct EmptyStateView: View {
 }
 
 struct LoadingStateView: View {
-    var message: String = "Loading…"
+    var message: LocalizedStringResource = "Loading…"
 
     var body: some View {
         VStack(spacing: Theme.Spacing.md) {

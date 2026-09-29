@@ -16,7 +16,7 @@ nonisolated enum PlantSymptom: String, CaseIterable, Hashable, Sendable {
     case pests
     case powderyMildew = "powdery_mildew"
 
-    var displayName: String {
+    var displayName: LocalizedStringResource {
         switch self {
         case .healthy:       return "Looks healthy"
         case .yellowLeaves:  return "Yellowing leaves"
@@ -28,8 +28,7 @@ nonisolated enum PlantSymptom: String, CaseIterable, Hashable, Sendable {
         }
     }
 
-    /// The usual reason, in plain words.
-    var likelyCause: String {
+    var likelyCause: LocalizedStringResource {
         switch self {
         case .healthy:
             return "No sign of the common problems the scanner knows about."
@@ -48,7 +47,7 @@ nonisolated enum PlantSymptom: String, CaseIterable, Hashable, Sendable {
         }
     }
 
-    var whatToDo: String {
+    var whatToDo: LocalizedStringResource {
         switch self {
         case .healthy:
             return "Keep doing what you're doing. Check the care tips above if you're unsure about light or watering."

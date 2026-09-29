@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ToastView: View {
-    let message: String
+    let message: LocalizedStringResource
 
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
@@ -30,8 +30,8 @@ struct ToastView: View {
 extension View {
     func toast(center: ToastCenter) -> some View {
         overlay(alignment: .top) {
-            if center.isShowing {
-                ToastView(message: center.message)
+            if center.isShowing, let message = center.message {
+                ToastView(message: message)
                     .padding(.top, Theme.Spacing.sm)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .onTapGesture { center.dismiss() }

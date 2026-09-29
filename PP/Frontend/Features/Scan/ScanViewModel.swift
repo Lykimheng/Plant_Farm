@@ -14,7 +14,7 @@ final class ScanViewModel: ObservableObject {
     @Published private(set) var predictions: [PlantPrediction] = []
     @Published private(set) var health: [HealthPrediction] = []
     @Published private(set) var isIdentifying = false
-    @Published private(set) var errorMessage: String?
+    @Published private(set) var errorMessage: LocalizedStringResource?
     @Published var isShowingResult = false
 
     private let speciesClassifier: ImageClassifier
@@ -27,9 +27,6 @@ final class ScanViewModel: ObservableObject {
 
     var bestMatch: PlantPrediction? { predictions.first }
     var healthVerdict: HealthPrediction? { health.first }
-
-    /// Opens the result sheet straight away and fills it in once the models
-    /// answer, so the user sees their photo while the (sub-second) inference runs.
     func identify(_ image: UIImage) async {
         self.image = image
         predictions = []
@@ -46,9 +43,8 @@ final class ScanViewModel: ObservableObject {
             predictions = try await speciesClassifier.classify(image).compactMap(PlantPrediction.init)
         } catch {
             AppLog.warning("Plant identification failed: \(error.localizedDescription)")
-            // Core ML / Vision errors read like stack traces; keep those in the log.
             let friendly = error as? ImageClassifierError ?? .inferenceFailed
-            errorMessage = friendly.errorDescription
+            errorMessage = friendly.message
         }
 
         do {

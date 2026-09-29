@@ -163,9 +163,7 @@ struct HomeView: View {
         EmptyStateView(
             icon: "wifi.exclamationmark",
             title: "Couldn't load the shop",
-            message: catalog.errorMessage.isEmpty
-                ? "Pull down to try again."
-                : catalog.errorMessage,
+            message: catalog.errorMessage ?? "Pull down to try again.",
             actionTitle: "Try again",
             action: { Task { await catalog.load() } }
         )

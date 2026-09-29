@@ -17,7 +17,7 @@ final class ReviewsStore: ObservableObject {
     @Published private(set) var canReview = false
     @Published private(set) var isLoading = false
     @Published private(set) var isSubmitting = false
-    @Published var errorMessage = ""
+    @Published var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
 
@@ -78,7 +78,7 @@ final class ReviewsStore: ObservableObject {
 
         do {
             apply(try await request())
-            errorMessage = ""
+            errorMessage = nil
             return true
         } catch {
             errorMessage = error.userMessage

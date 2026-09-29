@@ -16,7 +16,7 @@ final class CheckoutViewModel: ObservableObject {
     @Published var contactPhone = ""
     @Published var addressOverride = ""
     @Published private(set) var isPlacingOrder = false
-    @Published private(set) var errorMessage = ""
+    @Published private(set) var errorMessage: LocalizedStringResource?
     @Published var placedOrder: OrderModel?
 
     let deliveryOptions = DeliveryOption.all
@@ -33,11 +33,8 @@ final class CheckoutViewModel: ObservableObject {
     func canPlaceOrder(cart: CartStore, address: String) -> Bool {
         !cart.isEmpty && !isPlacingOrder && !deliveryAddress(from: address).isBlank
     }
-
-    /// Places the order, empties the cart, and hands back the stored order so
-    /// the success screen can link straight to real tracking.
     func placeOrder(cart: CartStore, orders: OrdersStore, userId: Int, address: String) async {
-        guard !isPlacingOrder else { return }        // a double-tap must not order twice
+        guard !isPlacingOrder else { return }
 
         let deliveryTo = deliveryAddress(from: address)
         guard !cart.isEmpty, !deliveryTo.isBlank else {
@@ -46,7 +43,7 @@ final class CheckoutViewModel: ObservableObject {
         }
 
         isPlacingOrder = true
-        errorMessage = ""
+        errorMessage = nil
         defer { isPlacingOrder = false }
 
         do {

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PerkCard: View {
     let icon: String
-    let title: String
-    let subtitle: String
+    let title: LocalizedStringResource
+    let subtitle: LocalizedStringResource
 
     var body: some View {
         HStack(spacing: Theme.Spacing.lg) {

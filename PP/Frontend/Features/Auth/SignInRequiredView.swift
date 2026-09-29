@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignInRequiredView: View {
-    let message: String
+    let message: LocalizedStringResource
     @State private var showSignIn = false
     @State private var showSignUp = false
 

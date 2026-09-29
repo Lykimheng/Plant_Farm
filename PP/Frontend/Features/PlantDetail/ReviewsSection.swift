@@ -63,7 +63,7 @@ struct ReviewsSection: View {
                     .font(.system(size: 34, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
                 StarRow(rating: store.summary.rating, size: 11)
-                Text(store.summary.countText)
+                Text("^[\(store.summary.reviewsCount) review](inflect: true)")
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.textTertiary)
             }
@@ -141,7 +141,7 @@ struct ReviewRow: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        Text(review.isMine ? "You" : review.authorName)
+                        (review.isMine ? Text("You") : Text(review.authorName))
                             .font(.system(size: 13.5, weight: .semibold))
                             .foregroundStyle(Theme.textPrimary)
                             .lineLimit(1)
@@ -158,7 +158,7 @@ struct ReviewRow: View {
 
                     HStack(spacing: 6) {
                         StarRow(rating: Double(review.rating), size: 10)
-                        Text(review.relativeDate)
+                        Text(OrderDateFormat.parse(review.createdAt), format: .relative(presentation: .named))
                             .font(.system(size: 11))
                             .foregroundStyle(Theme.textTertiary)
                     }

@@ -9,9 +9,11 @@ import Foundation
 
 nonisolated struct DeliveryOption: Identifiable, Hashable {
     let id: String
-    let name: String
+    let name: LocalizedStringResource
     let fee: Double
-    let duration: String
+    let duration: LocalizedStringResource
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
     static let standard = DeliveryOption(id: "standard", name: "Standard", fee: 1.50, duration: "3–5 days")
     static let express = DeliveryOption(id: "express", name: "Express", fee: 2.00, duration: "Next day")
@@ -21,9 +23,12 @@ nonisolated struct DeliveryOption: Identifiable, Hashable {
 
 nonisolated struct PaymentMethod: Identifiable, Hashable {
     let id: String
-    let name: String
+    let name: LocalizedStringResource
     let icon: String
-    let detail: String
+    let detail: LocalizedStringResource
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
     static let all: [PaymentMethod] = [
         PaymentMethod(id: "aba", name: "ABA Pay", icon: "building.columns", detail: "Pay from your ABA account"),

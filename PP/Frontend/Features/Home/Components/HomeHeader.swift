@@ -15,6 +15,7 @@ struct HomeHeader: View {
     @EnvironmentObject private var user: UserStore
     @EnvironmentObject private var location: LocationManager
     @EnvironmentObject private var notifications: NotificationsStore
+    @EnvironmentObject private var toast: ToastCenter
 
     @State private var showWishlist = false
     @State private var showNotifications = false
@@ -36,6 +37,7 @@ struct HomeHeader: View {
         .animation(.easeInOut(duration: 0.25), value: isCollapsed)
         .sheet(isPresented: $showWishlist) {
             NavigationStack { WishlistView(isModal: true) }
+                .toast(center: toast)
         }
         .sheet(isPresented: $showNotifications) {
             NavigationStack { NotificationsView() }
@@ -75,7 +77,7 @@ struct HomeHeader: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(Theme.onBrand)
 
-                    Text(locationText)
+                    locationText
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.onBrand.opacity(0.75))
                         .lineLimit(1)
@@ -91,9 +93,9 @@ struct HomeHeader: View {
         }
     }
 
-    private var locationText: String {
+    private var locationText: Text {
         let address = location.userAddress.isBlank ? user.location : location.userAddress
-        return address.isBlank ? "Delivering nearby" : address
+        return address.isBlank ? Text("Delivering nearby") : Text(address)
     }
 
     private var searchField: some View {
@@ -127,7 +129,7 @@ struct HomeHeader: View {
 
     // MARK: - Buttons
 
-    private func headerButton(_ icon: String, label: String, action: @escaping () -> Void) -> some View {
+    private func headerButton(_ icon: String, label: LocalizedStringResource, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
@@ -136,7 +138,7 @@ struct HomeHeader: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.pressable)
-        .accessibilityLabel(label)
+        .accessibilityLabel(Text(label))
     }
 
     private var notificationButton: some View {
@@ -149,7 +151,7 @@ struct HomeHeader: View {
                 .frame(width: Theme.Size.minimumTapTarget, height: Theme.Size.minimumTapTarget)
                 .overlay(alignment: .topTrailing) {
                     if notifications.unreadCount > 0 {
-                        Text(notifications.unreadCount > 9 ? "9+" : "\(notifications.unreadCount)")
+                        Text(verbatim: notifications.unreadCount > 9 ? "9+" : "\(notifications.unreadCount)")
                             .font(.system(size: 9, weight: .bold))
                             .foregroundStyle(Theme.onBrand)
                             .padding(.horizontal, 4)

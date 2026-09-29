@@ -28,7 +28,7 @@ nonisolated enum PlantCategory: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .all:     return "All"
         case .indoor:  return "Indoor"
@@ -39,7 +39,7 @@ nonisolated enum PlantCategory: String, CaseIterable, Identifiable, Hashable {
         }
     }
     
-    var sectionTitle: String {
+    var sectionTitle: LocalizedStringResource {
         switch self {
         case .all:     return "All Plants"
         case .indoor:  return "Indoor Plants"

@@ -14,10 +14,10 @@ struct OrderCard: View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("#\(order.orderNumber)")
+                    Text(verbatim: "#\(order.orderNumber)")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
-                    Text(order.dateText)
+                    Text(order.placedAt, format: Date.FormatStyle(date: .abbreviated, time: .shortened))
                         .font(.system(size: 11.5))
                         .foregroundStyle(Theme.textTertiary)
                 }

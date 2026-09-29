@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlantSection: View {
-    let title: String
+    let title: LocalizedStringResource
     let listings: [PlantListing]
     let isExpanded: Bool
     let onToggle: () -> Void
@@ -61,7 +61,6 @@ struct PlantLink: View {
     }
 }
 
-/// Two-column grid used by search results and the filtered category view.
 struct PlantGrid: View {
     let listings: [PlantListing]
 

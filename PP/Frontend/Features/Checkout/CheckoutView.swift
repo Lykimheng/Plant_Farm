@@ -60,12 +60,7 @@ struct CheckoutView: View {
                 specialNotes
                 orderSummary
 
-                if !viewModel.errorMessage.isEmpty {
-                    Label(viewModel.errorMessage, systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 12.5))
-                        .foregroundStyle(Theme.danger)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                InlineError(message: viewModel.errorMessage)
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.lg)
@@ -130,7 +125,7 @@ struct CheckoutView: View {
                         submitLabel: .done
                     )
                 } else {
-                    Text(deliveryAddress.isBlank ? "No address yet" : deliveryAddress)
+                    (deliveryAddress.isBlank ? Text("No address yet") : Text(deliveryAddress))
                         .font(.system(size: 14))
                         .foregroundStyle(deliveryAddress.isBlank ? Theme.textTertiary : Theme.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -225,8 +220,8 @@ struct CheckoutView: View {
                     .opacity(0.8)
             }
 
-            summaryRow("Subtotal", cart.subtotal.priceText)
-            summaryRow("\(viewModel.selectedDelivery.name) delivery", viewModel.deliveryFee.priceText)
+            summaryRow(Text("Subtotal"), cart.subtotal.priceText)
+            summaryRow(Text("\(Text(viewModel.selectedDelivery.name)) delivery"), viewModel.deliveryFee.priceText)
 
             Divider().overlay(Theme.onBrand.opacity(0.3))
 
@@ -244,9 +239,9 @@ struct CheckoutView: View {
         .background(Theme.brandGradient, in: RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
     }
 
-    private func summaryRow(_ label: String, _ value: String) -> some View {
+    private func summaryRow(_ label: Text, _ value: String) -> some View {
         HStack {
-            Text(label).opacity(0.85)
+            label.opacity(0.85)
             Spacer()
             Text(value)
         }
@@ -361,7 +356,7 @@ struct PaymentMethodRow: View {
 
 /// Titled block used across checkout, orders and profile.
 struct SectionCard<Content: View, Accessory: View>: View {
-    let title: String
+    let title: LocalizedStringResource
     var icon: String?
     @ViewBuilder var content: () -> Content
     @ViewBuilder var accessory: () -> Accessory
@@ -389,7 +384,7 @@ struct SectionCard<Content: View, Accessory: View>: View {
 }
 
 extension SectionCard where Accessory == EmptyView {
-    init(title: String, icon: String? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(title: LocalizedStringResource, icon: String? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.init(title: title, icon: icon, content: content, accessory: { EmptyView() })
     }
 }

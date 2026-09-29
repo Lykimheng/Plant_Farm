@@ -15,7 +15,7 @@ struct EditProfileView: View {
     @State private var name = ""
     @State private var isSaving = false
     @State private var isUploadingAvatar = false
-    @State private var errorMessage = ""
+    @State private var errorMessage: LocalizedStringResource?
     @State private var showPhotoSourceDialog = false
     @State private var showImagePicker = false
     @State private var imagePickerSource: UIImagePickerController.SourceType = .photoLibrary
@@ -45,12 +45,7 @@ struct EditProfileView: View {
                         )
                     }
 
-                    if !errorMessage.isEmpty {
-                        Label(errorMessage, systemImage: "exclamationmark.triangle")
-                            .font(.system(size: 12.5))
-                            .foregroundStyle(Theme.danger)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
+                    InlineError(message: errorMessage)
 
                     Button {
                         save()
@@ -144,7 +139,7 @@ struct EditProfileView: View {
     // MARK: - Actions
 
     private func save() {
-        errorMessage = ""
+        errorMessage = nil
         isSaving = true
 
         Task {
@@ -159,7 +154,7 @@ struct EditProfileView: View {
     }
 
     private func uploadAvatar(_ image: UIImage) {
-        errorMessage = ""
+        errorMessage = nil
         isUploadingAvatar = true
 
         Task {

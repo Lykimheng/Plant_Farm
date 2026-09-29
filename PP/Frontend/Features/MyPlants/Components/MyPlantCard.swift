@@ -60,7 +60,7 @@ struct MyPlantCard: View {
                 Text(plant.name)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
-                Text(plant.species.isBlank ? "Species not set" : plant.species)
+                (plant.species.isBlank ? Text("Species not set") : Text(plant.species))
                     .font(.system(size: 12))
                     .foregroundStyle(Theme.textTertiary)
             }
@@ -76,7 +76,9 @@ struct MyPlantCard: View {
         .padding(Theme.Spacing.lg)
     }
 
-    private func careFact(icon: String, label: String, value: String) -> some View {
+    /// `value` is what the server stored — the English wording picked in
+    /// AddMyPlantView — so it's translated by looking that text up.
+    private func careFact(icon: String, label: LocalizedStringResource, value: String) -> some View {
         HStack(spacing: Theme.Spacing.sm) {
             Image(systemName: icon)
                 .font(.system(size: 13))
@@ -85,11 +87,12 @@ struct MyPlantCard: View {
                 .background(Theme.brandTint, in: Circle())
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(label.uppercased())
+                Text(label)
+                    .textCase(.uppercase)
                     .font(.system(size: 9.5, weight: .semibold))
                     .tracking(0.5)
                     .foregroundStyle(Theme.textTertiary)
-                Text(value.isBlank ? "Not set" : value)
+                (value.isBlank ? Text("Not set") : Text(LocalizedStringResource.dynamic(value)))
                     .font(.system(size: 12.5, weight: .medium))
                     .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)

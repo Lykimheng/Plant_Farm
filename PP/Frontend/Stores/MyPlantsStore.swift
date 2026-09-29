@@ -12,7 +12,7 @@ import Combine
 final class MyPlantsStore: ObservableObject {
     @Published private(set) var plants: [MyPlantModel] = []
     @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage = ""
+    @Published private(set) var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
     private var loadedForUser: Int?
@@ -22,14 +22,13 @@ final class MyPlantsStore: ObservableObject {
     }
 
     var isEmpty: Bool { plants.isEmpty }
-
-    var careLevelText: String {
+    var careLevel: Int {
         switch plants.count {
-        case 0:      return "Lvl 1"
-        case 1...3:  return "Lvl 2"
-        case 4...7:  return "Lvl 3"
-        case 8...12: return "Lvl 4"
-        default:     return "Lvl 5"
+        case 0:      return 1
+        case 1...3:  return 2
+        case 4...7:  return 3
+        case 8...12: return 4
+        default:     return 5
         }
     }
 
@@ -57,7 +56,7 @@ final class MyPlantsStore: ObservableObject {
             )
             plants = response.plants.map(\.myPlant)
             loadedForUser = userId
-            errorMessage = ""
+            errorMessage = nil
         } catch {
             errorMessage = error.userMessage
             AppLog.network("load my plants", error)
@@ -84,7 +83,7 @@ final class MyPlantsStore: ObservableObject {
             var stored = plant
             stored.apiId = response.plantId ?? 0
             plants.insert(stored, at: 0)
-            errorMessage = ""
+            errorMessage = nil
             return true
         } catch {
             errorMessage = error.userMessage

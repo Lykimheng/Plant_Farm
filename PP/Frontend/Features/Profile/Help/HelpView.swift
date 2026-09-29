@@ -93,7 +93,7 @@ struct HelpView: View {
         .background(Theme.sectionWash, in: RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
     }
 
-    private func contactRow(icon: String, title: String, detail: String, url: URL?) -> some View {
+    private func contactRow(icon: String, title: LocalizedStringResource, detail: String, url: URL?) -> some View {
         Button {
             if let url { openURL(url) }
         } label: {
@@ -130,8 +130,8 @@ enum HelpContact {
 struct HelpTopic: Identifiable {
     let id = UUID()
     let icon: String
-    let question: String
-    let answer: String
+    let question: LocalizedStringResource
+    let answer: LocalizedStringResource
 
     static let all: [HelpTopic] = [
         HelpTopic(

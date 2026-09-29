@@ -14,13 +14,12 @@ struct ForgotPasswordView: View {
     @State private var email = ""
     @State private var newPassword = ""
     @State private var confirmPassword = ""
-    @State private var validationMessage = ""
+    @State private var validationMessage: LocalizedStringResource?
     @State private var didSucceed = false
 
     private static let minimumPasswordLength = 6
-
-    private var message: String {
-        validationMessage.isEmpty ? user.errorMessage : validationMessage
+    private var message: LocalizedStringResource? {
+        validationMessage ?? user.errorMessage
     }
 
     var body: some View {
@@ -74,12 +73,7 @@ struct ForgotPasswordView: View {
                         )
                     }
 
-                    if !message.isEmpty {
-                        Label(message, systemImage: "exclamationmark.triangle")
-                            .font(.system(size: 12.5))
-                            .foregroundStyle(Theme.danger)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
+                    InlineError(message: message)
 
                     Button(action: submit) {
                         if user.isLoading {
@@ -98,11 +92,11 @@ struct ForgotPasswordView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(Theme.background)
-        .onDisappear { user.errorMessage = "" }
+        .onDisappear { user.errorMessage = nil }
     }
 
     private func submit() {
-        validationMessage = ""
+        validationMessage = nil
 
         guard email.looksLikeEmail else {
             validationMessage = "Enter a valid email address."

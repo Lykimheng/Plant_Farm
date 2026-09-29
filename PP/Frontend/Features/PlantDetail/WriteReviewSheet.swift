@@ -21,7 +21,7 @@ struct WriteReviewSheet: View {
     private let characterLimit = 1000
     private var isEditing: Bool { store.myReview != nil }
 
-    private var ratingLabel: String {
+    private var ratingLabel: LocalizedStringResource {
         switch rating {
         case 1: return "Poor"
         case 2: return "Not great"
@@ -40,11 +40,7 @@ struct WriteReviewSheet: View {
                     ratingPicker
                     bodyField
 
-                    if !store.errorMessage.isEmpty {
-                        Text(store.errorMessage)
-                            .font(.system(size: 12))
-                            .foregroundStyle(Theme.danger)
-                    }
+                    InlineError(message: store.errorMessage)
 
                     if isEditing {
                         deleteButton
@@ -75,7 +71,7 @@ struct WriteReviewSheet: View {
                     rating = mine.rating
                     body_ = mine.body ?? ""
                 }
-                store.errorMessage = ""
+                store.errorMessage = nil
             }
             .confirmationDialog(
                 "Delete your review?",
@@ -144,7 +140,7 @@ struct WriteReviewSheet: View {
 
                 Spacer()
 
-                Text("\(body_.count)/\(characterLimit)")
+                Text(verbatim: "\(body_.count)/\(characterLimit)")
                     .font(.system(size: 11))
                     .foregroundStyle(body_.count > characterLimit ? Theme.danger : Theme.textTertiary)
             }

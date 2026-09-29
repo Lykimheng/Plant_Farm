@@ -71,8 +71,8 @@ struct CartView: View {
 
     private var summaryBar: some View {
         VStack(spacing: Theme.Spacing.md) {
-            summaryRow("Subtotal", cart.subtotal.priceText)
-            summaryRow("Delivery (\(estimatedDelivery.name.lowercased()))", estimatedDelivery.fee.priceText)
+            summaryRow(Text("Subtotal"), cart.subtotal.priceText)
+            summaryRow(Text("Delivery (\(Text(estimatedDelivery.name)))"), estimatedDelivery.fee.priceText)
 
             Divider().overlay(Theme.separator)
 
@@ -100,9 +100,9 @@ struct CartView: View {
         }
     }
 
-    private func summaryRow(_ label: String, _ value: String) -> some View {
+    private func summaryRow(_ label: Text, _ value: String) -> some View {
         HStack {
-            Text(label)
+            label
                 .font(.system(size: 14))
                 .foregroundStyle(Theme.textSecondary)
             Spacer()

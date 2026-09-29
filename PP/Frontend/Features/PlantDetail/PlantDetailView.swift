@@ -117,7 +117,7 @@ struct PlantDetailView: View {
         }
     }
 
-    private func circleButton(_ systemName: String, label: String, action: @escaping () -> Void) -> some View {
+    private func circleButton(_ systemName: String, label: LocalizedStringResource, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 15, weight: .semibold))
@@ -127,7 +127,7 @@ struct PlantDetailView: View {
                 .overlay(Circle().strokeBorder(Theme.separator, lineWidth: 0.7))
         }
         .buttonStyle(.pressable)
-        .accessibilityLabel(label)
+        .accessibilityLabel(Text(label))
     }
 
     // MARK: - Info
@@ -246,7 +246,7 @@ struct PlantDetailView: View {
         .padding(.horizontal, Theme.Spacing.lg)
     }
 
-    private func careTile(icon: String, title: String, value: String) -> some View {
+    private func careTile(icon: String, title: LocalizedStringResource, value: LocalizedStringResource) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 16))

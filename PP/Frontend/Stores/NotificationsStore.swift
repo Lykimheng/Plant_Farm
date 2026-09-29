@@ -74,7 +74,6 @@ final class NotificationsStore: ObservableObject {
                 body: NotificationUpdateRequest(userId: userId)
             )
         } catch {
-            // put them back rather than silently losing the list
             notifications = previous
             AppLog.network("delete notifications", error)
         }

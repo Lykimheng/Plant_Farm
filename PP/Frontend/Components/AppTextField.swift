@@ -16,7 +16,7 @@ struct AppTextField: View {
         var isSecure: Bool { self == .secure }
     }
 
-    let placeholder: String
+    let placeholder: LocalizedStringResource
     @Binding var text: String
     var icon: String?
     var kind: Kind = .plain
@@ -70,9 +70,9 @@ struct AppTextField: View {
     @ViewBuilder
     private var field: some View {
         if kind.isSecure && !isRevealed {
-            SecureField(placeholder, text: $text)
+            SecureField(text: $text, prompt: Text(placeholder)) { Text(placeholder) }
         } else {
-            TextField(placeholder, text: $text)
+            TextField(text: $text, prompt: Text(placeholder)) { Text(placeholder) }
         }
     }
 }

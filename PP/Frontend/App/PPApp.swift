@@ -20,6 +20,7 @@ struct PPApp: App {
     @StateObject private var toast = ToastCenter()
     @StateObject private var theme = ThemeManager()
     @StateObject private var router = AppRouter()
+    @StateObject private var language = LanguageManager()
 
     var body: some Scene {
         WindowGroup {
@@ -35,6 +36,8 @@ struct PPApp: App {
                 .environmentObject(toast)
                 .environmentObject(theme)
                 .environmentObject(router)
+                .environmentObject(language)
+                .environment(\.locale, language.locale)
                 .preferredColorScheme(theme.colorScheme)
                 .task {
                     cart.connect(toastCenter: toast)

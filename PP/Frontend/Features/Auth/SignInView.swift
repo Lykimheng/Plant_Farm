@@ -16,14 +16,14 @@ struct SignInView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var showForgotPassword = false
-    @State private var validationMessage = ""
+    @State private var validationMessage: LocalizedStringResource?
 
     private var canSubmit: Bool {
         !email.isBlank && !password.isEmpty && !user.isLoading
     }
 
-    private var message: String {
-        validationMessage.isEmpty ? user.errorMessage : validationMessage
+    private var message: LocalizedStringResource? {
+        validationMessage ?? user.errorMessage
     }
 
     var body: some View {
@@ -65,12 +65,7 @@ struct SignInView: View {
                     }
                 }
 
-                if !message.isEmpty {
-                    Label(message, systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 12.5))
-                        .foregroundStyle(Theme.danger)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                InlineError(message: message)
 
                 Button(action: submit) {
                     if user.isLoading {
@@ -104,11 +99,11 @@ struct SignInView: View {
                 .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
         }
-        .onDisappear { user.errorMessage = "" }
+        .onDisappear { user.errorMessage = nil }
     }
 
     private func submit() {
-        validationMessage = ""
+        validationMessage = nil
 
         guard email.looksLikeEmail else {
             validationMessage = "Enter a valid email address."

@@ -13,16 +13,17 @@ nonisolated enum APIError: LocalizedError, Equatable {
     case server(String)
     case decoding(String)
 
-    var message: String {
+
+    var message: LocalizedStringResource {
         switch self {
         case .invalidURL:            return "Something went wrong. Please try again."
         case .network:               return "No connection. Check your network and try again."
-        case .server(let message):   return message
+        case .server(let message):   return .dynamic(message)
         case .decoding:              return "The server sent something we couldn't read."
         }
     }
 
-    var errorDescription: String? { message }
+    var errorDescription: String? { String(localized: message) }
 
     var debugDescription: String {
         switch self {

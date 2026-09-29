@@ -112,6 +112,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				km,
 				Base,
 			);
 			mainGroup = FA0F4D002EFC33B7009766B8;
@@ -289,10 +290,10 @@
 				INFOPLIST_FILE = PP/Frontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Plant Farm";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Plant Farm\" Would like to Access Your Camera";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Plant Farm uses the camera to identify plants and check their health, and to take a profile photo.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Plant Farm connects to the shop server on your local network to load plants, orders and notifications.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"Plant Farm\" Would like to Access Your Location";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"Plant Farm\" Would like to Access Your Photo Library ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Plant Farm uses your location to fill in your delivery address at checkout.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Plant Farm opens your photo library so you can identify a plant from a picture or choose a profile photo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
@@ -332,10 +333,10 @@
 				INFOPLIST_FILE = PP/Frontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Plant Farm";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Plant Farm\" Would like to Access Your Camera";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Plant Farm uses the camera to identify plants and check their health, and to take a profile photo.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Plant Farm connects to the shop server on your local network to load plants, orders and notifications.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"Plant Farm\" Would like to Access Your Location";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"Plant Farm\" Would like to Access Your Photo Library ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Plant Farm uses your location to fill in your delivery address at checkout.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Plant Farm opens your photo library so you can identify a plant from a picture or choose a profile photo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
@@ -440,10 +441,10 @@
 				INFOPLIST_FILE = PP/Frontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Plant Farm";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Plant Farm\" Would like to Access Your Camera";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Plant Farm uses the camera to identify plants and check their health, and to take a profile photo.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Plant Farm connects to the shop server on your local network to load plants, orders and notifications.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"Plant Farm\" Would like to Access Your Location";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"Plant Farm\" Would like to Access Your Photo Library ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Plant Farm uses your location to fill in your delivery address at checkout.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Plant Farm opens your photo library so you can identify a plant from a picture or choose a profile photo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
@@ -548,10 +549,10 @@
 				INFOPLIST_FILE = PP/Frontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Plant Farm";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Plant Farm\" Would like to Access Your Camera";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Plant Farm uses the camera to identify plants and check their health, and to take a profile photo.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Plant Farm connects to the shop server on your local network to load plants, orders and notifications.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"Plant Farm\" Would like to Access Your Location";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"Plant Farm\" Would like to Access Your Photo Library ";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Plant Farm uses your location to fill in your delivery address at checkout.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Plant Farm opens your photo library so you can identify a plant from a picture or choose a profile photo.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;

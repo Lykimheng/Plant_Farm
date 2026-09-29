@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SectionHeader: View {
-    let title: String
+    let title: LocalizedStringResource
     var isExpanded: Bool = false
     var showsToggle: Bool = true
     var onToggle: () -> Void = {}
@@ -32,7 +32,7 @@ struct SectionHeader: View {
                     .foregroundStyle(Theme.brand)
                 }
                 .buttonStyle(.pressable)
-                .accessibilityLabel(isExpanded ? "Collapse \(title)" : "Show all \(title)")
+                .accessibilityLabel(isExpanded ? Text("Collapse \(Text(title))") : Text("Show all \(Text(title))"))
             }
         }
         .padding(.horizontal, Theme.Spacing.lg)

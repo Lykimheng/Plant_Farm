@@ -14,6 +14,12 @@ struct MyPlantsView: View {
 
     @State private var selectedDate = Date()
     @State private var showAddPlant = false
+    @State private var showDailyRoutine = false
+    @AppStorage(DailyRoutine.storageKey) private var routineCompletions = ""
+
+    private var routineTasksLeft: Int {
+        DailyRoutine.tasks(for: myPlants.plants, completions: routineCompletions).count { !$0.isDone }
+    }
 
     var body: some View {
         Group {
@@ -26,23 +32,29 @@ struct MyPlantsView: View {
         .background(Theme.background)
         .navigationTitle("My Plants")
         .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showDailyRoutine) {
+            DailyRoutineSheet()
+        }
     }
 
     private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
-                Text("Manage your garden's health and care schedule.")
-                    .font(.system(size: 13.5))
-                    .foregroundStyle(Theme.textSecondary)
-                    .padding(.horizontal, Theme.Spacing.lg)
+                HStack(spacing: Theme.Spacing.md) {
+                    Text("Manage your garden's health and care schedule.")
+                        .font(.system(size: 13.5))
+                        .foregroundStyle(Theme.textSecondary)
+
+                    Spacer(minLength: 0)
+
+                    routineButton
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
 
                 WeekStrip(selectedDate: $selectedDate)
                     .padding(.horizontal, Theme.Spacing.lg)
 
                 plantList
-
-                DailyRoutineCard()
-                    .padding(.horizontal, Theme.Spacing.lg)
             }
             .padding(.top, Theme.Spacing.md)
             .padding(.bottom, 88)
@@ -81,6 +93,32 @@ struct MyPlantsView: View {
         }
     }
 
+    private var routineButton: some View {
+        Button {
+            showDailyRoutine = true
+        } label: {
+            Image(systemName: "checklist")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(Theme.onBrand)
+                .frame(width: 38, height: 38)
+                .background(Theme.brand, in: Circle())
+                .softShadow(radius: 8, y: 6)
+                .overlay(alignment: .topTrailing) {
+                    if routineTasksLeft > 0 {
+                        Text(routineTasksLeft, format: .number)
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(Theme.onBrand)
+                            .frame(minWidth: 17, minHeight: 17)
+                            .background(Theme.danger, in: Circle())
+                            .offset(x: 4, y: -4)
+                    }
+                }
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel(Text("Today's routine"))
+        .accessibilityValue(Text("^[\(routineTasksLeft) task](inflect: true) left today"))
+    }
+
     private var addButton: some View {
         Button {
             showAddPlant = true
@@ -113,7 +151,7 @@ struct WeekStrip: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-            Text(selectedDate.formatted(.dateTime.month(.wide).year()))
+            Text(selectedDate, format: .dateTime.month(.wide).year())
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(Theme.brand)
 
@@ -133,11 +171,11 @@ struct WeekStrip: View {
             withAnimation(.easeOut(duration: 0.15)) { selectedDate = date }
         } label: {
             VStack(spacing: 3) {
-                Text(date.formatted(.dateTime.weekday(.abbreviated)))
+                Text(date, format: .dateTime.weekday(.abbreviated))
                     .font(.system(size: 10.5))
                     .foregroundStyle(isSelected ? Theme.onBrand.opacity(0.85) : Theme.textTertiary)
 
-                Text(date.formatted(.dateTime.day()))
+                Text(date, format: .dateTime.day())
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(isSelected ? Theme.onBrand : Theme.textPrimary)
 
@@ -157,7 +195,7 @@ struct WeekStrip: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(date.formatted(date: .complete, time: .omitted))
+        .accessibilityLabel(Text(date, format: .dateTime.weekday(.wide).day().month(.wide)))
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }

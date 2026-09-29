@@ -19,16 +19,16 @@ struct NotificationCard: View {
                 .background(notification.type.color.opacity(0.14), in: Circle())
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(notification.title)
+                Text(LocalizedStringResource.dynamic(notification.title))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Theme.textPrimary)
 
-                Text(notification.message)
+                Text(LocalizedStringResource.dynamic(notification.message))
                     .font(.system(size: 12.5))
                     .foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(notification.relativeDate)
+                Text(notification.date, format: .relative(presentation: .named))
                     .font(.system(size: 11))
                     .foregroundStyle(Theme.textTertiary)
             }

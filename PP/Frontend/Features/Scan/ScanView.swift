@@ -55,6 +55,8 @@ struct ScanView: View {
         }
         .sheet(isPresented: $viewModel.isShowingResult, onDismiss: { resultDetent = .medium }) {
             ScanResultSheet(viewModel: viewModel, detent: $resultDetent)
+                // the tab bar's toast sits underneath this sheet
+                .toast(center: toast)
                 .presentationDetents([.medium, .large], selection: $resultDetent)
                 .presentationDragIndicator(.visible)
         }
@@ -278,6 +280,7 @@ private struct ScanResultSheet: View {
 
     @EnvironmentObject private var catalog: PlantsStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
 
     @State private var path: [PlantListing] = []
     @State private var chosen: PlantPrediction?
@@ -362,7 +365,7 @@ private struct ScanResultSheet: View {
 
     private func matchCard(for prediction: PlantPrediction) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Label(headline(for: prediction), systemImage: Icons.identified)
+            Label { Text(headline(for: prediction)) } icon: { Image(systemName: Icons.identified) }
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(prediction.certainty == .low ? Theme.warning : Theme.brand)
 
@@ -390,7 +393,7 @@ private struct ScanResultSheet: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func headline(for prediction: PlantPrediction) -> String {
+    private func headline(for prediction: PlantPrediction) -> LocalizedStringResource {
         switch prediction.certainty {
         case .high:   return "Looks like a"
         case .likely: return "Probably a"
@@ -421,7 +424,7 @@ private struct ScanResultSheet: View {
                         .overlay(Capsule().strokeBorder(Theme.separator, lineWidth: 0.7))
                     }
                     .buttonStyle(.pressable)
-                    .accessibilityLabel("Show \(prediction.species.displayName), \(prediction.percentText)")
+                    .accessibilityLabel(Text("Show \(Text(prediction.species.displayName)), \(prediction.percentText)"))
                 }
             }
         }
@@ -444,8 +447,7 @@ private struct ScanResultSheet: View {
                     .foregroundStyle(tint)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(isHealthy ? verdict.symptom.displayName
-                                   : (isUnsure ? "Might be showing: " : "Possible issue: ") + verdict.symptom.displayName.lowercased())
+                    healthTitle(for: verdict, isHealthy: isHealthy, isUnsure: isUnsure)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Theme.textPrimary)
                     Text("\(verdict.percentText) match")
@@ -467,7 +469,7 @@ private struct ScanResultSheet: View {
 
             let others = viewModel.health.dropFirst().prefix(2).filter { $0.confidence >= 0.15 }
             if !others.isEmpty {
-                Text("Also possible: " + others.map { "\($0.symptom.displayName.lowercased()) \($0.percentText)" }.joined(separator: ", "))
+                Text("Also possible: \(others.map { "\(lowercasedName(of: $0.symptom)) \($0.percentText)" }.joined(separator: ", "))")
                     .font(.system(size: 12))
                     .foregroundStyle(Theme.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -475,13 +477,20 @@ private struct ScanResultSheet: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .cardSurface()
-//        .overlay(alignment: .leading) {
-//            RoundedRectangle(cornerRadius: 2).fill(tint).frame(width: 4).padding(.vertical, Theme.Spacing.md)
-//        }
         .accessibilityElement(children: .combine)
     }
+    
+    private func lowercasedName(of symptom: PlantSymptom) -> String {
+        symptom.displayName.string(in: locale).lowercased(with: locale)
+    }
 
-    private func healthRow(title: String, detail: String) -> some View {
+    private func healthTitle(for verdict: HealthPrediction, isHealthy: Bool, isUnsure: Bool) -> Text {
+        if isHealthy { return Text(verdict.symptom.displayName) }
+        let name = lowercasedName(of: verdict.symptom)
+        return isUnsure ? Text("Might be showing: \(name)") : Text("Possible issue: \(name)")
+    }
+
+    private func healthRow(title: LocalizedStringResource, detail: LocalizedStringResource) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 12, weight: .medium))
@@ -495,7 +504,7 @@ private struct ScanResultSheet: View {
 
     private func careCard(for species: PlantSpecies) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-            Text("Caring for a \(species.displayName)")
+            Text("Caring for a \(Text(species.displayName))")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Theme.textPrimary)
 
@@ -506,7 +515,7 @@ private struct ScanResultSheet: View {
         .cardSurface()
     }
 
-    private func careRow(icon: String, title: String, detail: String) -> some View {
+    private func careRow(icon: String, title: LocalizedStringResource, detail: LocalizedStringResource) -> some View {
         HStack(alignment: .top, spacing: Theme.Spacing.md) {
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .semibold))
@@ -537,7 +546,7 @@ private struct ScanResultSheet: View {
                     .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
 
-                Text("We don't have \(species.displayName) in the shop right now — here are some popular picks instead.")
+                Text("We don't have \(Text(species.displayName)) in the shop right now — here are some popular picks instead.")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

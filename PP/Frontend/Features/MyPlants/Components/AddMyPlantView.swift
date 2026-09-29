@@ -28,10 +28,15 @@ struct AddMyPlantView: View {
         NavigationStack {
             Form {
                 Section("Plant") {
-                    Picker("From the catalog", selection: $selectedPlant) {
-                        Text("Choose a plant").tag(nil as PlantModel?)
-                        ForEach(availablePlants) { plant in
-                            Text(plant.name).tag(plant as PlantModel?)
+                    NavigationLink {
+                        CatalogPlantPicker(plants: availablePlants, selection: $selectedPlant)
+                    } label: {
+                        LabeledContent("From the catalog") {
+                            if let selectedPlant {
+                                Text(selectedPlant.name)
+                            } else {
+                                Text("Choose a plant")
+                            }
                         }
                     }
 
@@ -49,13 +54,13 @@ struct AddMyPlantView: View {
 
                     Picker("Watering", selection: $wateringInterval) {
                         ForEach(WateringInterval.allCases) { interval in
-                            Text(interval.label).tag(interval)
+                            Text(interval.title).tag(interval)
                         }
                     }
 
                     Picker("Sunlight", selection: $sunlight) {
                         ForEach(SunlightNeed.allCases) { need in
-                            Text(need.label).tag(need)
+                            Text(need.title).tag(need)
                         }
                     }
                 }
@@ -73,7 +78,7 @@ struct AddMyPlantView: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(selectedPlant.name)
                                     .font(.system(size: 15, weight: .semibold))
-                                Text("\(wateringInterval.label) · \(sunlight.label)")
+                                Text("\(Text(wateringInterval.title)) · \(Text(sunlight.title))")
                                     .font(.system(size: 12))
                                     .foregroundStyle(Theme.textSecondary)
                             }
@@ -81,11 +86,9 @@ struct AddMyPlantView: View {
                     }
                 }
 
-                if !myPlants.errorMessage.isEmpty {
+                if myPlants.errorMessage != nil {
                     Section {
-                        Label(myPlants.errorMessage, systemImage: "exclamationmark.triangle")
-                            .font(.system(size: 12.5))
-                            .foregroundStyle(Theme.danger)
+                        InlineError(message: myPlants.errorMessage)
                     }
                 }
             }
@@ -132,6 +135,72 @@ struct AddMyPlantView: View {
     }
 }
 
+// MARK: - Plant picker
+
+private struct CatalogPlantPicker: View {
+    let plants: [PlantModel]
+    @Binding var selection: PlantModel?
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var query = ""
+
+    private var results: [PlantModel] {
+        let term = query.trimmed
+        guard !term.isEmpty else { return plants }
+        return plants.filter {
+            $0.name.localizedCaseInsensitiveContains(term) || $0.type.localizedCaseInsensitiveContains(term)
+        }
+    }
+
+    var body: some View {
+        List(results) { plant in
+            Button {
+                selection = plant
+                dismiss()
+            } label: {
+                row(for: plant)
+            }
+            .foregroundStyle(Theme.textPrimary)
+        }
+        .overlay {
+            if results.isEmpty {
+                ContentUnavailableView("No plants found", systemImage: Icons.search)
+            }
+        }
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search plants")
+        .navigationTitle("Choose a plant")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func row(for plant: PlantModel) -> some View {
+        HStack(spacing: Theme.Spacing.md) {
+            RemoteImage(urlString: plant.image)
+                .scaledToFill()
+                .frame(width: 40, height: 40)
+                .clipped()
+                .background(Theme.surfaceAlt)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(plant.name)
+                    .font(.system(size: 15))
+                Text(plant.type)
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+
+            Spacer(minLength: 0)
+
+            if plant.id == selection?.id {
+                Image(systemName: Icons.checkmark)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Theme.brand)
+            }
+        }
+        .contentShape(Rectangle())
+    }
+}
+
 // MARK: - Options
 
 enum WateringInterval: String, CaseIterable, Identifiable {
@@ -139,7 +208,7 @@ enum WateringInterval: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var label: String {
+    var title: LocalizedStringResource {
         switch self {
         case .everyOtherDay: return "Every other day"
         case .twiceWeekly:   return "Twice a week"
@@ -148,6 +217,7 @@ enum WateringInterval: String, CaseIterable, Identifiable {
         case .monthly:       return "Monthly"
         }
     }
+    var label: String { title.string(in: Locale(identifier: "en")) }
 }
 
 enum SunlightNeed: String, CaseIterable, Identifiable {
@@ -155,7 +225,7 @@ enum SunlightNeed: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var label: String {
+    var title: LocalizedStringResource {
         switch self {
         case .full:     return "Full sun"
         case .partial:  return "Partial sun"
@@ -163,6 +233,8 @@ enum SunlightNeed: String, CaseIterable, Identifiable {
         case .indirect: return "Bright indirect"
         }
     }
+
+    var label: String { title.string(in: Locale(identifier: "en")) }
 }
 
 #Preview {

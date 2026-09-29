@@ -18,7 +18,7 @@ struct SignUpView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var location = "Phnom Penh"
-    @State private var validationMessage = ""
+    @State private var validationMessage: LocalizedStringResource?
 
     private static let minimumPasswordLength = 6
 
@@ -26,8 +26,9 @@ struct SignUpView: View {
         !name.isBlank && !email.isBlank && !password.isEmpty && !confirmPassword.isEmpty && !user.isLoading
     }
 
-    private var message: String {
-        validationMessage.isEmpty ? user.errorMessage : validationMessage
+    /// A local validation problem wins over whatever the server last said.
+    private var message: LocalizedStringResource? {
+        validationMessage ?? user.errorMessage
     }
 
     var body: some View {
@@ -87,12 +88,7 @@ struct SignUpView: View {
                     PasswordStrengthHint(password: password, minimumLength: Self.minimumPasswordLength)
                 }
 
-                if !message.isEmpty {
-                    Label(message, systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 12.5))
-                        .foregroundStyle(Theme.danger)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                InlineError(message: message)
 
                 Button(action: submit) {
                     if user.isLoading {
@@ -121,11 +117,11 @@ struct SignUpView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(Theme.background)
-        .onDisappear { user.errorMessage = "" }
+        .onDisappear { user.errorMessage = nil }
     }
 
     private func submit() {
-        validationMessage = ""
+        validationMessage = nil
 
         guard email.looksLikeEmail else {
             validationMessage = "Enter a valid email address."

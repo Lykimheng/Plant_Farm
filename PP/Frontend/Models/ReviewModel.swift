@@ -41,17 +41,6 @@ nonisolated struct ReviewModel: Identifiable, Hashable, Decodable {
         let letters = authorName.split(separator: " ").prefix(2).compactMap(\.first).map(String.init)
         return letters.isEmpty ? "?" : letters.joined().uppercased()
     }
-
-    var relativeDate: String {
-        guard let createdAt else { return "" }
-        let date = OrderDateFormat.parse(createdAt)
-
-        if Date().timeIntervalSince(date) < 60 { return "Just now" }
-
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
 }
 
 nonisolated struct ReviewSummary: Decodable, Hashable {
@@ -90,9 +79,6 @@ nonisolated struct ReviewSummary: Decodable, Hashable {
         return Double(count(forStar: star)) / Double(reviewsCount)
     }
 
-    var countText: String {
-        "\(reviewsCount) review\(reviewsCount == 1 ? "" : "s")"
-    }
 }
 
 nonisolated struct ReviewsPayload: APIResponse {

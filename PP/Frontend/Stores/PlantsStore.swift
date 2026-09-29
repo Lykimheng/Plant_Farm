@@ -16,7 +16,7 @@ final class PlantsStore: ObservableObject {
     @Published private(set) var byCategory: [PlantCategory: [PlantModel]] = [:]
     @Published private(set) var discounts: [Int: Double] = [:]
     @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage = ""
+    @Published private(set) var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
 
@@ -69,7 +69,7 @@ final class PlantsStore: ObservableObject {
         do {
             let response: PlantsResponse = try await client.get(API.Path.plants)
             apply(response.plants)
-            errorMessage = ""
+            errorMessage = nil
         } catch {
             errorMessage = error.userMessage
         }

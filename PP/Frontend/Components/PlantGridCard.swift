@@ -41,7 +41,7 @@ struct PlantGridCard: View {
     @ViewBuilder
     private var discountBadge: some View {
         if listing.isDiscounted {
-            Text("-\(listing.discountPercentage)%")
+            Text(verbatim: "-\(listing.discountPercentage)%")
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(Theme.onBrand)
                 .padding(.horizontal, 7)
@@ -124,9 +124,8 @@ struct PriceLabel: View {
         .minimumScaleFactor(0.75)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            originalPrice == nil
-            ? price.priceText
-            : "\(price.priceText), reduced from \(originalPrice!.priceText)"
+            originalPrice.map { Text("\(price.priceText), reduced from \($0.priceText)") }
+            ?? Text(price.priceText)
         )
     }
 }

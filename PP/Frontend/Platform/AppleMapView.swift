@@ -40,12 +40,3 @@ struct AppleMapView: UIViewRepresentable {
         mapView.setRegion(region, animated: true)
     }
 }
-//
-//#Preview {
-//    AppleMapView(coordinate: CLLocationCoordinate2D(
-//        latitude: 11.5564,
-//        longitude: 104.9282
-//    ))
-//    .frame(height: 300)
-//    .cornerRadius(12)
-//}

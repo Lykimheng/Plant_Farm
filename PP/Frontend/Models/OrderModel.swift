@@ -17,7 +17,6 @@ nonisolated struct OrderModel: Identifiable, Hashable {
     let total: Double
     let deliveryAddress: String
     var itemCount: Int { items.reduce(0) { $0 + $1.quantity } }
-    var dateText: String { placedAt.formatted(date: .abbreviated, time: .shortened) }
     static func == (lhs: OrderModel, rhs: OrderModel) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
@@ -54,7 +53,17 @@ nonisolated struct OrderModel: Identifiable, Hashable {
             }
         }
 
-        var label: String { rawValue }
+        var label: LocalizedStringResource {
+            switch self {
+            case .pending:   return "Pending"
+            case .confirmed: return "Confirmed"
+            case .preparing: return "Preparing"
+            case .inTransit: return "In Transit"
+            case .delivered: return "Delivered"
+            case .cancelled: return "Cancelled"
+            case .rejected:  return "Rejected"
+            }
+        }
         
         static let fulfilmentSteps: [OrderStatus] = [.pending, .confirmed, .preparing, .inTransit, .delivered]
         

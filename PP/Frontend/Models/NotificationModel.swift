@@ -15,13 +15,6 @@ nonisolated struct NotificationModel: Identifiable, Hashable {
     var date: Date = Date()
     let type: NotificationType
     var isRead: Bool = false
-    var relativeDate: String {
-        if Date().timeIntervalSince(date) < 60 { return "Just now" }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
-
     enum NotificationType: String {
         case orderPlaced
         case orderConfirmed

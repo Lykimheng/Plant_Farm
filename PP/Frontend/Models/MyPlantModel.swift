@@ -44,7 +44,7 @@ nonisolated struct MyPlantModel: Identifiable, Hashable {
 
         var id: String { rawValue }
 
-        var displayName: String {
+        var displayName: LocalizedStringResource {
             switch self {
             case .easy:     return "Easy care"
             case .moderate: return "Moderate care"

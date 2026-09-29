@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CategoryChip: View {
-    let title: String
+    let title: LocalizedStringResource
     var isSelected: Bool = false
     let action: () -> Void
 

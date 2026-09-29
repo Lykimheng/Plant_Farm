@@ -104,9 +104,9 @@ struct ProfileView: View {
 
     private var stats: some View {
         HStack(spacing: Theme.Spacing.md) {
-            StatCard(title: "My Plants", value: "\(myPlants.plants.count)")
-            StatCard(title: "Orders", value: "\(orders.orders.count)")
-            StatCard(title: "Care Level", value: myPlants.careLevelText)
+            StatCard(title: "My Plants", value: Text(myPlants.plants.count, format: .number))
+            StatCard(title: "Orders", value: Text(orders.orders.count, format: .number))
+            StatCard(title: "Care Level", value: Text("Lvl \(myPlants.careLevel)"))
         }
     }
 
@@ -149,6 +149,19 @@ struct ProfileView: View {
 
             SettingsDivider()
 
+            HStack(spacing: Theme.Spacing.md) {
+                SettingsIcon(Icons.language)
+                Text("Language")
+                    .font(.system(size: 15))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer()
+                LanguagePicker()
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.sm)
+
+            SettingsDivider()
+
             NavigationLink { HelpView() } label: {
                 SettingsRowLabel(icon: Icons.help, title: "Help Center")
             }
@@ -175,12 +188,12 @@ struct ProfileView: View {
 // MARK: - Building blocks
 
 struct StatCard: View {
-    let title: String
-    let value: String
+    let title: LocalizedStringResource
+    let value: Text
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(value)
+            value
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(Theme.brand)
                 .contentTransition(.numericText())
@@ -197,12 +210,13 @@ struct StatCard: View {
 }
 
 struct SettingsGroup<Content: View>: View {
-    let title: String
+    let title: LocalizedStringResource
     @ViewBuilder var content: () -> Content
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-            Text(title.uppercased())
+            Text(title)
+                .textCase(.uppercase)
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(0.6)
                 .foregroundStyle(Theme.textTertiary)
@@ -218,7 +232,7 @@ struct SettingsGroup<Content: View>: View {
 
 struct SettingsRowLabel: View {
     let icon: String
-    let title: String
+    let title: LocalizedStringResource
     var detail: String?
 
     var body: some View {

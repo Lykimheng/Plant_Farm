@@ -11,7 +11,7 @@ import Combine
 enum AppTab: Hashable, CaseIterable {
     case home, cart, scan, myPlants, profile
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .home:     return "Home"
         case .cart:     return "Cart"

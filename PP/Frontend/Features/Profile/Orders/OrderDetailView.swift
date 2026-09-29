@@ -15,8 +15,6 @@ struct OrderDetailView: View {
     @EnvironmentObject private var user: UserStore
 
     @State private var showCancelAlert = false
-
-    /// Always read the live copy so a cancel updates this screen immediately.
     private var current: OrderModel {
         orders.orders.first { $0.id == order.id } ?? order
     }
@@ -57,7 +55,7 @@ struct OrderDetailView: View {
                     Text(headlineText)
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
-                    Text("Placed \(current.dateText)")
+                    Text("Placed \(current.placedAt, format: Date.FormatStyle(date: .abbreviated, time: .shortened))")
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -74,7 +72,7 @@ struct OrderDetailView: View {
         .cardSurface(padding: Theme.Spacing.lg)
     }
 
-    private var headlineText: String {
+    private var headlineText: LocalizedStringResource {
         switch current.status {
         case .pending:   return "Waiting for confirmation"
         case .confirmed: return "Confirmed"
@@ -86,11 +84,15 @@ struct OrderDetailView: View {
         }
     }
 
+    private var terminationNote: LocalizedStringResource {
+        current.status == .rejected ? "This order was rejected." : "This order was cancelled."
+    }
+
     // MARK: - Address
 
     private var addressCard: some View {
         SectionCard(title: "Delivery Address", icon: Icons.location) {
-            Text(current.deliveryAddress.isBlank ? "No address recorded" : current.deliveryAddress)
+            (current.deliveryAddress.isBlank ? Text("No address recorded") : Text(current.deliveryAddress))
                 .font(.system(size: 14))
                 .foregroundStyle(current.deliveryAddress.isBlank ? Theme.textTertiary : Theme.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -103,7 +105,7 @@ struct OrderDetailView: View {
     private var timeline: some View {
         SectionCard(title: "Progress", icon: "point.topleft.down.to.point.bottomright.curvepath") {
             VStack(spacing: 0) {
-                ForEach(Array(steps.enumerated()), id: \.element.title) { index, step in
+                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                     TimelineRow(
                         step: step,
                         isLast: index == steps.count - 1
@@ -114,8 +116,8 @@ struct OrderDetailView: View {
     }
 
     private struct Step {
-        let title: String
-        let subtitle: String
+        let title: Text
+        let subtitle: Text
         let isDone: Bool
         let isCurrent: Bool
     }
@@ -125,10 +127,10 @@ struct OrderDetailView: View {
 
         if status.isTerminated {
             return [
-                Step(title: "Order placed", subtitle: current.dateText, isDone: true, isCurrent: false),
+                Step(title: Text("Order placed"), subtitle: Text(current.placedAt, format: Date.FormatStyle(date: .abbreviated, time: .shortened)), isDone: true, isCurrent: false),
                 Step(
-                    title: status.label,
-                    subtitle: "This order was \(status.label.lowercased()).",
+                    title: Text(status.label),
+                    subtitle: Text(terminationNote),
                     isDone: false,
                     isCurrent: true
                 )
@@ -140,10 +142,10 @@ struct OrderDetailView: View {
 
         return all.enumerated().map { index, step in
             Step(
-                title: step.label,
-                subtitle: index < currentIndex ? "Done"
-                        : index == currentIndex ? "In progress"
-                        : "Upcoming",
+                title: Text(step.label),
+                subtitle: index < currentIndex ? Text("Done")
+                        : index == currentIndex ? Text("In progress")
+                        : Text("Upcoming"),
                 isDone: index < currentIndex,
                 isCurrent: index == currentIndex
             )
@@ -182,10 +184,10 @@ struct OrderDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(step.title)
+                    step.title
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(step.isDone || step.isCurrent ? Theme.textPrimary : Theme.textTertiary)
-                    Text(step.subtitle)
+                    step.subtitle
                         .font(.system(size: 11.5))
                         .foregroundStyle(Theme.textTertiary)
                 }
@@ -215,7 +217,7 @@ struct OrderDetailView: View {
                             Text(item.plant.name)
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Theme.textPrimary)
-                            Text("\(item.plant.price.priceText) × \(item.quantity)")
+                            Text(verbatim: "\(item.plant.price.priceText) × \(item.quantity)")
                                 .font(.system(size: 11.5))
                                 .foregroundStyle(Theme.textTertiary)
                         }
@@ -256,7 +258,7 @@ struct OrderDetailView: View {
                 .buttonStyle(SecondaryButtonStyle(tint: Theme.danger))
         } else {
             Text(current.status.isTerminated
-                 ? "This order was \(current.status.label.lowercased())."
+                 ? terminationNote
                  : "This order is already being processed and can no longer be cancelled.")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.textTertiary)
