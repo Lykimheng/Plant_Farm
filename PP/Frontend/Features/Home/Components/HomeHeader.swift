@@ -31,7 +31,7 @@ struct HomeHeader: View {
         .padding(.horizontal, Theme.Spacing.lg)
         .padding(.top, Theme.Spacing.sm)
         .padding(.bottom, isCollapsed ? Theme.Spacing.sm : Theme.Spacing.lg)
-        .readableWidth()
+        .readableWidth(Theme.Layout.wide)   // lines up with the content column below
         .background(Theme.brand.ignoresSafeArea(edges: .top))
         .animation(.easeInOut(duration: 0.25), value: isCollapsed)
         .sheet(isPresented: $showWishlist) {

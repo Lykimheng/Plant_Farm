@@ -13,6 +13,7 @@ struct PlantDetailView: View {
     @EnvironmentObject private var cart: CartStore
     @EnvironmentObject private var user: UserStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     @StateObject private var reviews = ReviewsStore()
     @State private var quantity = 1
@@ -21,6 +22,8 @@ struct PlantDetailView: View {
     @State private var scrollOffset: CGFloat = 0
 
     private var plant: PlantModel { listing.plant }
+    /// Shorter on a phone on its side, so the name and price show without scrolling.
+    private var heroHeight: CGFloat { verticalSizeClass == .compact ? 220 : 340 }
     private var lineTotal: Double { listing.price * Double(quantity) }
     private var savings: Double { listing.savings * Double(quantity) }
 
@@ -76,7 +79,7 @@ struct PlantDetailView: View {
     }
 
     private var scrimOpacity: Double {
-        min(max((scrollOffset - 230) / 60, 0), 1)
+        min(max((scrollOffset - (heroHeight - 110)) / 60, 0), 1)
     }
 
     // MARK: - Hero
@@ -88,7 +91,7 @@ struct PlantDetailView: View {
             .padding(.top, topInset + Theme.Spacing.xxl)
             .padding(.bottom, Theme.Spacing.xl)
             .frame(maxWidth: .infinity)
-            .frame(height: 340 + topInset)
+            .frame(height: heroHeight + topInset)
             .background(Theme.brandTint)
             .overlay(alignment: .bottomLeading) { offerBadge }
     }

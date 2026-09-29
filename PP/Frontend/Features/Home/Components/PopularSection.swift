@@ -30,7 +30,9 @@ struct PopularSection: View {
             .scrollClipDisabled()
         }
         .padding(.vertical, Theme.Spacing.lg)
-        .background(Theme.sectionWash)
+        // full-bleed, so on iPad the band doesn't stop partway through the carousel
+        // that scrolls past the content column
+        .background { Theme.sectionWash.containerRelativeFrame(.horizontal) }
     }
 }
 

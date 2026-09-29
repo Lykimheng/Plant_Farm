@@ -69,7 +69,7 @@ struct HomeView: View {
             }
             .padding(.top, Theme.Spacing.lg)
             .padding(.bottom, Theme.Spacing.xxl)
-            .readableWidth(760)
+            .readableWidth(Theme.Layout.wide)
         }
         .scrollDismissesKeyboard(.immediately)
         .onScrollGeometryChange(for: CGFloat.self) { geometry in

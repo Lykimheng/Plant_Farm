@@ -11,6 +11,7 @@ struct CartView: View {
     @EnvironmentObject private var cart: CartStore
     @EnvironmentObject private var user: UserStore
     @EnvironmentObject private var router: AppRouter
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     private let estimatedDelivery = DeliveryOption.standard
     private var total: Double { cart.subtotal + estimatedDelivery.fee }
 
@@ -70,34 +71,60 @@ struct CartView: View {
     // MARK: - Summary
 
     private var summaryBar: some View {
-        VStack(spacing: Theme.Spacing.md) {
-            summaryRow("Subtotal", cart.subtotal.priceText)
-            summaryRow("Delivery (\(estimatedDelivery.name.lowercased()))", estimatedDelivery.fee.priceText)
+        Group {
+            if verticalSizeClass == .compact {
+                // a phone on its side can't spare the full breakdown's height,
+                // or the bar would cover the items
+                HStack(spacing: Theme.Spacing.lg) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Total incl. \(estimatedDelivery.fee.priceText) delivery")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Theme.textTertiary)
+                        totalText
+                    }
+                    checkoutButton
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.vertical, Theme.Spacing.md)
+            } else {
+                VStack(spacing: Theme.Spacing.md) {
+                    summaryRow("Subtotal", cart.subtotal.priceText)
+                    summaryRow("Delivery (\(estimatedDelivery.name.lowercased()))", estimatedDelivery.fee.priceText)
 
-            Divider().overlay(Theme.separator)
+                    Divider().overlay(Theme.separator)
 
-            HStack {
-                Text("Total")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
-                Text(total.priceText)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-                    .contentTransition(.numericText())
+                    HStack {
+                        Text("Total")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                        totalText
+                    }
+
+                    checkoutButton
+                }
+                .padding(Theme.Spacing.lg)
             }
-
-            Button(user.isLoggedIn ? "Checkout" : "Sign in to checkout") {
-                router.push(.checkout)
-            }
-            .buttonStyle(.primary)
         }
-        .padding(Theme.Spacing.lg)
         .readableWidth()
         .background(.regularMaterial)
         .overlay(alignment: .top) {
             Rectangle().fill(Theme.separator).frame(height: 0.7)
         }
+    }
+
+    private var totalText: some View {
+        Text(total.priceText)
+            .font(.system(size: 20, weight: .bold))
+            .foregroundStyle(Theme.textPrimary)
+            .contentTransition(.numericText())
+    }
+
+    private var checkoutButton: some View {
+        Button(user.isLoggedIn ? "Checkout" : "Sign in to checkout") {
+            router.push(.checkout)
+        }
+        .buttonStyle(.primary)
     }
 
     private func summaryRow(_ label: String, _ value: String) -> some View {

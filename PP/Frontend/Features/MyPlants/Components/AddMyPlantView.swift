@@ -42,7 +42,7 @@ struct AddMyPlantView: View {
                 Section("Care") {
                     Picker("Care level", selection: $careLevel) {
                         ForEach(MyPlantModel.CareLevel.allCases) { level in
-                            Text(level.displayName).tag(level)
+                            Text(level.shortName).tag(level)
                         }
                     }
                     .pickerStyle(.segmented)
