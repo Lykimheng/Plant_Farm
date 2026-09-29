@@ -41,7 +41,7 @@ struct WishlistView: View {
                         .padding(.horizontal, Theme.Spacing.lg)
                     }
                     .padding(.vertical, Theme.Spacing.md)
-                    .readableWidth(760)
+                    .readableWidth(Theme.Layout.wide)
                 }
             }
         }

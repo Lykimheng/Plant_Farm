@@ -11,6 +11,14 @@ struct SignInRequiredView: View {
     let message: LocalizedStringResource
     @State private var showSignIn = false
     @State private var showSignUp = false
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
+    /// Side by side on a phone on its side, so the whole prompt fits above the tab bar.
+    private var buttonLayout: AnyLayout {
+        verticalSizeClass == .compact
+            ? AnyLayout(HStackLayout(spacing: Theme.Spacing.md))
+            : AnyLayout(VStackLayout(spacing: Theme.Spacing.md))
+    }
 
     var body: some View {
         VStack(spacing: Theme.Spacing.lg) {
@@ -28,7 +36,7 @@ struct SignInRequiredView: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: Theme.Spacing.md) {
+            buttonLayout {
                 Button("Sign in") { showSignIn = true }
                     .buttonStyle(.primary)
 
@@ -38,8 +46,10 @@ struct SignInRequiredView: View {
             .padding(.top, Theme.Spacing.xs)
         }
         .padding(.horizontal, Theme.Spacing.xl)
+        .padding(.vertical, Theme.Spacing.lg)
         .frame(maxWidth: 420)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
+        .scrollableWhenNeeded()
         .sheet(isPresented: $showSignIn) {
             SignInView()
                 .presentationDetents([.height(520), .large])

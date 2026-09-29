@@ -52,6 +52,15 @@ nonisolated struct MyPlantModel: Identifiable, Hashable {
             }
         }
 
+        /// For tight spots like a segmented control, where "care" is already implied.
+        var shortName: String {
+            switch self {
+            case .easy:     return "Easy"
+            case .moderate: return "Moderate"
+            case .expert:   return "Expert"
+            }
+        }
+
         var color: Color {
             switch self {
             case .easy:     return Theme.success

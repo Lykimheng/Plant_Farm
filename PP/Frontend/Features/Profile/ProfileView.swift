@@ -46,7 +46,8 @@ struct ProfileView: View {
         }
         .sheet(isPresented: $showEditProfile) {
             EditProfileView()
-                .presentationDetents([.medium, .large])
+                // .medium is under half an iPhone SE and cuts off the Save button
+                .presentationDetents([.height(460), .large])
                 .presentationDragIndicator(.visible)
         }
         .alert("Log out?", isPresented: $showLogoutAlert) {
@@ -143,6 +144,8 @@ struct ProfileView: View {
                 }
                 .pickerStyle(.menu)
                 .tint(Theme.brand)
+                // otherwise it shares the row with the Spacer and "System" wraps on small phones
+                .fixedSize()
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.sm)

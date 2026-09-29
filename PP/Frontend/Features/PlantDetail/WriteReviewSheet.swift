@@ -73,16 +73,6 @@ struct WriteReviewSheet: View {
                 }
                 store.errorMessage = nil
             }
-            .confirmationDialog(
-                "Delete your review?",
-                isPresented: $showDeleteConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Delete", role: .destructive) { deleteReview() }
-                Button("Keep", role: .cancel) {}
-            } message: {
-                Text("This removes your rating from \(plant.name).")
-            }
         }
     }
 
@@ -184,6 +174,17 @@ struct WriteReviewSheet: View {
         }
         .buttonStyle(.pressable)
         .disabled(store.isSubmitting)
+        // attached here so on iPad the popover points at the button
+        .confirmationDialog(
+            "Delete your review?",
+            isPresented: $showDeleteConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) { deleteReview() }
+            Button("Keep", role: .cancel) {}
+        } message: {
+            Text("This removes your rating from \(plant.name).")
+        }
     }
 
     // MARK: - Actions

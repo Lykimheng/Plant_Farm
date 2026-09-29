@@ -94,9 +94,11 @@ nonisolated enum Theme {
 
     enum Layout {
         static let readable: CGFloat = 640
+        static let wide: CGFloat = 760
         static let compact: CGFloat = 480
         static let gridCellMin: CGFloat = 156
         static let gridCellMax: CGFloat = 230
+        static let cardCellMin: CGFloat = 300
     }
 }
 
@@ -147,6 +149,16 @@ extension View {
         frame(maxWidth: maxWidth)
             .frame(maxWidth: .infinity)
     }
+
+    /// Centres content that fits, and lets it scroll when it doesn't — e.g. a phone
+    /// on its side, where fixed-height layouts would otherwise be clipped.
+    func scrollableWhenNeeded(alignment: UnitPoint = .center) -> some View {
+        ScrollView {
+            self
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .defaultScrollAnchor(alignment, for: .alignment)
+    }
 }
 
 extension Array where Element == GridItem {
@@ -155,6 +167,11 @@ extension Array where Element == GridItem {
             .adaptive(minimum: Theme.Layout.gridCellMin, maximum: Theme.Layout.gridCellMax),
             spacing: Theme.Spacing.lg
         )]
+    }
+
+    /// One column on phones, more once there's room for full-size cards side by side.
+    static var cardGrid: [GridItem] {
+        [GridItem(.adaptive(minimum: Theme.Layout.cardCellMin), spacing: Theme.Spacing.lg)]
     }
 }
 

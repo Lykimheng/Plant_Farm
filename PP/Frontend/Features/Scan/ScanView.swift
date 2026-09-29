@@ -14,18 +14,24 @@ struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
     @EnvironmentObject private var catalog: PlantsStore
     @EnvironmentObject private var toast: ToastCenter
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     @State private var pickedImage: UIImage?
     @State private var showPhotoLibrary = false
     @State private var isAnimatingScanLine = false
-    @State private var resultDetent: PresentationDetent = .medium
+    @State private var resultDetent: PresentationDetent = .scanSummary
 
-    private let frameSize: CGFloat = 280
+    /// The scan window never grows past this, and shrinks below it when space is short.
+    private var maxFrameSide: CGFloat { horizontalSizeClass == .regular ? 400 : 280 }
+
+    /// A phone on its side: too short to stack hint, window and controls.
+    private var isShortScreen: Bool { verticalSizeClass == .compact }
 
     var body: some View {
         ZStack {
             if permission.isCameraAuthorized {
-                CameraPreview(session: camera.session)
+                CameraPreview(session: camera.session, isRunning: camera.isRunning)
                     .ignoresSafeArea()
             } else {
                 Theme.textPrimary.opacity(0.9).ignoresSafeArea()
@@ -53,11 +59,11 @@ struct ScanView: View {
             ImagePicker(selectedImage: $pickedImage, sourceType: .photoLibrary)
                 .ignoresSafeArea()
         }
-        .sheet(isPresented: $viewModel.isShowingResult, onDismiss: { resultDetent = .medium }) {
+        .sheet(isPresented: $viewModel.isShowingResult, onDismiss: { resultDetent = .scanSummary }) {
             ScanResultSheet(viewModel: viewModel, detent: $resultDetent)
                 // the tab bar's toast sits underneath this sheet
                 .toast(center: toast)
-                .presentationDetents([.medium, .large], selection: $resultDetent)
+                .presentationDetents([.scanSummary, .large], selection: $resultDetent)
                 .presentationDragIndicator(.visible)
         }
         .onChange(of: pickedImage) { _, image in
@@ -80,38 +86,73 @@ struct ScanView: View {
     // MARK: - Overlay
 
     private var scannerOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.45)
-                .ignoresSafeArea()
-                .mask(
-                    ZStack {
-                        Rectangle()
-                        RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
-                            .frame(width: frameSize, height: frameSize)
-                            .blendMode(.destinationOut)
+        Group {
+            if isShortScreen {
+                // controls move to a column at the side, like the Camera app
+                HStack(spacing: Theme.Spacing.lg) {
+                    VStack(spacing: Theme.Spacing.md) {
+                        hint
+                        scanWindow
                     }
-                    .compositingGroup()
-                )
+                    .padding(.vertical, Theme.Spacing.md)
 
-            ScanFrame(size: frameSize)
-                .frame(width: frameSize, height: frameSize)
-                .overlay(alignment: .top) { scanLine }
-                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
-
-            VStack {
-                Text("Center the plant inside the frame")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.9))
-                    .padding(.horizontal, Theme.Spacing.md)
-                    .padding(.vertical, Theme.Spacing.sm)
-                    .background(.ultraThinMaterial, in: Capsule())
-                    .padding(.top, Theme.Spacing.xxl)
-
-                Spacer()
-
-                controls
+                    controls(vertical: true)
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+            } else {
+                VStack(spacing: Theme.Spacing.lg) {
+                    hint
+                        .padding(.top, Theme.Spacing.xl)
+                    scanWindow
+                    controls(vertical: false)
+                        .padding(.bottom, Theme.Spacing.xl)
+                }
+                .padding(.horizontal, Theme.Spacing.xl)
             }
         }
+        // the dimmed surround is cut out wherever the layout put the window
+        .backgroundPreferenceValue(ScanWindowAnchorKey.self) { anchor in
+            GeometryReader { proxy in
+                dimming(around: anchor.map { proxy[$0] })
+            }
+            .ignoresSafeArea()
+        }
+    }
+
+    private var hint: some View {
+        Text("Center the plant inside the frame")
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(.white.opacity(0.9))
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.sm)
+            .background(.ultraThinMaterial, in: Capsule())
+    }
+
+    /// Takes whatever room is left between the hint and the controls, as a square.
+    private var scanWindow: some View {
+        ScanFrame()
+            .overlay { scanLine }
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous))
+            .aspectRatio(1, contentMode: .fit)
+            .anchorPreference(key: ScanWindowAnchorKey.self, value: .bounds) { $0 }
+            .frame(maxWidth: maxFrameSide, maxHeight: maxFrameSide)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func dimming(around window: CGRect?) -> some View {
+        Color.black.opacity(0.45)
+            .mask {
+                ZStack {
+                    Rectangle()
+                    if let window {
+                        RoundedRectangle(cornerRadius: Theme.Radius.lg, style: .continuous)
+                            .frame(width: window.width, height: window.height)
+                            .position(x: window.midX, y: window.midY)
+                            .blendMode(.destinationOut)
+                    }
+                }
+                .compositingGroup()
+            }
     }
 
     private var scanLine: some View {
@@ -124,24 +165,31 @@ struct ScanView: View {
                 )
             )
             .frame(height: 2.5)
-            .offset(y: isAnimatingScanLine ? frameSize - 2.5 : 0)
+            // sweeps edge to edge whatever size the window ends up
+            .frame(maxHeight: .infinity, alignment: isAnimatingScanLine ? .bottom : .top)
             .animation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true), value: isAnimatingScanLine)
             .onAppear { isAnimatingScanLine = true }
     }
 
-    private var controls: some View {
-        HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+    private func controls(vertical: Bool) -> some View {
+        // the side column drops the captions so it fits a landscape phone's height
+        let layout = vertical
+            ? AnyLayout(VStackLayout(spacing: Theme.Spacing.lg))
+            : AnyLayout(HStackLayout(alignment: .top, spacing: Theme.Spacing.xxl))
+
+        return layout {
             controlButton(
                 icon: camera.isFlashOn ? Icons.flashOn : Icons.flashOff,
                 label: "Flash",
+                showsLabel: !vertical,
                 isActive: camera.isFlashOn
             ) {
                 camera.toggleFlash()
             }
 
-            shutterButton
+            shutterButton(showsLabel: !vertical)
 
-            controlButton(icon: Icons.photoLibrary, label: "Photos", isActive: false) {
+            controlButton(icon: Icons.photoLibrary, label: "Photos", showsLabel: !vertical, isActive: false) {
                 Task {
                     if await permission.requestPhotoLibrary() {
                         showPhotoLibrary = true
@@ -149,10 +197,9 @@ struct ScanView: View {
                 }
             }
         }
-        .padding(.bottom, Theme.Spacing.xxl + Theme.Spacing.lg)
     }
 
-    private var shutterButton: some View {
+    private func shutterButton(showsLabel: Bool) -> some View {
         Button(action: capture) {
             VStack(spacing: 6) {
                 ZStack {
@@ -166,21 +213,24 @@ struct ScanView: View {
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(Theme.brand)
                 }
-                Text("Identify")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.85))
+                if showsLabel {
+                    Text("Identify")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.85))
+                }
             }
         }
         .buttonStyle(.pressable)
         .disabled(!camera.isRunning || camera.isCapturing)
         .opacity(camera.isRunning ? 1 : 0.5)
         .accessibilityLabel("Take a photo to identify the plant")
-        .offset(y: -8)
+        .offset(y: showsLabel ? -8 : 0)
     }
 
     private func controlButton(
         icon: String,
         label: String,
+        showsLabel: Bool,
         isActive: Bool,
         action: @escaping () -> Void
     ) -> some View {
@@ -191,9 +241,11 @@ struct ScanView: View {
                     .foregroundStyle(isActive ? Theme.brandAccent : .white)
                     .frame(width: 52, height: 52)
                     .background(.ultraThinMaterial, in: Circle())
-                Text(label)
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.85))
+                if showsLabel {
+                    Text(label)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.85))
+                }
             }
         }
         .buttonStyle(.pressable)
@@ -238,13 +290,22 @@ struct ScanView: View {
             }
         }
         .padding(Theme.Spacing.lg)
+        .frame(maxWidth: .infinity)
+        .scrollableWhenNeeded()
     }
 }
 
 // MARK: - Frame corners
 
+private struct ScanWindowAnchorKey: PreferenceKey {
+    static let defaultValue: Anchor<CGRect>? = nil
+
+    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
+        value = value ?? nextValue()
+    }
+}
+
 private struct ScanFrame: View {
-    let size: CGFloat
     private let cornerLength: CGFloat = 26
     private let thickness: CGFloat = 4
 
@@ -298,7 +359,7 @@ private struct ScanResultSheet: View {
                     content
                 }
                 .padding(Theme.Spacing.lg)
-                .readableWidth(760)
+                .readableWidth(Theme.Layout.wide)
             }
             .background(Theme.background)
             .navigationTitle("Scan result")
@@ -314,7 +375,7 @@ private struct ScanResultSheet: View {
         }
         // A product page needs the full sheet; drop back when the user returns.
         .onChange(of: path) { _, path in
-            detent = path.isEmpty ? .medium : .large
+            detent = path.isEmpty ? .scanSummary : .large
         }
         .onChange(of: viewModel.predictions) { _, _ in chosen = nil }
     }
@@ -584,6 +645,18 @@ private struct ScanResultSheet: View {
             }
         }
     }
+}
+
+/// Half the screen on most phones, but never so short that a small phone (iPhone SE)
+/// hides the match card below the photo.
+nonisolated private struct ScanSummaryDetent: CustomPresentationDetent {
+    static func height(in context: Context) -> CGFloat? {
+        min(max(context.maxDetentValue * 0.5, 440), context.maxDetentValue)
+    }
+}
+
+private extension PresentationDetent {
+    static var scanSummary: PresentationDetent { .custom(ScanSummaryDetent.self) }
 }
 
 private struct ConfidenceBar: View {

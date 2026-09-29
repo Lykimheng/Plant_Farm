@@ -58,7 +58,7 @@ struct MyPlantsView: View {
             }
             .padding(.top, Theme.Spacing.md)
             .padding(.bottom, 88)
-            .readableWidth()
+            .readableWidth(Theme.Layout.wide)
         }
         .refreshable { await myPlants.load(userId: user.id) }
         .overlay(alignment: .bottomTrailing) { addButton }
@@ -82,7 +82,8 @@ struct MyPlantsView: View {
                 action: { showAddPlant = true }
             )
         } else {
-            LazyVStack(spacing: Theme.Spacing.lg) {
+            // one column on phones; side by side on iPad instead of banner-wide cards
+            LazyVGrid(columns: .cardGrid, spacing: Theme.Spacing.lg) {
                 ForEach(myPlants.plants) { plant in
                     MyPlantCard(plant: plant) {
                         Task { await myPlants.remove(plant, userId: user.id) }

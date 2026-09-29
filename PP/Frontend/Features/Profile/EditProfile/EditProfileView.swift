@@ -73,34 +73,14 @@ struct EditProfileView: View {
             }
         }
         .onAppear { name = user.name }
-        .confirmationDialog("Change profile photo", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
-            Button("Take photo") {
-                Task {
-                    if await permission.requestCamera() {
-                        imagePickerSource = .camera
-                        showImagePicker = true
-                    } else {
-                        errorMessage = "Camera access is off. Enable it in Settings to take a photo."
-                    }
-                }
-            }
-            .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
-
-            Button("Choose from library") {
-                Task {
-                    if await permission.requestPhotoLibrary() {
-                        imagePickerSource = .photoLibrary
-                        showImagePicker = true
-                    } else {
-                        errorMessage = "Photo access is off. Enable it in Settings to pick a photo."
-                    }
-                }
-            }
-
-            Button("Cancel", role: .cancel) {}
+        .sheet(isPresented: isPickerPresented(for: .photoLibrary)) {
+            ImagePicker(selectedImage: $selectedImage, sourceType: .photoLibrary)
+                .ignoresSafeArea()
         }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(selectedImage: $selectedImage, sourceType: imagePickerSource)
+        // the camera needs the whole screen; in a sheet it's cramped, and on iPad
+        // it would sit in a small form sheet
+        .fullScreenCover(isPresented: isPickerPresented(for: .camera)) {
+            ImagePicker(selectedImage: $selectedImage, sourceType: .camera)
                 .ignoresSafeArea()
         }
         .onChange(of: selectedImage) { _, newImage in
@@ -134,6 +114,40 @@ struct EditProfileView: View {
         .buttonStyle(.pressable)
         .disabled(isUploadingAvatar)
         .accessibilityLabel("Change profile photo")
+        // attached here so on iPad the popover points at the photo
+        .confirmationDialog("Change profile photo", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
+            Button("Take photo") {
+                Task {
+                    if await permission.requestCamera() {
+                        imagePickerSource = .camera
+                        showImagePicker = true
+                    } else {
+                        errorMessage = "Camera access is off. Enable it in Settings to take a photo."
+                    }
+                }
+            }
+            .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+
+            Button("Choose from library") {
+                Task {
+                    if await permission.requestPhotoLibrary() {
+                        imagePickerSource = .photoLibrary
+                        showImagePicker = true
+                    } else {
+                        errorMessage = "Photo access is off. Enable it in Settings to pick a photo."
+                    }
+                }
+            }
+
+            Button("Cancel", role: .cancel) {}
+        }
+    }
+
+    private func isPickerPresented(for source: UIImagePickerController.SourceType) -> Binding<Bool> {
+        Binding(
+            get: { showImagePicker && imagePickerSource == source },
+            set: { showImagePicker = $0 }
+        )
     }
 
     // MARK: - Actions
