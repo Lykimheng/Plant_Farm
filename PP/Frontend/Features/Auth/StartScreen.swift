@@ -48,19 +48,24 @@ struct StartScreen: View {
             }
     }
 
+    // Color.clear sets the full-screen frame; sized alone, the photo left a strip on tall phones
     private var backdrop: some View {
-        ZStack {
-            Image("Background")
-                .resizable()
-                .scaledToFill()
-                .accessibilityHidden(true)
-            LinearGradient(
-                colors: [.black.opacity(0.05), .black.opacity(0.65)],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-        }
-        .ignoresSafeArea()
+        Color.clear
+            .overlay {
+                Image("Background")
+                    .resizable()
+                    .scaledToFill()
+                    .accessibilityHidden(true)
+            }
+            .overlay {
+                LinearGradient(
+                    colors: [.black.opacity(0.05), .black.opacity(0.65)],
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+            }
+            .clipped()
+            .ignoresSafeArea()
     }
 
     private var content: some View {
