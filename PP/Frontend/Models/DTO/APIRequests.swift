@@ -89,6 +89,7 @@ nonisolated struct PlaceOrderRequest: Encodable {
     let orderNumber: String
     let total: Double
     let deliveryAddress: String
+    let deliveryOption: String
     let items: [Item]
 
     enum CodingKeys: String, CodingKey {
@@ -96,6 +97,7 @@ nonisolated struct PlaceOrderRequest: Encodable {
         case orderNumber = "order_number"
         case total
         case deliveryAddress = "delivery_address"
+        case deliveryOption = "delivery_option"
         case items
     }
 }

@@ -52,7 +52,8 @@ final class CheckoutViewModel: ObservableObject {
                 orderNumber: OrderNumber.generate(),
                 items: cart.items,
                 total: total(subtotal: cart.subtotal),
-                deliveryAddress: deliveryTo
+                deliveryAddress: deliveryTo,
+                deliveryOption: selectedDelivery.id
             )
             cart.clear()
             placedOrder = order

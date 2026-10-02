@@ -13,6 +13,8 @@ use Throwable;
 
 class OrderController extends Controller
 {
+    private const DELIVERY_FEES = ['standard' => 1.50, 'express' => 2.00];
+
     public function index(Request $request)
     {
         $userId = (int) $request->query('user_id', 0);
@@ -56,19 +58,51 @@ class OrderController extends Controller
     {
         $userId      = (int) $request->input('user_id', 0);
         $orderNumber = $this->stringInput($request, 'order_number');
-        $total       = (float) $request->input('total', 0);
         $address     = $this->stringInput($request, 'delivery_address');
         $items       = $request->input('items', []);
+        $delivery    = $this->stringInput($request, 'delivery_option') ?: 'standard';
 
-        if ($userId === 0 || $orderNumber === '' || empty($items)) {
+        if ($userId === 0 || $orderNumber === '' || empty($items) || ! is_array($items)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Missing required fields.',
             ]);
         }
 
+        if (! array_key_exists($delivery, self::DELIVERY_FEES)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unknown delivery option.',
+            ]);
+        }
+
+        // prices come from the database; the total and prices the app sends are ignored
+        $lines = [];
+        $subtotal = 0.0;
+
+        foreach ($items as $item) {
+            $plant    = Plant::find((int) ($item['plant_id'] ?? 0));
+            $quantity = (int) ($item['quantity'] ?? 0);
+
+            if (! $plant || $quantity < 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An item in your cart is no longer available.',
+                ]);
+            }
+
+            $price = $plant->discount_price !== null && $plant->discount_price < $plant->price
+                ? $plant->discount_price
+                : $plant->price;
+
+            $lines[] = ['plant' => $plant, 'price' => $price, 'quantity' => $quantity];
+            $subtotal += $price * $quantity;
+        }
+
+        $total = round($subtotal + self::DELIVERY_FEES[$delivery], 2);
+
         try {
-            $orderId = DB::transaction(function () use ($userId, $orderNumber, $total, $address, $items) {
+            $orderId = DB::transaction(function () use ($userId, $orderNumber, $total, $address, $lines) {
                 $order = Order::create([
                     'user_id'          => $userId,
                     'order_number'     => $orderNumber,
@@ -77,13 +111,13 @@ class OrderController extends Controller
                     'delivery_address' => $address,
                 ]);
 
-                foreach ($items as $item) {
+                foreach ($lines as $line) {
                     OrderItem::create([
                         'order_id'   => $order->id,
-                        'plant_id'   => (int) ($item['plant_id'] ?? 0),
-                        'plant_name' => $item['plant_name'] ?? '',
-                        'price'      => (float) ($item['price'] ?? 0),
-                        'quantity'   => (int) ($item['quantity'] ?? 0),
+                        'plant_id'   => $line['plant']->id,
+                        'plant_name' => $line['plant']->name,
+                        'price'      => $line['price'],
+                        'quantity'   => $line['quantity'],
                     ]);
                 }
 
@@ -105,6 +139,7 @@ class OrderController extends Controller
             'success'  => true,
             'message'  => 'Order placed.',
             'order_id' => (int) $orderId,
+            'total'    => $total,
         ]);
     }
 

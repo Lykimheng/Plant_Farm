@@ -202,9 +202,10 @@ nonisolated struct PlaceOrderResponse: APIResponse {
     let success: Bool
     let message: String?
     let orderId: Int?
+    let total: Double?
 
     enum CodingKeys: String, CodingKey {
-        case success, message
+        case success, message, total
         case orderId = "order_id"
     }
 }

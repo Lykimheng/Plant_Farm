@@ -59,7 +59,8 @@ final class OrdersStore: ObservableObject {
         orderNumber: String,
         items: [CartItem],
         total: Double,
-        deliveryAddress: String
+        deliveryAddress: String,
+        deliveryOption: String
     ) async throws -> OrderModel {
         let response: PlaceOrderResponse = try await client.send(
             API.Path.orders,
@@ -69,6 +70,7 @@ final class OrdersStore: ObservableObject {
                 orderNumber: orderNumber,
                 total: total,
                 deliveryAddress: deliveryAddress,
+                deliveryOption: deliveryOption,
                 items: items.map {
                     .init(
                         plantId: $0.plant.id,
@@ -86,7 +88,7 @@ final class OrdersStore: ObservableObject {
             placedAt: Date(),
             status: .pending,
             items: items,
-            total: total,
+            total: response.total ?? total,
             deliveryAddress: deliveryAddress
         )
 
