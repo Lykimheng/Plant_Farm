@@ -33,7 +33,7 @@ struct HomeHeader: View {
         .padding(.top, Theme.Spacing.sm)
         .padding(.bottom, isCollapsed ? Theme.Spacing.sm : Theme.Spacing.lg)
         .readableWidth(Theme.Layout.wide)   // lines up with the content column below
-        .background(Theme.brand.ignoresSafeArea(edges: .top))
+        .background(Theme.brand.ignoresSafeArea(edges: [.top, .horizontal]))
         .animation(.easeInOut(duration: 0.25), value: isCollapsed)
         .sheet(isPresented: $showWishlist) {
             NavigationStack { WishlistView(isModal: true) }

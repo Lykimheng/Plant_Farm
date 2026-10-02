@@ -19,7 +19,6 @@ struct ScanView: View {
 
     @State private var pickedImage: UIImage?
     @State private var showPhotoLibrary = false
-    @State private var isAnimatingScanLine = false
     @State private var resultDetent: PresentationDetent = .scanSummary
 
     /// The scan window never grows past this, and shrinks below it when space is short.
@@ -156,19 +155,29 @@ struct ScanView: View {
     }
 
     private var scanLine: some View {
-        Rectangle()
-            .fill(
-                LinearGradient(
-                    colors: [.clear, Theme.brandAccent, .clear],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .frame(height: 2.5)
-            // sweeps edge to edge whatever size the window ends up
-            .frame(maxHeight: .infinity, alignment: isAnimatingScanLine ? .bottom : .top)
-            .animation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true), value: isAnimatingScanLine)
-            .onAppear { isAnimatingScanLine = true }
+        TimelineView(.animation) { context in
+            GeometryReader { proxy in
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [.clear, Theme.brandAccent, .clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 2.5)
+                    .offset(y: (proxy.size.height - 2.5) * Self.scanProgress(at: context.date))
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    // driven by the clock, so rotating or switching tabs can't freeze it
+    private static func scanProgress(at date: Date) -> CGFloat {
+        let period = 3.6
+        let phase = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: period) / period
+        let t = phase < 0.5 ? phase * 2 : (1 - phase) * 2
+        return t * t * (3 - 2 * t)
     }
 
     private func controls(vertical: Bool) -> some View {
