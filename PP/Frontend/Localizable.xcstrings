@@ -395,6 +395,9 @@
         }
       }
     },
+    "All saved scans and their photos will be removed from this device." : {
+
+    },
     "Allow camera" : {
       "localizations" : {
         "km" : {
@@ -894,6 +897,9 @@
           }
         }
       }
+    },
+    "Clear scan history?" : {
+
     },
     "Clear search" : {
       "localizations" : {
@@ -2427,6 +2433,9 @@
         }
       }
     },
+    "No scans yet" : {
+
+    },
     "No sign of the common problems the scanner knows about." : {
       "localizations" : {
         "km" : {
@@ -2921,6 +2930,9 @@
         }
       }
     },
+    "Plants you identify with the camera or from your photos will show up here." : {
+
+    },
     "Poor" : {
       "localizations" : {
         "km" : {
@@ -3237,6 +3249,9 @@
         }
       }
     },
+    "Scan history" : {
+
+    },
     "Scan result" : {
       "localizations" : {
         "km" : {
@@ -3496,6 +3511,7 @@
       }
     },
     "Something went wrong while looking at the photo. Please try again." : {
+      "extractionState" : "stale",
       "localizations" : {
         "km" : {
           "stringUnit" : {
@@ -3826,6 +3842,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "សរុប"
+          }
+        }
+      }
+    },
+    "Total incl. %@ delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total incl. %@ delivery"
           }
         }
       }

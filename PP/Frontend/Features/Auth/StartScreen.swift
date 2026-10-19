@@ -1,6 +1,7 @@
 //
 //  StartScreen.swift
 //  PP
+//
 //  Created by Ly Kimheng on 25/12/25.
 //
 
@@ -14,8 +15,7 @@ struct StartScreen: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     private var isWide: Bool { sizeClass == .regular }
-    /// A phone on its side: the headline and buttons need to share ~350pt of height.
-    private var isShort: Bool { verticalSizeClass == .compact }
+    private var isShort: Bool { verticalSizeClass == .compact}
     private var alignment: HorizontalAlignment { isWide ? .center : .leading }
     private var textAlignment: TextAlignment { isWide ? .center : .leading }
 

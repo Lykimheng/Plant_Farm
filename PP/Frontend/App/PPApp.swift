@@ -21,6 +21,7 @@ struct PPApp: App {
     @StateObject private var theme = ThemeManager()
     @StateObject private var router = AppRouter()
     @StateObject private var language = LanguageManager()
+    @StateObject private var scanHistory = ScanHistoryStore()
 
     var body: some Scene {
         WindowGroup {
@@ -37,6 +38,7 @@ struct PPApp: App {
                 .environmentObject(theme)
                 .environmentObject(router)
                 .environmentObject(language)
+                .environmentObject(scanHistory)
                 .environment(\.locale, language.locale)
                 .preferredColorScheme(theme.colorScheme)
                 .task {

@@ -30,10 +30,6 @@ return new class extends Migration
             }
 
             $this->dropForeignKey($table, $column);
-
-            // a constraint can't be added while rows point at a user that no
-            // longer exists, which is exactly what the missing my_plants key
-            // allowed to happen
             $this->deleteOrphans($table, $column, $parent);
 
             Schema::table($table, function ($blueprint) use ($column, $parent) {

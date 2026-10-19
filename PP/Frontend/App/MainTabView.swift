@@ -83,4 +83,5 @@ struct MainTabView: View {
         .environmentObject(ToastCenter())
         .environmentObject(ThemeManager())
         .environmentObject(AppRouter())
+        .environmentObject(ScanHistoryStore())
 }

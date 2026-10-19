@@ -23,7 +23,7 @@ struct PlantDetailView: View {
 
     private var plant: PlantModel { listing.plant }
     /// Shorter on a phone on its side, so the name and price show without scrolling.
-    private var heroHeight: CGFloat { verticalSizeClass == .compact ? 220 : 340 }
+    private var heroHeight: CGFloat { verticalSizeClass == .compact  ? 220 : 340 }
     private var lineTotal: Double { listing.price * Double(quantity) }
     private var savings: Double { listing.savings * Double(quantity) }
 

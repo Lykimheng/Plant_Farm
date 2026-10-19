@@ -149,9 +149,7 @@ extension View {
         frame(maxWidth: maxWidth)
             .frame(maxWidth: .infinity)
     }
-
-    /// Centres content that fits, and lets it scroll when it doesn't — e.g. a phone
-    /// on its side, where fixed-height layouts would otherwise be clipped.
+    
     func scrollableWhenNeeded(alignment: UnitPoint = .center) -> some View {
         ScrollView {
             self

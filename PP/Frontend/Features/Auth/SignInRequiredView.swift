@@ -13,7 +13,6 @@ struct SignInRequiredView: View {
     @State private var showSignUp = false
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    /// Side by side on a phone on its side, so the whole prompt fits above the tab bar.
     private var buttonLayout: AnyLayout {
         verticalSizeClass == .compact
             ? AnyLayout(HStackLayout(spacing: Theme.Spacing.md))

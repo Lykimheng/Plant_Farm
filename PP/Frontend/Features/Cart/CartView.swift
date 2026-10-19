@@ -72,9 +72,7 @@ struct CartView: View {
 
     private var summaryBar: some View {
         Group {
-            if verticalSizeClass == .compact {
-                // a phone on its side can't spare the full breakdown's height,
-                // or the bar would cover the items
+            if verticalSizeClass == .compact{
                 HStack(spacing: Theme.Spacing.lg) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Total incl. \(estimatedDelivery.fee.priceText) delivery")

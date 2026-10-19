@@ -17,12 +17,21 @@ final class ScanViewModel: ObservableObject {
     @Published private(set) var errorMessage: LocalizedStringResource?
     @Published var isShowingResult = false
 
+    weak var history: ScanHistoryStore?
+
     private let speciesClassifier: ImageClassifier
     private let healthClassifier: ImageClassifier
 
     init(species: ImageClassifier = .species, health: ImageClassifier = .health) {
         speciesClassifier = species
         healthClassifier = health
+    }
+
+    convenience init(record: ScanRecord, image: UIImage?) {
+        self.init()
+        self.image = image
+        predictions = record.predictions
+        health = record.healthPredictions
     }
 
     var bestMatch: PlantPrediction? { predictions.first }
@@ -52,6 +61,8 @@ final class ScanViewModel: ObservableObject {
         } catch {
             AppLog.warning("Health check unavailable: \(error.localizedDescription)")
         }
+
+        history?.add(image: image, predictions: predictions, health: health)
     }
 
     func retry() async {

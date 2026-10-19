@@ -65,6 +65,7 @@ nonisolated enum Icons {
     static let shutter = "camera.fill"
     static let identified = "sparkles"
     static let retry = "arrow.counterclockwise"
+    static let history = "clock.arrow.circlepath"
     static let health = "stethoscope"
     static let warning = "exclamationmark.triangle.fill"
 }

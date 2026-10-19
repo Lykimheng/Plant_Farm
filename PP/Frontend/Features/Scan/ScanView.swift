@@ -14,6 +14,7 @@ struct ScanView: View {
     @StateObject private var viewModel = ScanViewModel()
     @EnvironmentObject private var catalog: PlantsStore
     @EnvironmentObject private var toast: ToastCenter
+    @EnvironmentObject private var history: ScanHistoryStore
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
@@ -47,7 +48,26 @@ struct ScanView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(value: ScanRoute.history) {
+                    Image(systemName: Icons.history)
+                }
+                .accessibilityLabel("Scan history")
+            }
+        }
+        // declared on the tab's root so every link pushed in this tab can use them
+        .navigationDestination(for: ScanRoute.self) { _ in
+            ScanHistoryView()
+        }
+        .navigationDestination(for: ScanRecord.self) { record in
+            ScanRecordDetailView(record: record, image: history.image(for: record))
+        }
+        .navigationDestination(for: PlantListing.self) { listing in
+            PlantDetailView(listing: listing)
+        }
         .task {
+            viewModel.history = history
             await permission.requestCamera()
             if permission.isCameraAuthorized { camera.start() }
             // The result sheet links into the shop, so have the catalog ready.
@@ -348,11 +368,38 @@ private struct ScanResultSheet: View {
     @ObservedObject var viewModel: ScanViewModel
     @Binding var detent: PresentationDetent
 
-    @EnvironmentObject private var catalog: PlantsStore
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.locale) private var locale
 
     @State private var path: [PlantListing] = []
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            ScanResultContent(viewModel: viewModel)
+                .navigationTitle("Scan result")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+                .navigationDestination(for: PlantListing.self) { listing in
+                    PlantDetailView(listing: listing)
+                }
+        }
+        // A product page needs the full sheet; drop back when the user returns.
+        .onChange(of: path) { _, path in
+            detent = path.isEmpty ? .scanSummary : .large
+        }
+    }
+}
+
+// shared by the live result sheet and saved scans in the history
+struct ScanResultContent: View {
+    @ObservedObject var viewModel: ScanViewModel
+
+    @EnvironmentObject private var catalog: PlantsStore
+    @Environment(\.locale) private var locale
+
     @State private var chosen: PlantPrediction?
 
     /// The candidate being shown: the model's best guess unless the user picked another.
@@ -361,31 +408,15 @@ private struct ScanResultSheet: View {
     }
 
     var body: some View {
-        NavigationStack(path: $path) {
-            ScrollView {
-                VStack(spacing: Theme.Spacing.lg) {
-                    photo
-                    content
-                }
-                .padding(Theme.Spacing.lg)
-                .readableWidth(Theme.Layout.wide)
+        ScrollView {
+            VStack(spacing: Theme.Spacing.lg) {
+                photo
+                content
             }
-            .background(Theme.background)
-            .navigationTitle("Scan result")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            .navigationDestination(for: PlantListing.self) { listing in
-                PlantDetailView(listing: listing)
-            }
+            .padding(Theme.Spacing.lg)
+            .readableWidth(Theme.Layout.wide)
         }
-        // A product page needs the full sheet; drop back when the user returns.
-        .onChange(of: path) { _, path in
-            detent = path.isEmpty ? .scanSummary : .large
-        }
+        .background(Theme.background)
         .onChange(of: viewModel.predictions) { _, _ in chosen = nil }
     }
 
@@ -478,7 +509,7 @@ private struct ScanResultSheet: View {
                 .foregroundStyle(Theme.textSecondary)
 
             HStack(spacing: Theme.Spacing.sm) {
-                ForEach(viewModel.predictions.filter { $0.id != current.id }) { prediction in
+                ForEach(Array(viewModel.predictions.filter { $0.id != current.id }.prefix(2))) { prediction in
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) { chosen = prediction }
                     } label: {
@@ -701,5 +732,6 @@ private struct ConfidenceBar: View {
             .environmentObject(WishlistStore())
             .environmentObject(UserStore())
             .environmentObject(ToastCenter())
+            .environmentObject(ScanHistoryStore())
     }
 }
