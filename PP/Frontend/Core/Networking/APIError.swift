@@ -12,7 +12,7 @@ nonisolated enum APIError: LocalizedError, Equatable {
     case network(String)
     case server(String)
     case decoding(String)
-
+    case sessionExpired
 
     var message: LocalizedStringResource {
         switch self {
@@ -20,6 +20,7 @@ nonisolated enum APIError: LocalizedError, Equatable {
         case .network:               return "No connection. Check your network and try again."
         case .server(let message):   return .dynamic(message)
         case .decoding:              return "The server sent something we couldn't read."
+        case .sessionExpired:        return "Your session has expired. Please sign in again."
         }
     }
 
@@ -31,6 +32,7 @@ nonisolated enum APIError: LocalizedError, Equatable {
         case .network(let detail):   return "APIError.network(\(detail))"
         case .server(let detail):    return "APIError.server(\(detail))"
         case .decoding(let detail):  return "APIError.decoding(\(detail))"
+        case .sessionExpired:        return "APIError.sessionExpired"
         }
     }
 }

@@ -32,13 +32,17 @@ nonisolated enum API {
     enum Path {
         static let register = "register"
         static let login = "login"
+        static let logout = "logout"
+        static let currentUser = "user"
         static let forgotPassword = "forgot_password"
+        static let resetPassword = "reset_password"
         static let updateProfile = "update_profile"
         static let uploadAvatar = "upload_avatar"
         static let plants = "plants"
         static let reviews = "reviews"
         static let myPlants = "my_plants"
         static let orders = "orders"
+        static func cancelOrder(_ id: Int) -> String { "orders/\(id)/cancel" }
         static let notifications = "notifications"
     }
 

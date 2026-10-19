@@ -17,10 +17,8 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $userId = (int) $request->query('user_id', 0);
-
-        $orders = Order::with('items')
-            ->where('user_id', $userId)
+        $orders = $request->user()->orders()
+            ->with('items')
             ->orderByDesc('created_at')
             ->get();
 
@@ -56,24 +54,24 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        $userId      = (int) $request->input('user_id', 0);
+        $userId      = $request->user()->id;
         $orderNumber = $this->stringInput($request, 'order_number');
         $address     = $this->stringInput($request, 'delivery_address');
         $items       = $request->input('items', []);
         $delivery    = $this->stringInput($request, 'delivery_option') ?: 'standard';
 
-        if ($userId === 0 || $orderNumber === '' || empty($items) || ! is_array($items)) {
+        if ($orderNumber === '' || empty($items) || ! is_array($items)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Missing required fields.',
-            ]);
+            ], 422);
         }
 
         if (! array_key_exists($delivery, self::DELIVERY_FEES)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unknown delivery option.',
-            ]);
+            ], 422);
         }
 
         // prices come from the database; the total and prices the app sends are ignored
@@ -88,7 +86,7 @@ class OrderController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'An item in your cart is no longer available.',
-                ]);
+                ], 422);
             }
 
             $price = $plant->discount_price !== null && $plant->discount_price < $plant->price
@@ -132,7 +130,7 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => "We couldn't place your order. Please try again.",
-            ]);
+            ], 500);
         }
 
         return response()->json([
@@ -143,32 +141,39 @@ class OrderController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request)
+    /**
+     * Customers can only cancel their own order, and only while it's still
+     * pending. Every other status change belongs to the admin panel.
+     */
+    public function cancel(Request $request, int $order)
     {
-        $orderId = (int) $request->input('order_id', 0);
-        $status  = $this->stringInput($request, 'status');
+        [$status, $message] = DB::transaction(function () use ($request, $order) {
+            // locked so an admin confirming at the same moment can't be overwritten
+            $found = $request->user()->orders()->lockForUpdate()->find($order);
 
-        $allowed = ['pending', 'confirmed', 'preparing', 'inTransit', 'delivered', 'cancelled', 'rejected'];
+            if (! $found) {
+                return [404, 'Order not found.'];
+            }
 
-        if (! in_array($status, $allowed, true)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid status.',
-            ]);
-        }
+            // a retried request after a dropped connection shouldn't look like a failure
+            if ($found->status === 'cancelled') {
+                return [200, 'Order cancelled.'];
+            }
 
-        // save through the model (not a mass update) so OrderObserver fires and
-        // raises the customer notification
-        $order = Order::find($orderId);
+            if ($found->status !== 'pending') {
+                return [422, 'This order is already being processed and can no longer be cancelled.'];
+            }
 
-        if ($order) {
-            $order->status = $status;
-            $order->save();
-        }
+            // saved through the model so OrderObserver raises the notification
+            $found->status = 'cancelled';
+            $found->save();
+
+            return [200, 'Order cancelled.'];
+        });
 
         return response()->json([
-            'success' => true,
-            'message' => 'Order status updated.',
-        ]);
+            'success' => $status === 200,
+            'message' => $message,
+        ], $status);
     }
 }

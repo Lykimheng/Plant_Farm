@@ -20,6 +20,7 @@ nonisolated struct UserResponse: APIResponse {
     let success: Bool
     let message: String?
     let user: UserDTO?
+    let token: String?
 }
 
 nonisolated struct UserDTO: Decodable {

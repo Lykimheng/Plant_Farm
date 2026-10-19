@@ -20,9 +20,16 @@ final class UserStore: ObservableObject {
     @Published var errorMessage: LocalizedStringResource?
 
     private let client: APIClient
+    private var sessionExpiry: AnyCancellable?
 
     init(client: APIClient = .shared) {
         self.client = client
+        sessionExpiry = NotificationCenter.default.publisher(for: .sessionExpired)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.endSession()
+                self?.errorMessage = APIError.sessionExpired.message
+            }
     }
 
     // MARK: - Auth
@@ -54,25 +61,46 @@ final class UserStore: ObservableObject {
         }
     }
     
-    func resetPassword(email: String, newPassword: String) async -> Bool {
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
+    func restoreSession() async {
+        guard !isLoggedIn, AuthToken.current != nil else { return }
 
         do {
-            let _: StatusResponse = try await client.send(
+            let response: UserResponse = try await client.get(API.Path.currentUser)
+            if let user = response.user, !isLoggedIn { apply(user) }
+        } catch {
+            AppLog.network("restore session", error)
+        }
+    }
+
+    func requestPasswordReset(email: String) async -> Bool {
+        await submit {
+            try await self.client.send(
                 API.Path.forgotPassword,
                 method: .post,
-                body: ForgotPasswordRequest(email: email.trimmed, newPassword: newPassword)
+                body: ForgotPasswordRequest(email: email.trimmed)
             )
-            return true
-        } catch {
-            errorMessage = error.userMessage
-            return false
+        }
+    }
+
+    func resetPassword(email: String, code: String, newPassword: String) async -> Bool {
+        await submit {
+            try await self.client.send(
+                API.Path.resetPassword,
+                method: .post,
+                body: ResetPasswordRequest(email: email.trimmed, code: code.trimmed, password: newPassword)
+            )
         }
     }
 
     func logout() {
+        if let token = AuthToken.current {
+            AuthToken.clear()
+            Task { await client.revoke(token: token) }
+        }
+        endSession()
+    }
+
+    private func endSession() {
         id = 0
         name = "Guest"
         email = ""
@@ -99,7 +127,7 @@ final class UserStore: ObservableObject {
             let _: StatusResponse = try await client.send(
                 API.Path.updateProfile,
                 method: .put,
-                body: UpdateProfileRequest(userId: id, name: trimmed)
+                body: UpdateProfileRequest(name: trimmed)
             )
             name = trimmed
             return true
@@ -123,7 +151,7 @@ final class UserStore: ObservableObject {
             let response: AvatarResponse = try await client.send(
                 API.Path.uploadAvatar,
                 method: .post,
-                body: UploadAvatarRequest(userId: id, imageBase64: data.base64EncodedString())
+                body: UploadAvatarRequest(imageBase64: data.base64EncodedString())
             )
             if let url = response.avatarURL { avatarURL = url }
             return true
@@ -142,11 +170,26 @@ final class UserStore: ObservableObject {
 
         do {
             let response = try await request()
-            guard let user = response.user else {
+            guard let user = response.user, let token = response.token else {
                 errorMessage = response.message.map { .dynamic($0) } ?? "Something went wrong. Please try again."
                 return false
             }
+            AuthToken.save(token)
             apply(user)
+            return true
+        } catch {
+            errorMessage = error.userMessage
+            return false
+        }
+    }
+
+    private func submit(_ request: () async throws -> StatusResponse) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            _ = try await request()
             return true
         } catch {
             errorMessage = error.userMessage

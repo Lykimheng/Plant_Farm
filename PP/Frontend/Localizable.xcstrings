@@ -129,6 +129,16 @@
         }
       }
     },
+    "6-digit code" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "លេខកូដ 6 ខ្ទង់"
+          }
+        }
+      }
+    },
     "^[%lld item](inflect: true)" : {
       "localizations" : {
         "km" : {
@@ -1381,12 +1391,32 @@
         }
       }
     },
-    "Enter your email and choose a new password." : {
+    "Enter the 6-digit code from the email." : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "បញ្ចូលអ៊ីមែលរបស់អ្នក ហើយជ្រើសរើសពាក្យសម្ងាត់ថ្មី។"
+            "state" : "needs_review",
+            "value" : "សូមបញ្ចូលលេខកូដ 6 ខ្ទង់ពីអ៊ីមែល។"
+          }
+        }
+      }
+    },
+    "Enter the 6-digit code we emailed to %@ and choose a new password." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បញ្ចូលលេខកូដ 6 ខ្ទង់ដែលយើងបានផ្ញើតាមអ៊ីមែលទៅ %@ ហើយជ្រើសរើសពាក្យសម្ងាត់ថ្មី។"
+          }
+        }
+      }
+    },
+    "Enter your email and we'll send you a code to reset your password." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បញ្ចូលអ៊ីមែលរបស់អ្នក ហើយយើងនឹងផ្ញើលេខកូដសម្រាប់កំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញ។"
           }
         }
       }
@@ -3287,12 +3317,32 @@
         }
       }
     },
+    "Send a new code" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ផ្ញើលេខកូដថ្មី"
+          }
+        }
+      }
+    },
     "Send a photo within 48 hours of delivery and we'll replace it on the next run at no cost. Leaves sometimes bruise in transit — most plants recover within a fortnight, and we'd rather advise than replace unnecessarily." : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "សូមផ្ញើរូបថតក្នុងរយៈពេល 48 ម៉ោងបន្ទាប់ពីទទួលបាន ហើយយើងនឹងប្ដូរជូនថ្មីក្នុងការដឹកជញ្ជូនលើកក្រោយ ដោយឥតគិតថ្លៃ។ ពេលខ្លះស្លឹកអាចជាំក្នុងពេលដឹកជញ្ជូន — រុក្ខជាតិភាគច្រើនជាសះស្បើយវិញក្នុងរយៈពេលពីរសប្ដាហ៍ ហើយយើងចូលចិត្តផ្ដល់ដំបូន្មាន ជាជាងប្ដូរដោយមិនចាំបាច់។"
+          }
+        }
+      }
+    },
+    "Send code" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ផ្ញើលេខកូដ"
           }
         }
       }
@@ -4384,6 +4434,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ការវាយតម្លៃរបស់អ្នក"
+          }
+        }
+      }
+    },
+    "Your session has expired. Please sign in again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "វគ្គចូលរបស់អ្នកបានផុតកំណត់។ សូមចូលគណនីម្ដងទៀត។"
           }
         }
       }

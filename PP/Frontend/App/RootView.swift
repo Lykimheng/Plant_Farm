@@ -52,7 +52,16 @@ struct RootView: View {
     
     private func launch() async {
         Task { await catalog.loadIfNeeded() }
+        let restore = Task { await user.restoreSession() }
         try? await Task.sleep(for: Self.minimumLaunchDuration)
+
+        // wait a little longer for a saved session, but not on a dead network
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await restore.value }
+            group.addTask { try? await Task.sleep(for: .seconds(3)) }
+            await group.next()
+            group.cancelAll()
+        }
         phase = .ready
     }
 

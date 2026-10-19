@@ -257,7 +257,6 @@ struct CheckoutView: View {
                     await viewModel.placeOrder(
                         cart: cart,
                         orders: orders,
-                        userId: user.id,
                         address: resolvedAddress
                     )
                 }

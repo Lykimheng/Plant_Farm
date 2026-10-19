@@ -30,7 +30,7 @@ struct NotificationsView: View {
                         ForEach(notifications.notifications) { notification in
                             NotificationCard(notification: notification)
                                 .onTapGesture {
-                                    Task { await notifications.markAsRead(notification, userId: user.id) }
+                                    Task { await notifications.markAsRead(notification) }
                                 }
                         }
                     }
@@ -51,12 +51,12 @@ struct NotificationsView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button("Mark all as read", systemImage: Icons.checkmark) {
-                        Task { await notifications.markAllAsRead(userId: user.id) }
+                        Task { await notifications.markAllAsRead() }
                     }
                     .disabled(notifications.unreadCount == 0)
 
                     Button("Clear all", systemImage: Icons.trash, role: .destructive) {
-                        Task { await notifications.deleteAll(userId: user.id) }
+                        Task { await notifications.deleteAll() }
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")

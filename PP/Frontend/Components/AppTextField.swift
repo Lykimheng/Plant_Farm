@@ -12,6 +12,7 @@ struct AppTextField: View {
         case plain
         case email
         case secure
+        case number
 
         var isSecure: Bool { self == .secure }
     }
@@ -43,7 +44,7 @@ struct AppTextField: View {
                 .textContentType(textContentType)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(kind == .plain ? .words : .never)
-                .keyboardType(kind == .email ? .emailAddress : .default)
+                .keyboardType(kind == .email ? .emailAddress : kind == .number ? .numberPad : .default)
 
             if kind.isSecure {
                 Button {
