@@ -41,10 +41,7 @@ final class OrdersStore: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: OrdersResponse = try await client.get(
-                API.Path.orders,
-                query: ["user_id": String(userId)]
-            )
+            let response: OrdersResponse = try await client.get(API.Path.orders)
             orders = response.orders.map(\.order)
             errorMessage = nil
         } catch {
@@ -55,7 +52,6 @@ final class OrdersStore: ObservableObject {
     
     @discardableResult
     func placeOrder(
-        userId: Int,
         orderNumber: String,
         items: [CartItem],
         total: Double,
@@ -66,7 +62,6 @@ final class OrdersStore: ObservableObject {
             API.Path.orders,
             method: .post,
             body: PlaceOrderRequest(
-                userId: userId,
                 orderNumber: orderNumber,
                 total: total,
                 deliveryAddress: deliveryAddress,
@@ -103,22 +98,15 @@ final class OrdersStore: ObservableObject {
         return order
     }
 
-    func cancel(_ order: OrderModel, userId: Int) async {
+    func cancel(_ order: OrderModel) async {
         guard let index = orders.firstIndex(where: { $0.id == order.id }) else { return }
 
         let previousStatus = orders[index].status
         orders[index].status = .cancelled
+        errorMessage = nil
 
         do {
-            let _: StatusResponse = try await client.send(
-                API.Path.orders,
-                method: .put,
-                body: UpdateOrderStatusRequest(
-                    orderId: order.apiId,
-                    status: OrderModel.OrderStatus.cancelled.apiValue,
-                    userId: userId
-                )
-            )
+            let _: StatusResponse = try await client.send(API.Path.cancelOrder(order.apiId), method: .post)
             notifications?.add(
                 NotificationModel(
                     title: "Order Cancelled",
@@ -127,7 +115,9 @@ final class OrdersStore: ObservableObject {
                 )
             )
         } catch {
-            orders[index].status = previousStatus
+            if let index = orders.firstIndex(where: { $0.id == order.id }) {
+                orders[index].status = previousStatus
+            }
             errorMessage = error.userMessage
             AppLog.network("cancel order", error)
         }

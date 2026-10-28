@@ -9,23 +9,34 @@ use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
-| Clean REST-ish routes. Each is also aliased to the old "<name>.php" path the
-| plain-PHP backend used, so an un-updated client keeps working.
+| The app signs in with a Sanctum token (`Authorization: Bearer …`) and every
+| user-owned record is looked up from that token, never from a `user_id` the
+| client sends. The old "<name>.php" aliases are gone: clients that old never
+| received a token, so they couldn't use the protected routes anyway.
 */
 
-$routes = function () {
-    // auth
+// auth, rate limited per IP (the third argument keeps the two counters apart)
+Route::middleware('throttle:10,1,auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+});
+
+Route::middleware('throttle:10,1,password-reset')->group(function () {
     Route::post('forgot_password', [AuthController::class, 'forgotPassword']);
+    Route::post('reset_password', [AuthController::class, 'resetPassword']);
+});
+
+// public
+Route::get('plants', [PlantController::class, 'index']);
+Route::get('reviews', [ReviewController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', [AuthController::class, 'me']);
+    Route::post('logout', [AuthController::class, 'logout']);
     Route::put('update_profile', [AuthController::class, 'updateProfile']);
     Route::post('upload_avatar', [AuthController::class, 'uploadAvatar']);
 
-    // catalog
-    Route::get('plants', [PlantController::class, 'index']);
-
     // reviews
-    Route::get('reviews', [ReviewController::class, 'index']);
     Route::post('reviews', [ReviewController::class, 'store']);
     Route::delete('reviews', [ReviewController::class, 'destroy']);
 
@@ -34,46 +45,13 @@ $routes = function () {
     Route::post('my_plants', [MyPlantController::class, 'store']);
     Route::delete('my_plants', [MyPlantController::class, 'destroy']);
 
-    // orders
+    // orders — any other status change is made by an admin in the Filament panel
     Route::get('orders', [OrderController::class, 'index']);
     Route::post('orders', [OrderController::class, 'store']);
-    Route::put('orders', [OrderController::class, 'updateStatus']);
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order');
 
-    // notifications (the legacy backend spelled this "notifactions")
+    // notifications
     Route::get('notifications', [NotificationController::class, 'index']);
     Route::put('notifications', [NotificationController::class, 'markRead']);
     Route::delete('notifications', [NotificationController::class, 'destroy']);
-    Route::get('notifactions', [NotificationController::class, 'index']);
-    Route::put('notifactions', [NotificationController::class, 'markRead']);
-    Route::delete('notifactions', [NotificationController::class, 'destroy']);
-};
-
-$routes();
-
-// legacy ".php" aliases so the previous URLs keep resolving
-Route::group([], function () use ($routes) {
-    Route::name('legacy.')->group(function () use ($routes) {
-        foreach ([
-            'register.php'        => ['post', [AuthController::class, 'register']],
-            'login.php'           => ['post', [AuthController::class, 'login']],
-            'forgot_password.php' => ['post', [AuthController::class, 'forgotPassword']],
-            'update_profile.php'  => ['put', [AuthController::class, 'updateProfile']],
-            'upload_avatar.php'   => ['post', [AuthController::class, 'uploadAvatar']],
-            'plants.php'          => ['get', [PlantController::class, 'index']],
-        ] as $uri => [$verb, $action]) {
-            Route::{$verb}($uri, $action);
-        }
-
-        Route::match(['get'], 'my_plants.php', [MyPlantController::class, 'index']);
-        Route::match(['post'], 'my_plants.php', [MyPlantController::class, 'store']);
-        Route::match(['delete'], 'my_plants.php', [MyPlantController::class, 'destroy']);
-
-        Route::match(['get'], 'orders.php', [OrderController::class, 'index']);
-        Route::match(['post'], 'orders.php', [OrderController::class, 'store']);
-        Route::match(['put'], 'orders.php', [OrderController::class, 'updateStatus']);
-
-        Route::match(['get'], 'notifactions.php', [NotificationController::class, 'index']);
-        Route::match(['put'], 'notifactions.php', [NotificationController::class, 'markRead']);
-        Route::match(['delete'], 'notifactions.php', [NotificationController::class, 'destroy']);
-    });
 });

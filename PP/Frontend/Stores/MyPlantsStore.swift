@@ -50,10 +50,7 @@ final class MyPlantsStore: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: MyPlantsResponse = try await client.get(
-                API.Path.myPlants,
-                query: ["user_id": String(userId)]
-            )
+            let response: MyPlantsResponse = try await client.get(API.Path.myPlants)
             plants = response.plants.map(\.myPlant)
             loadedForUser = userId
             errorMessage = nil
@@ -64,13 +61,12 @@ final class MyPlantsStore: ObservableObject {
     }
 
     @discardableResult
-    func add(_ plant: MyPlantModel, userId: Int) async -> Bool {
+    func add(_ plant: MyPlantModel) async -> Bool {
         do {
             let response: AddMyPlantResponse = try await client.send(
                 API.Path.myPlants,
                 method: .post,
                 body: AddMyPlantRequest(
-                    userId: userId,
                     image: plant.image,
                     name: plant.name,
                     species: plant.species,
@@ -92,7 +88,7 @@ final class MyPlantsStore: ObservableObject {
         }
     }
 
-    func remove(_ plant: MyPlantModel, userId: Int) async {
+    func remove(_ plant: MyPlantModel) async {
         guard let index = plants.firstIndex(where: { $0.id == plant.id }) else { return }
 
         let removed = plants.remove(at: index)
@@ -101,7 +97,7 @@ final class MyPlantsStore: ObservableObject {
             let _: StatusResponse = try await client.send(
                 API.Path.myPlants,
                 method: .delete,
-                body: RemoveMyPlantRequest(plantId: plant.apiId, userId: userId)
+                body: RemoveMyPlantRequest(plantId: plant.apiId)
             )
         } catch {
             plants.insert(removed, at: min(index, plants.count))

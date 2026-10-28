@@ -11,7 +11,6 @@ struct PlantDetailView: View {
     let listing: PlantListing
 
     @EnvironmentObject private var cart: CartStore
-    @EnvironmentObject private var user: UserStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
@@ -40,7 +39,7 @@ struct PlantDetailView: View {
         .sheet(isPresented: $showWriteReview) {
             WriteReviewSheet(plant: plant, store: reviews)
         }
-        .task { await reviews.load(plantId: plant.id, userId: user.id) }
+        .task { await reviews.load(plantId: plant.id) }
     }
 
     private func scrollContent(topInset: CGFloat) -> some View {

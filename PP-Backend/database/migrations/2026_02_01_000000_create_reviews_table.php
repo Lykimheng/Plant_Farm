@@ -15,6 +15,11 @@ return new class extends Migration
      */
     private function referencesUnsignedIds(): bool
     {
+        // only MySQL has information_schema; the SQLite test database is always fresh
+        if (! in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return true;
+        }
+
         $column = DB::selectOne(
             'SELECT COLUMN_TYPE AS type FROM information_schema.COLUMNS
              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?',

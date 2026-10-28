@@ -293,19 +293,44 @@ cat backup.sql | docker exec -i pp_mysql mysql -uroot -proot pp_database
 
 ## API Endpoints
 
-All under `/api`. The old `<name>.php` paths still resolve, so older builds of
-the app keep working.
+All under `/api`. Errors use real HTTP status codes (401, 404, 422, 429…) and
+still carry the usual `{ "success": false, "message": "…" }` body.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `POST` | `/register`, `/login`, `/forgot_password` | Authentication |
-| `PUT` | `/update_profile` | Change display name |
-| `POST` | `/upload_avatar` | Upload profile photo (base64) |
-| `GET` | `/plants` | Plant catalog |
-| `GET` `POST` `DELETE` | `/my_plants` | Personal plant tracker |
-| `GET` `POST` `PUT` | `/orders` | Order history, checkout, status updates |
-| `GET` `PUT` `DELETE` | `/notifications` | Notifications, mark read, clear |
-| `GET` `POST` `DELETE` | `/reviews` | Plant reviews — read, post/edit, delete own |
+**Signing in.** `login` and `register` return a Sanctum `token`; send it as
+`Authorization: Bearer <token>` on every request marked *token* below. The
+server takes the user from the token and ignores any `user_id` in the request,
+so no one can read or change another customer's data. Tokens last 30 days
+(`SANCTUM_EXPIRATION`, in minutes); the app stores its token in the Keychain
+and signs out when the server answers 401. After pulling this change run
+`php artisan migrate` once to create the `personal_access_tokens` table.
+
+| Method | Endpoint | Auth | Purpose |
+|---|---|---|---|
+| `POST` | `/register`, `/login` | | Create an account / sign in; both return a token |
+| `POST` | `/forgot_password`, `/reset_password` | | Email a reset code / set a new password with it |
+| `GET` | `/user` | token | The signed-in user (used to restore a saved session) |
+| `POST` | `/logout` | token | Revoke this device's token |
+| `PUT` | `/update_profile` | token | Change display name |
+| `POST` | `/upload_avatar` | token | Upload profile photo (base64) |
+| `GET` | `/plants` | | Plant catalog |
+| `GET` | `/reviews` | optional | Plant reviews; with a token, also your own review |
+| `POST` `DELETE` | `/reviews` | token | Post/edit or delete your review |
+| `GET` `POST` `DELETE` | `/my_plants` | token | Personal plant tracker |
+| `GET` `POST` | `/orders` | token | Order history, checkout |
+| `POST` | `/orders/{id}/cancel` | token | Cancel your own order while it is still pending |
+| `GET` `PUT` `DELETE` | `/notifications` | token | Notifications, mark read, clear |
+
+Customers can only cancel a pending order; every other status change is made
+by an admin in the dashboard. The old `<name>.php` aliases were removed — those
+builds of the app never received a token, so they can't sign in any more.
+
+**Password reset.** `forgot_password` emails a 6-digit code (valid 60 minutes,
+stored hashed in `password_reset_tokens`) and gives the same answer whether or
+not the account exists. `reset_password` takes `email`, `code` and `password`;
+five wrong codes throw the code away, and a successful reset signs the account
+out on every device. With the default `MAIL_MAILER=log` no email is actually
+sent — the message, code included, is written to `storage/logs/laravel.log`.
+Set the `MAIL_*` values in `.env` to a real SMTP server to deliver it.
 
 Reviews are one-per-customer-per-plant: posting again edits the existing one
 rather than stacking. A plant's `rating` and `counting` are a cache recomputed

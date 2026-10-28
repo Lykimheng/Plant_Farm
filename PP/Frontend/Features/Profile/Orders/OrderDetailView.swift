@@ -12,7 +12,6 @@ struct OrderDetailView: View {
 
     @EnvironmentObject private var orders: OrdersStore
     @EnvironmentObject private var location: LocationManager
-    @EnvironmentObject private var user: UserStore
 
     @State private var showCancelAlert = false
     private var current: OrderModel {
@@ -38,7 +37,7 @@ struct OrderDetailView: View {
         .toolbar(.hidden, for: .tabBar)
         .alert("Cancel this order?", isPresented: $showCancelAlert) {
             Button("Cancel order", role: .destructive) {
-                Task { await orders.cancel(current, userId: user.id) }
+                Task { await orders.cancel(current) }
             }
             Button("Keep order", role: .cancel) {}
         } message: {
@@ -254,6 +253,7 @@ struct OrderDetailView: View {
     @ViewBuilder
     private var cancelSection: some View {
         if current.status.isCancellable {
+            InlineError(message: orders.errorMessage)
             Button("Cancel order") { showCancelAlert = true }
                 .buttonStyle(SecondaryButtonStyle(tint: Theme.danger))
         } else {

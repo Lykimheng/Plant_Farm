@@ -86,7 +86,7 @@ struct MyPlantsView: View {
             LazyVGrid(columns: .cardGrid, spacing: Theme.Spacing.lg) {
                 ForEach(myPlants.plants) { plant in
                     MyPlantCard(plant: plant) {
-                        Task { await myPlants.remove(plant, userId: user.id) }
+                        Task { await myPlants.remove(plant) }
                     }
                 }
             }

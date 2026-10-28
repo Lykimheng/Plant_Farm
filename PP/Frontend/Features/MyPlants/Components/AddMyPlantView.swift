@@ -9,7 +9,6 @@ import SwiftUI
 
 struct AddMyPlantView: View {
     @EnvironmentObject private var myPlants: MyPlantsStore
-    @EnvironmentObject private var user: UserStore
     @EnvironmentObject private var catalog: PlantsStore
     @Environment(\.dismiss) private var dismiss
 
@@ -126,8 +125,7 @@ struct AddMyPlantView: View {
                     careLevel: careLevel,
                     nextWatering: wateringInterval.label,
                     sunlight: sunlight.label
-                ),
-                userId: user.id
+                )
             )
             isSaving = false
             if added { dismiss() }

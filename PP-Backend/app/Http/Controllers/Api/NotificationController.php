@@ -10,9 +10,7 @@ class NotificationController extends Controller
 {
     public function index(Request $request)
     {
-        $userId = (int) $request->query('user_id', 0);
-
-        $notifications = AppNotification::where('user_id', $userId)
+        $notifications = $request->user()->appNotifications()
             ->orderByDesc('created_at')
             ->get()
             ->map(fn (AppNotification $n) => [
@@ -33,16 +31,7 @@ class NotificationController extends Controller
 
     public function markRead(Request $request)
     {
-        $userId  = (int) $request->input('user_id', 0);
-        $notifId = $request->input('notification_id');
-
-        $query = AppNotification::where('user_id', $userId);
-
-        if (filled($notifId)) {
-            $query->where('id', (int) $notifId);
-        }
-
-        $query->update(['is_read' => true]);
+        $this->scope($request)->update(['is_read' => true]);
 
         return response()->json([
             'success' => true,
@@ -52,20 +41,27 @@ class NotificationController extends Controller
 
     public function destroy(Request $request)
     {
-        $userId  = (int) $request->input('user_id', 0);
-        $notifId = $request->input('notification_id');
-
-        $query = AppNotification::where('user_id', $userId);
-
-        if (filled($notifId)) {
-            $query->where('id', (int) $notifId);
-        }
-
-        $query->delete();
+        $this->scope($request)->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Deleted.',
         ]);
+    }
+
+    /** The one notification named by `notification_id`, or all of the caller's. */
+    private function scope(Request $request)
+    {
+        $query   = $request->user()->appNotifications();
+        $notifId = $request->input('notification_id');
+
+        if (filled($notifId)) {
+            $query->whereKey((int) $notifId);
+
+            // someone else's id is a 404, not a silent no-op
+            abort_unless($query->exists(), 404);
+        }
+
+        return $query;
     }
 }

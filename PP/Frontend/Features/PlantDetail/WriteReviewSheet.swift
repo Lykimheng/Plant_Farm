@@ -11,7 +11,6 @@ struct WriteReviewSheet: View {
     let plant: PlantModel
     @ObservedObject var store: ReviewsStore
 
-    @EnvironmentObject private var user: UserStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var rating = 0
@@ -195,7 +194,6 @@ struct WriteReviewSheet: View {
         Task {
             let ok = await store.submit(
                 plantId: plant.id,
-                userId: user.id,
                 rating: rating,
                 body: String(body_.prefix(characterLimit))
             )
@@ -205,7 +203,7 @@ struct WriteReviewSheet: View {
 
     private func deleteReview() {
         Task {
-            let ok = await store.deleteMyReview(plantId: plant.id, userId: user.id)
+            let ok = await store.deleteMyReview(plantId: plant.id)
             if ok { dismiss() }
         }
     }

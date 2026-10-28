@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Plant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PlaceOrderTest extends TestCase
@@ -25,6 +26,7 @@ class PlaceOrderTest extends TestCase
             'email' => 'customer@example.test',
             'password' => 'secret123',
         ]);
+        Sanctum::actingAs($this->user);
 
         // 2 × $18.00 + 1 × $47.50 (discounted from $50.00) = $83.50
         $this->monstera = $this->plant('Monstera', 18.00);
@@ -63,19 +65,31 @@ class PlaceOrderTest extends TestCase
     public function test_unknown_plant_is_rejected(): void
     {
         $this->postJson('/api/orders', [
-            'user_id' => $this->user->id,
             'order_number' => 'PF-TEST-0002',
             'delivery_address' => 'No. 42, St. 271, Phnom Penh',
             'items' => [['plant_id' => 9999, 'plant_name' => 'Fake', 'price' => 0.01, 'quantity' => 1]],
-        ])->assertJson(['success' => false]);
+        ])->assertStatus(422)->assertJson(['success' => false]);
 
         $this->assertSame(0, Order::count());
+    }
+
+    public function test_order_belongs_to_the_token_user_not_the_sent_user_id(): void
+    {
+        $other = User::forceCreate(['name' => 'Other', 'email' => 'other@example.test', 'password' => 'secret123']);
+
+        $this->postJson('/api/orders', [
+            'user_id' => $other->id,
+            'order_number' => 'PF-TEST-0003',
+            'delivery_address' => 'No. 42, St. 271, Phnom Penh',
+            'items' => [['plant_id' => $this->monstera->id, 'quantity' => 1]],
+        ])->assertOk();
+
+        $this->assertSame($this->user->id, Order::sole()->user_id);
     }
 
     private function placeOrder(float $total, float $monsteraPrice, float $figPrice, string $delivery = 'standard')
     {
         return $this->postJson('/api/orders', [
-            'user_id' => $this->user->id,
             'order_number' => 'PF-TEST-0001',
             'delivery_address' => 'No. 42, St. 271, Phnom Penh',
             'delivery_option' => $delivery,

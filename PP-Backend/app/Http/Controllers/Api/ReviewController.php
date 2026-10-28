@@ -10,17 +10,14 @@ use Illuminate\Http\Request;
 /**
  * Customer reviews. Ratings only originate here — the admin panel can moderate
  * what customers wrote but never author or edit it.
- *
- * Like the rest of this API, the caller identifies itself with a `user_id`
- * rather than a token, matching the existing app. That's fine for a local
- * project but means the client is trusted; real auth would want tokens.
  */
 class ReviewController extends Controller
 {
     public function index(Request $request)
     {
         $plantId = (int) $request->query('plant_id', 0);
-        $userId  = (int) $request->query('user_id', 0);
+        // public route: a bearer token, when sent, only decides which review is "mine"
+        $userId  = (int) $request->user('sanctum')?->id;
 
         $plant = Plant::find($plantId);
 
@@ -34,17 +31,14 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $plantId = (int) $request->input('plant_id', 0);
-        $userId  = (int) $request->input('user_id', 0);
+        $userId  = $request->user()->id;
         $rating  = (int) $request->input('rating', 0);
         $body    = trim((string) $request->input('body', ''));
 
         $plant = Plant::find($plantId);
 
-        if (! $plant || $userId === 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sign in to leave a review.',
-            ], 422);
+        if (! $plant) {
+            return response()->json(['success' => false, 'message' => 'Plant not found.'], 404);
         }
 
         if ($rating < 1 || $rating > 5) {
@@ -71,7 +65,7 @@ class ReviewController extends Controller
     public function destroy(Request $request)
     {
         $plantId  = (int) $request->input('plant_id', 0);
-        $userId   = (int) $request->input('user_id', 0);
+        $userId   = $request->user()->id;
         $reviewId = (int) $request->input('review_id', 0);
 
         $plant = Plant::find($plantId);
@@ -80,12 +74,14 @@ class ReviewController extends Controller
             return response()->json(['success' => false, 'message' => 'Plant not found.'], 404);
         }
 
-        $review = Review::find($reviewId);
-
         // only the author may remove their own review
-        if ($review && $review->plant_id === $plantId && $review->user_id === $userId) {
-            $review->delete();
+        $review = $plant->reviews()->where('user_id', $userId)->find($reviewId);
+
+        if (! $review) {
+            return response()->json(['success' => false, 'message' => 'Review not found.'], 404);
         }
+
+        $review->delete();
 
         return $this->payload($plant->fresh(), $userId);
     }

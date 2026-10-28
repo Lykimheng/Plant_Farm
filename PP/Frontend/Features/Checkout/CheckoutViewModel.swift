@@ -33,7 +33,7 @@ final class CheckoutViewModel: ObservableObject {
     func canPlaceOrder(cart: CartStore, address: String) -> Bool {
         !cart.isEmpty && !isPlacingOrder && !deliveryAddress(from: address).isBlank
     }
-    func placeOrder(cart: CartStore, orders: OrdersStore, userId: Int, address: String) async {
+    func placeOrder(cart: CartStore, orders: OrdersStore, address: String) async {
         guard !isPlacingOrder else { return }
 
         let deliveryTo = deliveryAddress(from: address)
@@ -48,7 +48,6 @@ final class CheckoutViewModel: ObservableObject {
 
         do {
             let order = try await orders.placeOrder(
-                userId: userId,
                 orderNumber: OrderNumber.generate(),
                 items: cart.items,
                 total: total(subtotal: cart.subtotal),

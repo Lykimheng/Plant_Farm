@@ -24,6 +24,12 @@ return new class extends Migration
 
     public function up(): void
     {
+        // a fresh (e.g. SQLite test) database already got cascading keys from
+        // the table migration, and the lookup below is MySQL-only
+        if (! $this->isMySql()) {
+            return;
+        }
+
         foreach ($this->links as [$table, $column, $parent]) {
             if (! Schema::hasTable($table)) {
                 continue;
@@ -40,6 +46,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! $this->isMySql()) {
+            return;
+        }
+
         foreach ($this->links as [$table, $column, $parent]) {
             if (! Schema::hasTable($table)) {
                 continue;
@@ -78,6 +88,11 @@ return new class extends Migration
         foreach ($names as $constraint) {
             DB::statement("ALTER TABLE `{$table}` DROP FOREIGN KEY `{$constraint->name}`");
         }
+    }
+
+    private function isMySql(): bool
+    {
+        return in_array(DB::getDriverName(), ['mysql', 'mariadb'], true);
     }
 
     private function deleteOrphans(string $table, string $column, string $parent): void

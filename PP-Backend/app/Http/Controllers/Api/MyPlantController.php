@@ -32,9 +32,7 @@ class MyPlantController extends Controller
 
     public function index(Request $request)
     {
-        $userId = (int) $request->query('user_id', 0);
-
-        $plants = MyPlant::where('user_id', $userId)
+        $plants = $request->user()->myPlants()
             ->orderByDesc('added_date')
             ->get()
             ->map(fn (MyPlant $plant) => [
@@ -57,18 +55,16 @@ class MyPlantController extends Controller
 
     public function store(Request $request)
     {
-        $userId = (int) $request->input('user_id', 0);
-        $name   = $this->stringInput($request, 'name');
+        $name = $this->stringInput($request, 'name');
 
-        if ($userId === 0 || $name === '') {
+        if ($name === '') {
             return response()->json([
                 'success' => false,
                 'message' => 'Missing required fields.',
-            ]);
+            ], 422);
         }
 
-        $plant = MyPlant::create([
-            'user_id'       => $userId,
+        $plant = $request->user()->myPlants()->create([
             'image'         => $this->toFilename($this->stringInput($request, 'image')),
             'name'          => $name,
             // species is optional in the app, so a blank one must save cleanly
@@ -87,10 +83,16 @@ class MyPlantController extends Controller
 
     public function destroy(Request $request)
     {
-        $plantId = (int) $request->input('plant_id', 0);
-        $userId  = (int) $request->input('user_id', 0);
+        $plant = $request->user()->myPlants()->find((int) $request->input('plant_id', 0));
 
-        MyPlant::where('id', $plantId)->where('user_id', $userId)->delete();
+        if (! $plant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Plant not found.',
+            ], 404);
+        }
+
+        $plant->delete();
 
         return response()->json([
             'success' => true,

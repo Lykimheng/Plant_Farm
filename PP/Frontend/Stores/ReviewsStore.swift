@@ -29,14 +29,14 @@ final class ReviewsStore: ObservableObject {
 
     var isEmpty: Bool { reviews.isEmpty && myReview == nil }
 
-    func load(plantId: Int, userId: Int) async {
+    func load(plantId: Int) async {
         isLoading = true
         defer { isLoading = false }
 
         do {
             let payload: ReviewsPayload = try await client.get(
                 API.Path.reviews,
-                query: ["plant_id": String(plantId), "user_id": String(userId)]
+                query: ["plant_id": String(plantId)]
             )
             apply(payload)
         } catch {
@@ -45,14 +45,13 @@ final class ReviewsStore: ObservableObject {
         }
     }
 
-    func submit(plantId: Int, userId: Int, rating: Int, body: String) async -> Bool {
+    func submit(plantId: Int, rating: Int, body: String) async -> Bool {
         await write {
             try await self.client.send(
                 API.Path.reviews,
                 method: .post,
                 body: SubmitReviewRequest(
                     plantId: plantId,
-                    userId: userId,
                     rating: rating,
                     body: body.trimmed
                 )
@@ -60,14 +59,14 @@ final class ReviewsStore: ObservableObject {
         }
     }
 
-    func deleteMyReview(plantId: Int, userId: Int) async -> Bool {
+    func deleteMyReview(plantId: Int) async -> Bool {
         guard let myReview else { return false }
 
         return await write {
             try await self.client.send(
                 API.Path.reviews,
                 method: .delete,
-                body: DeleteReviewRequest(plantId: plantId, userId: userId, reviewId: myReview.id)
+                body: DeleteReviewRequest(plantId: plantId, reviewId: myReview.id)
             )
         }
     }

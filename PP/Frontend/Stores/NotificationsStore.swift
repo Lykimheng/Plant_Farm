@@ -39,31 +39,28 @@ final class NotificationsStore: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let response: NotificationsResponse = try await client.get(
-                API.Path.notifications,
-                query: ["user_id": String(userId)]
-            )
+            let response: NotificationsResponse = try await client.get(API.Path.notifications)
             notifications = response.notifications.map(\.notification)
         } catch {
             AppLog.network("load notifications", error)
         }
     }
 
-    func markAllAsRead(userId: Int) async {
+    func markAllAsRead() async {
         guard unreadCount > 0 else { return }
         for index in notifications.indices { notifications[index].isRead = true }
-        await update(.put, NotificationUpdateRequest(userId: userId))
+        await update(.put, NotificationUpdateRequest())
     }
 
-    func markAsRead(_ notification: NotificationModel, userId: Int) async {
+    func markAsRead(_ notification: NotificationModel) async {
         guard let index = notifications.firstIndex(where: { $0.id == notification.id }),
               !notifications[index].isRead else { return }
 
         notifications[index].isRead = true
-        await update(.put, NotificationUpdateRequest(userId: userId, notificationId: notification.apiId))
+        await update(.put, NotificationUpdateRequest(notificationId: notification.apiId))
     }
 
-    func deleteAll(userId: Int) async {
+    func deleteAll() async {
         let previous = notifications
         notifications.removeAll()
 
@@ -71,7 +68,7 @@ final class NotificationsStore: ObservableObject {
             let _: StatusResponse = try await client.send(
                 API.Path.notifications,
                 method: .delete,
-                body: NotificationUpdateRequest(userId: userId)
+                body: NotificationUpdateRequest()
             )
         } catch {
             notifications = previous

@@ -45,15 +45,30 @@ nonisolated final class APIClient: Sendable {
         try await perform(path, method: method, query: [:], body: body)
     }
 
+    @discardableResult
+    func send<Response: APIResponse>(
+        _ path: String,
+        method: HTTPMethod
+    ) async throws -> Response {
+        try await perform(path, method: method, query: [:], body: Optional<Empty>.none)
+    }
+
+    func revoke(token: String) async {
+        let _: StatusResponse? = try? await perform(
+            API.Path.logout, method: .post, query: [:], body: Optional<Empty>.none, token: token
+        )
+    }
+
     // MARK: - Core
 
     private func perform<Body: Encodable, Response: APIResponse>(
         _ path: String,
         method: HTTPMethod,
         query: [String: String],
-        body: Body?
+        body: Body?,
+        token: String? = AuthToken.current
     ) async throws -> Response {
-        let request = try makeRequest(path: path, method: method, query: query, body: body)
+        let request = try makeRequest(path: path, method: method, query: query, body: body, token: token)
 
         let data: Data
         let response: URLResponse
@@ -63,6 +78,15 @@ nonisolated final class APIClient: Sendable {
             throw APIError.network("cancelled")
         } catch {
             throw APIError.network(error.localizedDescription)
+        }
+
+        if (response as? HTTPURLResponse)?.statusCode == 401, let token {
+            // a late reply for an older token mustn't end a newer session
+            if token == AuthToken.current {
+                AuthToken.clear()
+                NotificationCenter.default.post(name: .sessionExpired, object: nil)
+            }
+            throw APIError.sessionExpired
         }
 
         let decoded: Response
@@ -86,7 +110,8 @@ nonisolated final class APIClient: Sendable {
         path: String,
         method: HTTPMethod,
         query: [String: String],
-        body: Body?
+        body: Body?,
+        token: String?
     ) throws -> URLRequest {
         var components = URLComponents(
             url: API.apiURL.appendingPathComponent(path),
@@ -101,6 +126,9 @@ nonisolated final class APIClient: Sendable {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
 
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
