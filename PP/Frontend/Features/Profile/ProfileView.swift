@@ -13,9 +13,11 @@ struct ProfileView: View {
     @EnvironmentObject private var wishlist: WishlistStore
     @EnvironmentObject private var myPlants: MyPlantsStore
     @EnvironmentObject private var theme: ThemeManager
+    @EnvironmentObject private var location: LocationManager
 
     @State private var showEditProfile = false
     @State private var showLogoutAlert = false
+    @State private var showLocationSettings = false
 
     var body: some View {
         Group {
@@ -56,6 +58,7 @@ struct ProfileView: View {
         } message: {
             Text("You'll need to sign in again to see your orders and saved plants.")
         }
+        .locationSettingsAlert(isPresented: $showLocationSettings, turningOff: location.isAuthorized)
         .task { await orders.load(userId: user.id) }
     }
 
@@ -165,9 +168,33 @@ struct ProfileView: View {
 
             SettingsDivider()
 
+            Toggle(isOn: locationBinding) {
+                HStack(spacing: Theme.Spacing.md) {
+                    SettingsIcon(Icons.location)
+                    Text("Location")
+                        .font(.system(size: 15))
+                        .foregroundStyle(Theme.textPrimary)
+                }
+            }
+            .tint(Theme.brand)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .frame(height: 54)
+
+            SettingsDivider()
+
             NavigationLink { HelpView() } label: {
                 SettingsRowLabel(icon: Icons.help, title: "Help Center")
             }
+        }
+    }
+
+    // apps can't grant or revoke their own permission, so anything iOS won't prompt for goes to Settings
+    private var locationBinding: Binding<Bool> {
+        Binding {
+            location.isAuthorized
+        } set: { isOn in
+            if isOn, location.requestPermission() { return }
+            showLocationSettings = true
         }
     }
 

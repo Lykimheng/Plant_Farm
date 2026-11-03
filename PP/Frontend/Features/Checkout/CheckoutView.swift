@@ -16,6 +16,7 @@ struct CheckoutView: View {
     @EnvironmentObject private var router: AppRouter
 
     @State private var isEditingAddress = false
+    @State private var showLocationSettings = false
 
     private var resolvedAddress: String {
         location.userAddress.isBlank ? user.location : location.userAddress
@@ -44,6 +45,7 @@ struct CheckoutView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .task { location.requestPermissionIfNeeded() }
+        .locationSettingsAlert(isPresented: $showLocationSettings)
         .onChange(of: viewModel.placedOrder) { _, order in
             guard let order else { return }
             router.push(.orderPlaced(order))
@@ -92,6 +94,9 @@ struct CheckoutView: View {
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.textTertiary)
                                 .multilineTextAlignment(.center)
+                            Button("Turn on location") { showLocationSettings = true }
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Theme.brand)
                         } else {
                             ProgressView()
                             Text("Finding your location…")

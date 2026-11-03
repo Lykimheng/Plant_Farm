@@ -1885,6 +1885,16 @@
         }
       }
     },
+    "iOS manages location access. In Settings, tap Location and choose Never." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS គ្រប់គ្រងការចូលប្រើទីតាំង។ នៅក្នុងការកំណត់ សូមចុច ទីតាំង ហើយជ្រើសរើស កុំឲ្យសោះ។"
+          }
+        }
+      }
+    },
     "Isolate the plant, wipe the leaves with soapy water or neem oil, and repeat weekly until it's clear." : {
       "localizations" : {
         "km" : {
@@ -2011,6 +2021,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "កំពុងផ្ទុក…"
+          }
+        }
+      }
+    },
+    "Location" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ទីតាំង"
+          }
+        }
+      }
+    },
+    "Location access is off for Plant Farm. In Settings, tap Location and choose While Using the App so we can fill in your delivery address." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ការចូលប្រើទីតាំងត្រូវបានបិទសម្រាប់ Plant Farm។ នៅក្នុងការកំណត់ សូមចុច ទីតាំង ហើយជ្រើសរើស ពេលកំពុងប្រើកម្មវិធី ដើម្បីយើងអាចបំពេញអាសយដ្ឋានដឹកជញ្ជូនរបស់អ្នក។"
           }
         }
       }
@@ -2492,6 +2522,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "មិនមែន? វាក៏អាចជា"
+          }
+        }
+      }
+    },
+    "Not now" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ពេលក្រោយ"
           }
         }
       }
@@ -3952,6 +3992,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ព្យាយាមម្ដងទៀត"
+          }
+        }
+      }
+    },
+    "Turn off location?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បិទទីតាំង?"
+          }
+        }
+      }
+    },
+    "Turn on location" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "បើកទីតាំង"
           }
         }
       }

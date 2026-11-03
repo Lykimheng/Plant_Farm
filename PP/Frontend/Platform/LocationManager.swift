@@ -50,6 +50,27 @@ final class LocationManager: NSObject, ObservableObject {
             break
         }
     }
+
+    // Returns false when iOS won't show the prompt again and the user has to go to Settings
+    @discardableResult
+    func requestPermission() -> Bool {
+        switch authorizationStatus {
+        case .notDetermined:
+            hasRequestedPermission = true
+            manager.requestWhenInUseAuthorization()
+            return true
+        case .authorizedWhenInUse, .authorizedAlways:
+            manager.requestLocation()
+            return true
+        default:
+            return false
+        }
+    }
+
+    func openSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
 }
 
 // MARK: - CLLocationManagerDelegate
