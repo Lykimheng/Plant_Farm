@@ -20,6 +20,7 @@ struct ScanView: View {
 
     @State private var pickedImage: UIImage?
     @State private var showPhotoLibrary = false
+    @State private var showPhotoSettings = false
     @State private var resultDetent: PresentationDetent = .scanSummary
 
     /// The scan window never grows past this, and shrinks below it when space is short.
@@ -78,6 +79,7 @@ struct ScanView: View {
             ImagePicker(selectedImage: $pickedImage, sourceType: .photoLibrary)
                 .ignoresSafeArea()
         }
+        .photoSettingsAlert(isPresented: $showPhotoSettings, permission: permission)
         .sheet(isPresented: $viewModel.isShowingResult, onDismiss: { resultDetent = .scanSummary }) {
             ScanResultSheet(viewModel: viewModel, detent: $resultDetent)
                 // the tab bar's toast sits underneath this sheet
@@ -99,6 +101,14 @@ struct ScanView: View {
             } else {
                 toast.show("Couldn't take a photo. Try again or pick one from your library.")
             }
+        }
+    }
+
+    private func choosePhoto() async {
+        if permission.isPhotoDenied {
+            showPhotoSettings = true
+        } else if await permission.requestPhotoLibrary() {
+            showPhotoLibrary = true
         }
     }
 
@@ -219,11 +229,7 @@ struct ScanView: View {
             shutterButton(showsLabel: !vertical)
 
             controlButton(icon: Icons.photoLibrary, label: "Photos", showsLabel: !vertical, isActive: false) {
-                Task {
-                    if await permission.requestPhotoLibrary() {
-                        showPhotoLibrary = true
-                    }
-                }
+                Task { await choosePhoto() }
             }
         }
     }
@@ -311,9 +317,7 @@ struct ScanView: View {
                 }
 
                 Button("Choose a photo") {
-                    Task {
-                        if await permission.requestPhotoLibrary() { showPhotoLibrary = true }
-                    }
+                    Task { await choosePhoto() }
                 }
                 .buttonStyle(SecondaryButtonStyle(fullWidth: false, tint: .white))
             }

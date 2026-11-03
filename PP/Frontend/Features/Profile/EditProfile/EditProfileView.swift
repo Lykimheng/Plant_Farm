@@ -17,6 +17,7 @@ struct EditProfileView: View {
     @State private var isUploadingAvatar = false
     @State private var errorMessage: LocalizedStringResource?
     @State private var showPhotoSourceDialog = false
+    @State private var showPhotoSettings = false
     @State private var showImagePicker = false
     @State private var imagePickerSource: UIImagePickerController.SourceType = .photoLibrary
     @State private var selectedImage: UIImage?
@@ -73,6 +74,7 @@ struct EditProfileView: View {
             }
         }
         .onAppear { name = user.name }
+        .photoSettingsAlert(isPresented: $showPhotoSettings, permission: permission)
         .sheet(isPresented: isPickerPresented(for: .photoLibrary)) {
             ImagePicker(selectedImage: $selectedImage, sourceType: .photoLibrary)
                 .ignoresSafeArea()
@@ -130,11 +132,11 @@ struct EditProfileView: View {
 
             Button("Choose from library") {
                 Task {
-                    if await permission.requestPhotoLibrary() {
+                    if permission.isPhotoDenied {
+                        showPhotoSettings = true
+                    } else if await permission.requestPhotoLibrary() {
                         imagePickerSource = .photoLibrary
                         showImagePicker = true
-                    } else {
-                        errorMessage = "Photo access is off. Enable it in Settings to pick a photo."
                     }
                 }
             }

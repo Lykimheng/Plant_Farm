@@ -2896,12 +2896,12 @@
         }
       }
     },
-    "Photo access is off. Enable it in Settings to pick a photo." : {
+    "Photo access is off for Plant Farm. In Settings, tap Photos and choose Full Access or Limited Access so you can pick a photo." : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "ការចូលប្រើរូបថតត្រូវបានបិទ។ សូមបើកវានៅក្នុង ការកំណត់ ដើម្បីជ្រើសរើសរូបថត។"
+            "state" : "needs_review",
+            "value" : "ការចូលប្រើរូបថតត្រូវបានបិទសម្រាប់ Plant Farm។ នៅក្នុងការកំណត់ សូមចុច រូបថត ហើយជ្រើសរើស ការចូលប្រើពេញលេញ ឬ ការចូលប្រើមានកំណត់ ដើម្បីអ្នកអាចជ្រើសរើសរូបថតបាន។"
           }
         }
       }
@@ -4012,6 +4012,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "បើកទីតាំង"
+          }
+        }
+      }
+    },
+    "Turn on photo access" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បើកការចូលប្រើរូបថត"
           }
         }
       }

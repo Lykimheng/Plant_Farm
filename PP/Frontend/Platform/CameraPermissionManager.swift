@@ -23,6 +23,7 @@ final class CameraPermissionManager: ObservableObject {
     var isCameraAuthorized: Bool { cameraStatus == .authorized }
     var isCameraDenied: Bool { cameraStatus == .denied || cameraStatus == .restricted }
     var isPhotoAuthorized: Bool { photoStatus == .authorized || photoStatus == .limited }
+    var isPhotoDenied: Bool { photoStatus == .denied || photoStatus == .restricted }
 
     @discardableResult
     func requestCamera() async -> Bool {
