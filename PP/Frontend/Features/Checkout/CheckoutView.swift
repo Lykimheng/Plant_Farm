@@ -48,7 +48,12 @@ struct CheckoutView: View {
         .locationSettingsAlert(isPresented: $showLocationSettings)
         .onChange(of: viewModel.placedOrder) { _, order in
             guard let order else { return }
-            router.push(.orderPlaced(order))
+            // a placed order can't go back to checkout, so payment takes its place
+            if order.paymentMethod.paysOnline {
+                router.replaceTop(with: .payment(order))
+            } else {
+                router.push(.orderPlaced(order))
+            }
         }
     }
 
@@ -178,7 +183,20 @@ struct CheckoutView: View {
                         method: method,
                         isSelected: viewModel.selectedPayment == method
                     ) {
-                        viewModel.selectedPayment = method
+                        withAnimation(.easeInOut(duration: 0.2)) { viewModel.selectedPayment = method }
+                    }
+
+                    if viewModel.selectedPayment == method {
+                        Text(method.hint)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(Theme.Spacing.md)
+                            .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+                            .padding(.leading, 56)
+                            .padding(.bottom, Theme.Spacing.sm)
+                            .transition(.opacity)
                     }
 
                     if method != viewModel.paymentMethods.last {
@@ -268,6 +286,8 @@ struct CheckoutView: View {
             } label: {
                 if viewModel.isPlacingOrder {
                     ProgressView().tint(Theme.onBrand)
+                } else if viewModel.selectedPayment.paysOnline {
+                    Text("Pay Now · \(viewModel.total(subtotal: cart.subtotal).priceText)")
                 } else {
                     Text("Place Order · \(viewModel.total(subtotal: cart.subtotal).priceText)")
                 }

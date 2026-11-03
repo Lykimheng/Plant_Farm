@@ -22,6 +22,12 @@ struct OrderSuccessView: View {
         return others > 0 ? Text("\(first.plant.name) and \(others) more") : Text(first.plant.name)
     }
 
+    private var paymentDescription: Text {
+        order.isPaid
+            ? Text("\(Text(order.paymentMethod.name)) · \(Text(order.paymentStatus.label))")
+            : Text(order.paymentMethod.name)
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.xl) {
@@ -98,6 +104,7 @@ struct OrderSuccessView: View {
             infoRow(icon: "number", label: Text("Order number"), value: Text(verbatim: "#\(order.orderNumber)"))
             infoRow(icon: Icons.truck, label: Text("Estimated delivery"), value: Text("2–3 business days"))
             infoRow(icon: Icons.bag, label: shipmentDescription, value: Text(order.total.priceText))
+            infoRow(icon: Icons.card, label: Text("Payment"), value: paymentDescription)
         }
         .opacity(animateContent ? 1 : 0)
         .offset(y: animateContent ? 0 : 16)

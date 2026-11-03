@@ -275,6 +275,26 @@
         }
       }
     },
+    "ABA Mobile didn't open on this phone. Scan or save the KHQR code below instead." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ABA Mobile មិនបានបើកនៅលើទូរស័ព្ទនេះទេ។ សូមស្កេន ឬរក្សាទុកកូដ KHQR ខាងក្រោមជំនួសវិញ។"
+          }
+        }
+      }
+    },
+    "ABA Mobile opens with the amount ready. Confirm there, then come back to Plant Farm." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ABA Mobile នឹងបើកជាមួយចំនួនទឹកប្រាក់ដែលបានរៀបចំរួច។ សូមបញ្ជាក់នៅទីនោះ រួចត្រឡប់មក Plant Farm វិញ។"
+          }
+        }
+      }
+    },
     "ABA Pay" : {
       "localizations" : {
         "km" : {
@@ -418,6 +438,16 @@
         }
       }
     },
+    "Allow saving to Photos" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "អនុញ្ញាតឱ្យរក្សាទុកក្នុងរូបថត"
+          }
+        }
+      }
+    },
     "Allow the camera so you can point it at a plant to identify it. You can also pick a photo instead." : {
       "localizations" : {
         "km" : {
@@ -454,6 +484,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "អាចជា៖ %@"
+          }
+        }
+      }
+    },
+    "Amount to pay" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ចំនួនទឹកប្រាក់ត្រូវបង់"
           }
         }
       }
@@ -718,6 +758,16 @@
         }
       }
     },
+    "Cancel payment" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បោះបង់ការទូទាត់"
+          }
+        }
+      }
+    },
     "Cancel this order?" : {
       "localizations" : {
         "km" : {
@@ -728,12 +778,32 @@
         }
       }
     },
+    "Cancel this payment?" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បោះបង់ការទូទាត់នេះឬ?"
+          }
+        }
+      }
+    },
     "Cancelled" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "បានបោះបង់ចោល"
+          }
+        }
+      }
+    },
+    "Card payment" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការទូទាត់តាមកាត"
           }
         }
       }
@@ -921,6 +991,16 @@
         }
       }
     },
+    "Close" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បិទ"
+          }
+        }
+      }
+    },
     "Collapse %@" : {
       "localizations" : {
         "km" : {
@@ -961,12 +1041,32 @@
         }
       }
     },
+    "Confirm the payment in ABA Mobile, then come back here. This screen updates as soon as ABA confirms it." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "សូមបញ្ជាក់ការទូទាត់នៅក្នុង ABA Mobile រួចត្រឡប់មកទីនេះវិញ។ អេក្រង់នេះនឹងធ្វើបច្ចុប្បន្នភាពភ្លាមៗ នៅពេល ABA បញ្ជាក់។"
+          }
+        }
+      }
+    },
     "Confirmed" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "បានបញ្ជាក់"
+          }
+        }
+      }
+    },
+    "Connecting to ABA PayWay…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "កំពុងភ្ជាប់ទៅ ABA PayWay…"
           }
         }
       }
@@ -1017,6 +1117,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "មិនអាចផ្ទុកហាងបានទេ"
+          }
+        }
+      }
+    },
+    "Couldn't save the KHQR code. Please try again." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "មិនអាចរក្សាទុកកូដ KHQR បានទេ។ សូមព្យាយាមម្ដងទៀត។"
           }
         }
       }
@@ -1393,6 +1503,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "សូមបញ្ចូលអាសយដ្ឋានអ៊ីមែលឲ្យត្រឹមត្រូវ។"
+          }
+        }
+      }
+    },
+    "Enter card details" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បញ្ចូលព័ត៌មានកាត"
           }
         }
       }
@@ -1965,6 +2085,16 @@
         }
       }
     },
+    "Keep paying" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បន្តការទូទាត់"
+          }
+        }
+      }
+    },
     "Keep roots in 1–2 inches of clean water; change it weekly" : {
       "localizations" : {
         "km" : {
@@ -1981,6 +2111,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "KHQR"
+          }
+        }
+      }
+    },
+    "KHQR code for %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "កូដ KHQR សម្រាប់ %@"
+          }
+        }
+      }
+    },
+    "KHQR code saved to Photos" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បានរក្សាទុកកូដ KHQR ក្នុងរូបថត"
           }
         }
       }
@@ -2616,6 +2766,16 @@
         }
       }
     },
+    "Open ABA Mobile" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បើក ABA Mobile"
+          }
+        }
+      }
+    },
     "Open Settings" : {
       "localizations" : {
         "km" : {
@@ -2796,6 +2956,16 @@
         }
       }
     },
+    "Paid" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បានបង់ប្រាក់"
+          }
+        }
+      }
+    },
     "Partial sun" : {
       "localizations" : {
         "km" : {
@@ -2846,12 +3016,72 @@
         }
       }
     },
+    "Pay later" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បង់ប្រាក់ពេលក្រោយ"
+          }
+        }
+      }
+    },
+    "Pay Now · %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បង់ប្រាក់ឥឡូវ · %@"
+          }
+        }
+      }
+    },
+    "Pay the courier in cash when your plants arrive." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ទូទាត់ជាសាច់ប្រាក់ជូនអ្នកដឹកជញ្ជូន នៅពេលរុក្ខជាតិរបស់អ្នកមកដល់។"
+          }
+        }
+      }
+    },
     "Pay the courier on arrival" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ទូទាត់ជូនអ្នកដឹកជញ្ជូនពេលមកដល់"
+          }
+        }
+      }
+    },
+    "Pay with" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បង់ប្រាក់តាមរយៈ"
+          }
+        }
+      }
+    },
+    "Payment" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការទូទាត់"
+          }
+        }
+      }
+    },
+    "Payment cancelled. Your order is saved but not paid." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការទូទាត់ត្រូវបានបោះបង់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។"
           }
         }
       }
@@ -2872,6 +3102,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "វិធីទូទាត់"
+          }
+        }
+      }
+    },
+    "Payment received. Thank you!" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បានទទួលការទូទាត់។ សូមអរគុណ!"
           }
         }
       }
@@ -2964,6 +3204,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plant Farm %@ · បង្កើតឡើងសម្រាប់អ្នកដាំដុះរុក្ខជាតិក្នុងទីក្រុង"
+          }
+        }
+      }
+    },
+    "Plant Farm can't add photos right now. In Settings, tap Photos and allow Plant Farm to add photos so you can save the KHQR code." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Plant Farm មិនអាចបន្ថែមរូបថតបានទេនៅពេលនេះ។ នៅក្នុងការកំណត់ សូមចុច រូបថត ហើយអនុញ្ញាតឱ្យ Plant Farm បន្ថែមរូបថត ដើម្បីអ្នកអាចរក្សាទុកកូដ KHQR បាន។"
           }
         }
       }
@@ -3169,6 +3419,16 @@
         }
       }
     },
+    "Refunded" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បានសងប្រាក់វិញ"
+          }
+        }
+      }
+    },
     "Rejected" : {
       "localizations" : {
         "km" : {
@@ -3299,6 +3559,16 @@
         }
       }
     },
+    "Save to Photos" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "រក្សាទុកក្នុងរូបថត"
+          }
+        }
+      }
+    },
     "Saving %@" : {
       "localizations" : {
         "km" : {
@@ -3321,6 +3591,16 @@
     },
     "Scan history" : {
 
+    },
+    "Scan it with ABA Mobile or any KHQR bank app. Paying on this phone? Save it, then in your bank app tap Scan and choose the image from your photos." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ស្កេនវាជាមួយ ABA Mobile ឬកម្មវិធីធនាគារណាមួយដែលគាំទ្រ KHQR។ បង់ប្រាក់នៅលើទូរស័ព្ទនេះឬ? សូមរក្សាទុកវា បន្ទាប់មកនៅក្នុងកម្មវិធីធនាគាររបស់អ្នក សូមចុច ស្កេន ហើយជ្រើសរើសរូបភាពពីរូបថតរបស់អ្នក។"
+          }
+        }
+      }
     },
     "Scan result" : {
       "localizations" : {
@@ -3348,6 +3628,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ស្វែងរករុក្ខជាតិ"
+          }
+        }
+      }
+    },
+    "Secured by ABA PayWay · %@" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការពារដោយ ABA PayWay · %@"
           }
         }
       }
@@ -3412,6 +3702,16 @@
         }
       }
     },
+    "Share" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ចែករំលែក"
+          }
+        }
+      }
+    },
     "Shop unavailable" : {
       "localizations" : {
         "km" : {
@@ -3454,6 +3754,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "បង្ហាញ %@ ទាំងអស់"
+          }
+        }
+      }
+    },
+    "Show KHQR code instead" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "បង្ហាញកូដ KHQR ជំនួសវិញ"
           }
         }
       }
@@ -3849,6 +4159,26 @@
         }
       }
     },
+    "The payment didn't go through. Your order is saved but not paid. Try again or choose another way to pay." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការទូទាត់មិនបានសម្រេច។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ សូមព្យាយាមម្ដងទៀត ឬជ្រើសរើសវិធីទូទាត់ផ្សេង។"
+          }
+        }
+      }
+    },
+    "The payment time ran out. Your order is saved but not paid. Tap Try again for a new code." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ពេលវេលាទូទាត់បានផុតកំណត់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ ចុច ព្យាយាមម្ដងទៀត ដើម្បីទទួលបានកូដថ្មី។"
+          }
+        }
+      }
+    },
     "The server sent something we couldn't read." : {
       "localizations" : {
         "km" : {
@@ -3882,6 +4212,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ការបញ្ជាទិញនេះកំពុងដំណើរការហើយ មិនអាចលុបចោលបានទៀតទេ។"
+          }
+        }
+      }
+    },
+    "This order is already paid, so it can't be cancelled here. Contact us if you need to change it." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការបញ្ជាទិញនេះបានបង់ប្រាក់រួចហើយ ដូច្នេះមិនអាចលុបចោលនៅទីនេះបានទេ។ សូមទាក់ទងមកយើង ប្រសិនបើអ្នកត្រូវការផ្លាស់ប្ដូរវា។"
           }
         }
       }
@@ -4036,6 +4376,16 @@
         }
       }
     },
+    "Unpaid" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "មិនទាន់បង់ប្រាក់"
+          }
+        }
+      }
+    },
     "Unread" : {
       "localizations" : {
         "km" : {
@@ -4132,6 +4482,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "កំពុងរង់ចាំការបញ្ជាក់"
+          }
+        }
+      }
+    },
+    "Waiting for your payment…" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "កំពុងរង់ចាំការទូទាត់របស់អ្នក…"
           }
         }
       }
@@ -4408,12 +4768,42 @@
         }
       }
     },
+    "You'll get a KHQR code to scan with ABA Mobile or any KHQR bank app. You can also save it and scan it from your photos." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "អ្នកនឹងទទួលបានកូដ KHQR ដើម្បីស្កេនជាមួយ ABA Mobile ឬកម្មវិធីធនាគារណាមួយដែលគាំទ្រ KHQR។ អ្នកក៏អាចរក្សាទុកវា ហើយស្កេនពីរូបថតរបស់អ្នកបានដែរ។"
+          }
+        }
+      }
+    },
     "You'll need to sign in again to see your orders and saved plants." : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "អ្នកនឹងត្រូវចូលគណនីម្ដងទៀត ដើម្បីមើលការបញ្ជាទិញ និងរុក្ខជាតិដែលបានរក្សាទុក។"
+          }
+        }
+      }
+    },
+    "You'll type your card number, expiry date and CVV on ABA PayWay's secure form. Plant Farm never sees your card details." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "អ្នកនឹងបញ្ចូលលេខកាត កាលបរិច្ឆេទផុតកំណត់ និង CVV នៅលើទម្រង់សុវត្ថិភាពរបស់ ABA PayWay។ Plant Farm មិនដែលឃើញព័ត៌មានកាតរបស់អ្នកទេ។"
+          }
+        }
+      }
+    },
+    "Your bank declined the payment. Your order is saved but not paid. Try again or choose another way to pay." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ធនាគាររបស់អ្នកបានបដិសេធការទូទាត់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ សូមព្យាយាមម្ដងទៀត ឬជ្រើសរើសវិធីទូទាត់ផ្សេង។"
           }
         }
       }
@@ -4510,6 +4900,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានដឹកជញ្ជូនរួចរាល់ហើយ!"
+          }
+        }
+      }
+    },
+    "Your order is saved. You can pay for it any time from My Orders." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក។ អ្នកអាចបង់ប្រាក់បានគ្រប់ពេលពី ការបញ្ជាទិញរបស់ខ្ញុំ។"
+          }
+        }
+      }
+    },
+    "Your order stays saved but unpaid. You can pay for it later from My Orders." : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការបញ្ជាទិញរបស់អ្នកនៅតែត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់។ អ្នកអាចបង់ប្រាក់នៅពេលក្រោយពី ការបញ្ជាទិញរបស់ខ្ញុំ។"
           }
         }
       }

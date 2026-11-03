@@ -34,6 +34,7 @@ enum AppTab: Hashable, CaseIterable {
 
 enum CartRoute: Hashable {
     case checkout
+    case payment(OrderModel)
     case orderPlaced(OrderModel)
     case orderDetail(OrderModel)
 }
@@ -49,6 +50,11 @@ final class AppRouter: ObservableObject {
     }
 
     func push(_ route: CartRoute) {
+        cartPath.append(route)
+    }
+
+    func replaceTop(with route: CartRoute) {
+        if !cartPath.isEmpty { cartPath.removeLast() }
         cartPath.append(route)
     }
 }

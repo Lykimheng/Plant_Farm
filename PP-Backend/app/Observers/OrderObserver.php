@@ -31,18 +31,21 @@ class OrderObserver
 
     public function updated(Order $order): void
     {
-        if (! $order->wasChanged('status')) {
+        if ($order->wasChanged('payment_status') && $order->payment_status === 'paid') {
+            $this->notify($order, 'Payment Received', "We received your payment for order #{$order->order_number}.", 'paymentReceived');
+        }
+
+        if (! $order->wasChanged('status') || ! isset(self::STATUS_MESSAGES[$order->status])) {
             return;
         }
 
-        $status = $order->status;
+        [$title, $message, $type] = self::STATUS_MESSAGES[$order->status];
 
-        if (! isset(self::STATUS_MESSAGES[$status])) {
-            return;
-        }
+        $this->notify($order, $title, $message, $type);
+    }
 
-        [$title, $message, $type] = self::STATUS_MESSAGES[$status];
-
+    private function notify(Order $order, string $title, string $message, string $type): void
+    {
         // the order owns the user id — never trust a client-supplied one
         AppNotification::create([
             'user_id' => $order->user_id,

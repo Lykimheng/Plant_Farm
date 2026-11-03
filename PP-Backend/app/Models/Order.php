@@ -11,6 +11,7 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id', 'order_number', 'status', 'total', 'delivery_address',
+        'payment_method', 'payment_status', 'paid_at',
     ];
 
     public $timestamps = false;
@@ -21,12 +22,18 @@ class Order extends Model
             'total'      => 'float',
             'user_id'    => 'integer',
             'created_at' => 'datetime',
+            'paid_at'    => 'datetime',
         ];
     }
 
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 
     public function user()

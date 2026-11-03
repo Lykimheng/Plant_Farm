@@ -12,16 +12,19 @@ struct OrderDetailView: View {
 
     @EnvironmentObject private var orders: OrdersStore
     @EnvironmentObject private var location: LocationManager
+    @EnvironmentObject private var toast: ToastCenter
 
     @State private var showCancelAlert = false
+    @State private var showPayment = false
     private var current: OrderModel {
-        orders.orders.first { $0.id == order.id } ?? order
+        orders.latest(order)
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
                 statusHeader
+                paymentCard
                 addressCard
                 timeline
                 itemsCard
@@ -35,6 +38,22 @@ struct OrderDetailView: View {
         .navigationTitle("Order #\(current.orderNumber)")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .task {
+            // it may have been paid in the bank app since this screen last checked
+            if current.awaitsOnlinePayment {
+                _ = try? await orders.refreshPayment(for: current)
+            }
+        }
+        .navigationDestination(isPresented: $showPayment) {
+            PaymentView(
+                order: current,
+                onPaid: { _ in
+                    showPayment = false
+                    toast.show("Payment received. Thank you!")
+                },
+                onLater: { showPayment = false }
+            )
+        }
         .alert("Cancel this order?", isPresented: $showCancelAlert) {
             Button("Cancel order", role: .destructive) {
                 Task { await orders.cancel(current) }
@@ -85,6 +104,37 @@ struct OrderDetailView: View {
 
     private var terminationNote: LocalizedStringResource {
         current.status == .rejected ? "This order was rejected." : "This order was cancelled."
+    }
+
+    // MARK: - Payment
+
+    private var paymentCard: some View {
+        SectionCard(title: "Payment", icon: Icons.card) {
+            VStack(spacing: Theme.Spacing.md) {
+                HStack(spacing: Theme.Spacing.md) {
+                    Image(systemName: current.paymentMethod.icon)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Theme.brand)
+                        .frame(width: 36, height: 36)
+                        .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+
+                    Text(current.paymentMethod.name)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Theme.textPrimary)
+
+                    Spacer()
+
+                    if current.paymentMethod.paysOnline || current.isPaid {
+                        PaymentStatusBadge(status: current.paymentStatus)
+                    }
+                }
+
+                if current.awaitsOnlinePayment {
+                    Button("Pay Now · \(current.total.priceText)") { showPayment = true }
+                        .buttonStyle(.primary)
+                }
+            }
+        }
     }
 
     // MARK: - Address
@@ -252,13 +302,13 @@ struct OrderDetailView: View {
 
     @ViewBuilder
     private var cancelSection: some View {
-        if current.status.isCancellable {
+        if current.canCancel {
             InlineError(message: orders.errorMessage)
             Button("Cancel order") { showCancelAlert = true }
                 .buttonStyle(SecondaryButtonStyle(tint: Theme.danger))
         } else {
-            Text(current.status.isTerminated
-                 ? terminationNote
+            Text(current.status.isTerminated ? terminationNote
+                 : current.status.isCancellable ? "This order is already paid, so it can't be cancelled here. Contact us if you need to change it."
                  : "This order is already being processed and can no longer be cancelled.")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.textTertiary)
@@ -278,5 +328,6 @@ struct OrderDetailView: View {
         .environmentObject(OrdersStore())
         .environmentObject(LocationManager())
         .environmentObject(UserStore())
+        .environmentObject(ToastCenter())
     }
 }

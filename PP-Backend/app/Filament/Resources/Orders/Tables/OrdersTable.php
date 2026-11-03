@@ -43,6 +43,13 @@ class OrdersTable
                     ->money('USD')
                     ->sortable(),
 
+                TextColumn::make('payment_status')
+                    ->label('Payment')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => ucfirst($state))
+                    ->color(fn (string $state) => $state === 'paid' ? 'success' : 'warning')
+                    ->description(fn ($record) => OrderForm::PAYMENT_METHODS[$record->payment_method] ?? $record->payment_method),
+
                 TextColumn::make('created_at')
                     ->label('Placed')
                     ->dateTime('M j, Y g:i A')
@@ -51,6 +58,7 @@ class OrdersTable
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')->options(OrderForm::STATUSES),
+                SelectFilter::make('payment_status')->label('Payment')->options(['paid' => 'Paid', 'unpaid' => 'Unpaid']),
             ])
             ->recordActions([
                 EditAction::make(),

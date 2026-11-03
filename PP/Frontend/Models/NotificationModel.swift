@@ -21,6 +21,7 @@ nonisolated struct NotificationModel: Identifiable, Hashable {
         case orderCancelled
         case orderRejected
         case orderDelivered
+        case paymentReceived
 
         init(apiValue: String) {
             self = NotificationType(rawValue: apiValue) ?? .orderPlaced
@@ -33,6 +34,7 @@ nonisolated struct NotificationModel: Identifiable, Hashable {
             case .orderCancelled: return "xmark.circle.fill"
             case .orderRejected:  return "exclamationmark.triangle.fill"
             case .orderDelivered: return "shippingbox.fill"
+            case .paymentReceived: return "creditcard.fill"
             }
         }
 
@@ -43,6 +45,7 @@ nonisolated struct NotificationModel: Identifiable, Hashable {
             case .orderCancelled: return Theme.danger
             case .orderRejected:  return Theme.danger
             case .orderDelivered: return Theme.success
+            case .paymentReceived: return Theme.success
             }
         }
     }

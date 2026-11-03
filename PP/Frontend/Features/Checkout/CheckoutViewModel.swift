@@ -11,7 +11,9 @@ import Combine
 @MainActor
 final class CheckoutViewModel: ObservableObject {
     @Published var selectedDelivery: DeliveryOption = .standard
-    @Published var selectedPayment: PaymentMethod = PaymentMethod.all[0]
+    @Published var selectedPayment = PaymentMethod.with(
+        id: UserDefaults.standard.string(forKey: "preferredPaymentMethod") ?? PaymentMethod.aba.id
+    )
     @Published var specialNotes = ""
     @Published var contactPhone = ""
     @Published var addressOverride = ""
@@ -52,7 +54,8 @@ final class CheckoutViewModel: ObservableObject {
                 items: cart.items,
                 total: total(subtotal: cart.subtotal),
                 deliveryAddress: deliveryTo,
-                deliveryOption: selectedDelivery.id
+                deliveryOption: selectedDelivery.id,
+                paymentMethod: selectedPayment
             )
             cart.clear()
             placedOrder = order

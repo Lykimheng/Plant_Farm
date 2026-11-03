@@ -21,6 +21,13 @@ class OrderForm
         'rejected'  => 'Rejected',
     ];
 
+    public const PAYMENT_METHODS = [
+        'aba'  => 'ABA Pay',
+        'khqr' => 'KHQR',
+        'card' => 'Visa / Mastercard',
+        'cod'  => 'Cash on delivery',
+    ];
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -45,6 +52,26 @@ class OrderForm
                         TextInput::make('delivery_address')
                             ->disabled()
                             ->columnSpanFull(),
+                    ]),
+
+                // set by ABA PayWay's own confirmation, so read-only here
+                Section::make('Payment')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('payment_method')
+                            ->label('Method')
+                            ->formatStateUsing(fn (?string $state) => self::PAYMENT_METHODS[$state] ?? $state),
+
+                        TextEntry::make('payment_status')
+                            ->label('Status')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state) => ucfirst((string) $state))
+                            ->color(fn (?string $state) => $state === 'paid' ? 'success' : 'warning'),
+
+                        TextEntry::make('paid_at')
+                            ->label('Paid')
+                            ->dateTime('M j, Y g:i A')
+                            ->placeholder('—'),
                     ]),
 
                 Section::make('Items')

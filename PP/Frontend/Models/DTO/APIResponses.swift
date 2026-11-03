@@ -145,6 +145,8 @@ nonisolated struct OrderDTO: Decodable {
     let status: String
     let total: Double
     let deliveryAddress: String
+    let paymentMethod: String?
+    let paymentStatus: String?
     let createdAt: String?
     let items: [OrderItemDTO]
 
@@ -152,6 +154,8 @@ nonisolated struct OrderDTO: Decodable {
         case id, status, total, items
         case orderNumber = "order_number"
         case deliveryAddress = "delivery_address"
+        case paymentMethod = "payment_method"
+        case paymentStatus = "payment_status"
         case createdAt = "created_at"
     }
 
@@ -163,7 +167,9 @@ nonisolated struct OrderDTO: Decodable {
             status: OrderModel.OrderStatus(apiValue: status),
             items: items.map(\.cartItem),
             total: total,
-            deliveryAddress: deliveryAddress
+            deliveryAddress: deliveryAddress,
+            paymentMethod: PaymentMethod.with(id: paymentMethod ?? ""),
+            paymentStatus: OrderModel.PaymentStatus(apiValue: paymentStatus)
         )
     }
 }
@@ -208,6 +214,63 @@ nonisolated struct PlaceOrderResponse: APIResponse {
     enum CodingKeys: String, CodingKey {
         case success, message, total
         case orderId = "order_id"
+    }
+}
+
+// MARK: - Payments
+
+nonisolated struct PaymentResponse: APIResponse {
+    let success: Bool
+    let message: String?
+    let paymentStatus: String?
+    let payment: PaymentDTO?
+
+    enum CodingKeys: String, CodingKey {
+        case success, message, payment
+        case paymentStatus = "payment_status"
+    }
+
+    var update: PaymentUpdate {
+        PaymentUpdate(
+            orderPaymentStatus: OrderModel.PaymentStatus(apiValue: paymentStatus),
+            session: payment?.session
+        )
+    }
+}
+
+nonisolated struct PaymentDTO: Decodable {
+    let tranId: String
+    let method: String
+    let status: String
+    let amount: Double
+    let expiresAt: String?
+    let deeplink: String?
+    let qrString: String?
+    let checkoutHTML: String?
+    let checkoutBaseURL: String?
+
+    enum CodingKeys: String, CodingKey {
+        case method, status, amount, deeplink
+        case tranId = "tran_id"
+        case expiresAt = "expires_at"
+        case qrString = "qr_string"
+        case checkoutHTML = "checkout_html"
+        case checkoutBaseURL = "checkout_base_url"
+    }
+
+    var session: PaymentSession {
+        PaymentSession(
+            tranId: tranId,
+            method: PaymentMethod.with(id: method),
+            status: PaymentSession.Status(apiValue: status),
+            amount: amount,
+            expiresAt: OrderDateFormat.parse(expiresAt),
+            deeplink: deeplink.flatMap(URL.init(string:)),
+            qrString: qrString,
+            cardForm: checkoutHTML.map {
+                PaymentSession.CardForm(html: $0, baseURL: checkoutBaseURL.flatMap(URL.init(string:)))
+            }
+        )
     }
 }
 

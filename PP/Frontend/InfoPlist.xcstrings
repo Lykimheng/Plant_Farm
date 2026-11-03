@@ -91,6 +91,24 @@
         }
       }
     },
+    "NSPhotoLibraryAddUsageDescription" : {
+      "comment" : "Privacy - Photo Library Additions Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plant Farm saves your KHQR payment code to Photos so you can scan it from your bank app."
+          }
+        },
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Plant Farm រក្សាទុកកូដទូទាត់ KHQR របស់អ្នកក្នុងរូបថត ដើម្បីឱ្យអ្នកអាចស្កេនវាពីកម្មវិធីធនាគាររបស់អ្នក។"
+          }
+        }
+      }
+    },
     "NSPhotoLibraryUsageDescription" : {
       "comment" : "Privacy - Photo Library Usage Description",
       "extractionState" : "extracted_with_value",

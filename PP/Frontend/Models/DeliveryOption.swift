@@ -26,16 +26,36 @@ nonisolated struct PaymentMethod: Identifiable, Hashable {
     let name: LocalizedStringResource
     let icon: String
     let detail: LocalizedStringResource
+    let hint: LocalizedStringResource
 
     static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
-    static let all: [PaymentMethod] = [
-        PaymentMethod(id: "aba", name: "ABA Pay", icon: "building.columns", detail: "Pay from your ABA account"),
-        PaymentMethod(id: "khqr", name: "KHQR", icon: "qrcode", detail: "Scan to pay with any bank app"),
-        PaymentMethod(id: "card", name: "Visa / Mastercard", icon: Icons.card, detail: "Credit or debit card"),
-        PaymentMethod(id: "cod", name: "Cash on Delivery", icon: "banknote", detail: "Pay the courier on arrival")
-    ]
+    var paysOnline: Bool { self != .cashOnDelivery }
+
+    static let aba = PaymentMethod(
+        id: "aba", name: "ABA Pay", icon: "building.columns", detail: "Pay from your ABA account",
+        hint: "ABA Mobile opens with the amount ready. Confirm there, then come back to Plant Farm."
+    )
+    static let khqr = PaymentMethod(
+        id: "khqr", name: "KHQR", icon: "qrcode", detail: "Scan to pay with any bank app",
+        hint: "You'll get a KHQR code to scan with ABA Mobile or any KHQR bank app. You can also save it and scan it from your photos."
+    )
+    static let card = PaymentMethod(
+        id: "card", name: "Visa / Mastercard", icon: Icons.card, detail: "Credit or debit card",
+        hint: "You'll type your card number, expiry date and CVV on ABA PayWay's secure form. Plant Farm never sees your card details."
+    )
+    static let cashOnDelivery = PaymentMethod(
+        id: "cod", name: "Cash on Delivery", icon: "banknote", detail: "Pay the courier on arrival",
+        hint: "Pay the courier in cash when your plants arrive."
+    )
+
+    static let all: [PaymentMethod] = [.aba, .khqr, .card, .cashOnDelivery]
+    static let online: [PaymentMethod] = all.filter(\.paysOnline)
+
+    static func with(id: String) -> PaymentMethod {
+        all.first { $0.id == id } ?? .cashOnDelivery
+    }
 }
 
 nonisolated enum OrderNumber {

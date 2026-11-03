@@ -62,6 +62,15 @@ struct MainTabView: View {
         switch route {
         case .checkout:
             CheckoutView()
+        case .payment(let order):
+            PaymentView(
+                order: order,
+                onPaid: { router.replaceTop(with: .orderPlaced($0)) },
+                onLater: {
+                    router.cartPath = [.orderDetail(order)]
+                    toast.show("Your order is saved. You can pay for it any time from My Orders.", duration: 3)
+                }
+            )
         case .orderPlaced(let order):
             OrderSuccessView(order: order)
         case .orderDetail(let order):

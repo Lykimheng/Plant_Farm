@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    // the API key signs every PayWay request, so it stays on the server
+    'payway' => [
+        'base_url' => env('PAYWAY_BASE_URL', 'https://checkout-sandbox.payway.com.kh'),
+        'merchant_id' => env('PAYWAY_MERCHANT_ID'),
+        'api_key' => env('PAYWAY_API_KEY'),
+        'return_url' => env('PAYWAY_RETURN_URL'),
+        'lifetime' => (int) env('PAYWAY_LIFETIME', 15),
+    ],
+
 ];

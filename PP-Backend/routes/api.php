@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MyPlantController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PlantController;
 use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,9 @@ Route::middleware('throttle:10,1,password-reset')->group(function () {
 Route::get('plants', [PlantController::class, 'index']);
 Route::get('reviews', [ReviewController::class, 'index']);
 
+// ABA PayWay's pushback; the controller re-checks every claim with PayWay itself
+Route::post('payway/callback', [PaymentController::class, 'callback'])->middleware('throttle:60,1,payway');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);
@@ -49,6 +53,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('orders', [OrderController::class, 'index']);
     Route::post('orders', [OrderController::class, 'store']);
     Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order');
+
+    // paying with ABA PayWay; the app polls the status while the customer pays
+    Route::middleware('throttle:60,1,payments')->group(function () {
+        Route::post('orders/{order}/payments', [PaymentController::class, 'store'])->whereNumber('order');
+        Route::get('orders/{order}/payment', [PaymentController::class, 'show'])->whereNumber('order');
+        Route::post('orders/{order}/payment/cancel', [PaymentController::class, 'cancel'])->whereNumber('order');
+    });
 
     // notifications
     Route::get('notifications', [NotificationController::class, 'index']);

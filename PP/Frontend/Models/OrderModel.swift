@@ -16,9 +16,35 @@ nonisolated struct OrderModel: Identifiable, Hashable {
     let items: [CartItem]
     let total: Double
     let deliveryAddress: String
+    var paymentMethod: PaymentMethod = .cashOnDelivery
+    var paymentStatus: PaymentStatus = .unpaid
     var itemCount: Int { items.reduce(0) { $0 + $1.quantity } }
     static func == (lhs: OrderModel, rhs: OrderModel) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+
+    var isPaid: Bool { paymentStatus == .paid }
+
+    var awaitsOnlinePayment: Bool {
+        paymentMethod.paysOnline && paymentStatus == .unpaid && !status.isTerminated
+    }
+
+    var canCancel: Bool { status.isCancellable && !isPaid }
+
+    enum PaymentStatus: String {
+        case unpaid, paid, refunded
+
+        init(apiValue: String?) {
+            self = PaymentStatus(rawValue: apiValue ?? "") ?? .unpaid
+        }
+
+        var label: LocalizedStringResource {
+            switch self {
+            case .unpaid:   return "Unpaid"
+            case .paid:     return "Paid"
+            case .refunded: return "Refunded"
+            }
+        }
+    }
 
     enum OrderStatus: String, CaseIterable {
         case pending = "Pending"

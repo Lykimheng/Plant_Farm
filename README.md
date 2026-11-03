@@ -316,8 +316,12 @@ and signs out when the server answers 401. After pulling this change run
 | `GET` | `/reviews` | optional | Plant reviews; with a token, also your own review |
 | `POST` `DELETE` | `/reviews` | token | Post/edit or delete your review |
 | `GET` `POST` `DELETE` | `/my_plants` | token | Personal plant tracker |
-| `GET` `POST` | `/orders` | token | Order history, checkout |
-| `POST` | `/orders/{id}/cancel` | token | Cancel your own order while it is still pending |
+| `GET` `POST` | `/orders` | token | Order history, checkout (`payment_method`: `aba`, `khqr`, `card` or `cod`) |
+| `POST` | `/orders/{id}/cancel` | token | Cancel your own order while it is still pending and unpaid |
+| `POST` | `/orders/{id}/payments` | token | Start paying an order with ABA PayWay (`method`: `aba`, `khqr`, `card`) |
+| `GET` | `/orders/{id}/payment` | token | The latest payment attempt, re-checked with PayWay while it's open |
+| `POST` | `/orders/{id}/payment/cancel` | token | Close the open PayWay transaction; the order stays unpaid |
+| `POST` | `/payway/callback` | | PayWay's pushback; the server re-checks the transaction with PayWay |
 | `GET` `PUT` `DELETE` | `/notifications` | token | Notifications, mark read, clear |
 
 Customers can only cancel a pending order; every other status change is made
@@ -335,6 +339,48 @@ Set the `MAIL_*` values in `.env` to a real SMTP server to deliver it.
 Reviews are one-per-customer-per-plant: posting again edits the existing one
 rather than stacking. A plant's `rating` and `counting` are a cache recomputed
 from its visible reviews on every change, so they can't drift.
+
+## Online payment (ABA PayWay)
+
+ABA Pay, KHQR and Visa / Mastercard are paid through
+[ABA PayWay](https://developer.payway.com.kh). Cash on delivery skips it.
+
+1. Put the keys from ABA's email in `PP-Backend/.env` (they stay on the server;
+   the app never sees them):
+
+   ```
+   PAYWAY_BASE_URL=<API URL>
+   PAYWAY_MERCHANT_ID=<Merchant ID>
+   PAYWAY_API_KEY=<Public key>
+   ```
+
+   The API URL can be pasted exactly as ABA wrote it (for example
+   `https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase`):
+   the server keeps the part before `/api/` and adds each endpoint's path
+   itself. The RSA key pair isn't needed for checkout (PayWay only uses it for APIs
+   such as refunds). For production, switch the URL to
+   `https://checkout.payway.com.kh` and use the production keys.
+2. Run `php artisan migrate` once (adds the `payments` table and the
+   payment columns on `orders`).
+3. PayWay only answers servers it knows: ask ABA to whitelist the public IP
+   your backend calls from. Until then every attempt fails, and
+   `storage/logs/laravel.log` says `PayWay error 6: wrong domain`.
+
+**How a payment works.** The app places the order (unpaid), then asks the
+server to start a PayWay transaction for the order's server-side total.
+ABA Pay and KHQR share one transaction: the app opens ABA Mobile with its link,
+or shows the KHQR code to scan or save. Cards open PayWay's own card form
+inside the app, so card numbers go straight to ABA. While the customer pays,
+the app asks the server every few seconds; the server asks PayWay's
+check-transaction API and marks the order paid only when PayWay says
+`APPROVED` for exactly that amount. Nothing the app sends can mark an order
+paid, and PayWay's pushback (`PAYWAY_RETURN_URL`, optional) only triggers the
+same check. Cancelled, declined or expired payments leave the order unpaid;
+the customer can pay later from My Orders, and starting again closes the old
+transaction first. A paid order can no longer be cancelled from the app.
+
+Sandbox test cards are on PayWay's
+[resources page](https://developer.payway.com.kh/resources-3305682f0.md).
 
 ## Project Structure
 

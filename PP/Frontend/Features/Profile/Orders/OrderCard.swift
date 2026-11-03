@@ -24,7 +24,12 @@ struct OrderCard: View {
 
                 Spacer()
 
-                OrderStatusBadge(status: order.status)
+                VStack(alignment: .trailing, spacing: 6) {
+                    OrderStatusBadge(status: order.status)
+                    if order.awaitsOnlinePayment {
+                        PaymentStatusBadge(status: order.paymentStatus)
+                    }
+                }
             }
 
             Divider().overlay(Theme.separator)
@@ -61,6 +66,22 @@ struct OrderCard: View {
         }
         .cardSurface(padding: Theme.Spacing.lg)
         .accessibilityElement(children: .combine)
+    }
+}
+
+struct PaymentStatusBadge: View {
+    let status: OrderModel.PaymentStatus
+    var size: CGFloat = 11.5
+
+    private var color: Color { status == .paid ? Theme.success : Theme.warning }
+
+    var body: some View {
+        Label(status.label, systemImage: status == .paid ? "checkmark.seal" : "exclamationmark.circle")
+            .font(.system(size: size, weight: .semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(color.opacity(0.14), in: Capsule())
     }
 }
 

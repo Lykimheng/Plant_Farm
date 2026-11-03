@@ -43,6 +43,9 @@ nonisolated enum API {
         static let myPlants = "my_plants"
         static let orders = "orders"
         static func cancelOrder(_ id: Int) -> String { "orders/\(id)/cancel" }
+        static func startPayment(_ orderId: Int) -> String { "orders/\(orderId)/payments" }
+        static func payment(_ orderId: Int) -> String { "orders/\(orderId)/payment" }
+        static func cancelPayment(_ orderId: Int) -> String { "orders/\(orderId)/payment/cancel" }
         static let notifications = "notifications"
     }
 
