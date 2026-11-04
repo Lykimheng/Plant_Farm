@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
  */
 class OrderPayments
 {
-    public const METHODS = ['aba', 'khqr', 'card'];
+    public const METHODS = ['khqr', 'card'];
 
     // the app's prices are in dollars
     private const CURRENCY = 'USD';

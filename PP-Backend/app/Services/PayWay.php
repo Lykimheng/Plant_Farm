@@ -26,6 +26,9 @@ class PayWay
         'additional_params', 'google_pay_token', 'skip_success_page',
     ];
 
+    // PayWay renders the card form on its server, so this picks its phone layout
+    private const MOBILE_USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
+
     private array $config;
 
     public function __construct(?array $config = null)
@@ -58,12 +61,14 @@ class PayWay
 
         $this->assertSuccess($body);
 
-        if (blank($body['qr_string'] ?? null)) {
+        $qrString = $body['qr_string'] ?? $body['qrString'] ?? null;
+
+        if (blank($qrString)) {
             throw new PayWayException('PayWay answered without a KHQR code.');
         }
 
         return [
-            'qr_string' => $body['qr_string'],
+            'qr_string' => $qrString,
             'deeplink'  => (string) ($body['abapay_deeplink'] ?? ''),
         ];
     }
@@ -71,7 +76,7 @@ class PayWay
     /** PayWay's own card form, as the HTML page it answers with. */
     public function createCardCheckout(array $fields): string
     {
-        $response = $this->purchase($fields + ['payment_option' => 'cards']);
+        $response = $this->purchase($fields + ['payment_option' => 'cards', 'view_type' => 'hosted_view']);
 
         // a rejected request comes back as JSON instead of the page
         if (is_array($body = $response->json())) {
@@ -137,7 +142,14 @@ class PayWay
             self::PURCHASE_HASH_FIELDS
         )));
 
-        return $this->send(fn () => Http::timeout(20)->asMultipart()->post($this->baseUrl().self::PURCHASE, $fields));
+        // a profile that also has the QR Payment API uses it unless told otherwise,
+        // and then cards never get their form; not one of the signed fields
+        $fields['payment_gate'] = '0';
+
+        return $this->send(fn () => Http::timeout(20)
+            ->withUserAgent(self::MOBILE_USER_AGENT)
+            ->asMultipart()
+            ->post($this->baseUrl().self::PURCHASE, $fields));
     }
 
     private function signedPost(string $path, string $tranId): array

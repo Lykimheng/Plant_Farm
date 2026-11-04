@@ -12,7 +12,7 @@ import Combine
 final class CheckoutViewModel: ObservableObject {
     @Published var selectedDelivery: DeliveryOption = .standard
     @Published var selectedPayment = PaymentMethod.with(
-        id: UserDefaults.standard.string(forKey: "preferredPaymentMethod") ?? PaymentMethod.aba.id
+        id: UserDefaults.standard.string(forKey: "preferredPaymentMethod") ?? PaymentMethod.abaKHQR.id
     )
     @Published var specialNotes = ""
     @Published var contactPhone = ""

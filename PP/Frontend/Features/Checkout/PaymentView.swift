@@ -25,12 +25,32 @@ struct PaymentView: View {
         self.onLater = onLater
     }
 
+    private var otherMethod: PaymentMethod {
+        viewModel.method == .abaKHQR ? .card : .abaKHQR
+    }
+
+    private var subtotal: Double {
+        viewModel.order.items.reduce(0) { $0 + $1.lineTotal }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.Spacing.lg) {
-                amountCard
-                methods
+                merchantHeader
+                paymentContent
                 InlineError(message: viewModel.message)
+                totals
+
+                if viewModel.isWaiting || viewModel.phase == .stopped {
+                    Button {
+                        Task { await viewModel.choose(otherMethod, using: orders) }
+                    } label: {
+                        Text("Pay with \(Text(otherMethod.name)) instead")
+                    }
+                    .font(.system(size: 13.5, weight: .semibold))
+                    .foregroundStyle(Theme.brand)
+                    .disabled(viewModel.isBusy)
+                }
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.lg)
@@ -87,50 +107,26 @@ struct PaymentView: View {
         }
     }
 
-    // MARK: - Amount
+    // MARK: - Header
 
-    private var amountCard: some View {
-        VStack(spacing: 4) {
-            Text("Amount to pay")
-                .font(.system(size: 12.5, weight: .medium))
-                .foregroundStyle(Theme.textSecondary)
-            Text(viewModel.amount.priceText)
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(Theme.textPrimary)
+    private var merchantHeader: some View {
+        VStack(spacing: Theme.Spacing.xs) {
+            Image("logo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 60)
+                .accessibilityLabel(Text(verbatim: "Plant Farm"))
             Text("Order #\(viewModel.order.orderNumber)")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.textTertiary)
         }
         .frame(maxWidth: .infinity)
-        .cardSurface(padding: Theme.Spacing.lg)
     }
 
-    // MARK: - Methods
-
-    private var methods: some View {
-        SectionCard(title: "Pay with", icon: Icons.card) {
-            VStack(spacing: 0) {
-                ForEach(PaymentMethod.online) { method in
-                    PaymentMethodRow(method: method, isSelected: viewModel.method == method) {
-                        Task { await viewModel.choose(method, using: orders) }
-                    }
-                    .disabled(viewModel.isBusy)
-
-                    if viewModel.method == method {
-                        expanded(for: method)
-                            .padding(.bottom, Theme.Spacing.md)
-                    }
-
-                    if method != PaymentMethod.online.last {
-                        Divider().overlay(Theme.separator).padding(.leading, 56)
-                    }
-                }
-            }
-        }
-    }
+    // MARK: - Content
 
     @ViewBuilder
-    private func expanded(for method: PaymentMethod) -> some View {
+    private var paymentContent: some View {
         switch viewModel.phase {
         case .starting:
             HStack(spacing: Theme.Spacing.sm) {
@@ -140,94 +136,117 @@ struct PaymentView: View {
                     .foregroundStyle(Theme.textSecondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.xl)
         case .waiting:
-            if method == .aba {
-                bankAppSection
-            } else if method == .card {
+            if viewModel.method == .card {
                 cardSection
             } else {
                 qrSection
             }
         case .paid, .stopped:
-            EmptyView()
-        }
-    }
-
-    private var bankAppSection: some View {
-        VStack(spacing: Theme.Spacing.md) {
-            note(viewModel.isBankAppMissing
-                 ? "ABA Mobile didn't open on this phone. Scan or save the KHQR code below instead."
-                 : "Confirm the payment in ABA Mobile, then come back here. This screen updates as soon as ABA confirms it.")
-
-            if !viewModel.isBankAppMissing {
-                Button("Open ABA Mobile") {
-                    Task { await viewModel.openBankApp() }
-                }
-                .buttonStyle(.primary)
+            HStack(spacing: Theme.Spacing.md) {
+                PaymentMethodIcon(method: viewModel.method)
+                Text(viewModel.method.name)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Theme.textPrimary)
+                Spacer(minLength: 0)
             }
-
-            if viewModel.showsQRForBankApp {
-                qrSection
-            } else {
-                Button("Show KHQR code instead") { viewModel.showsQRForBankApp = true }
-                    .font(.system(size: 13.5, weight: .semibold))
-                    .foregroundStyle(Theme.brand)
-            }
+            .cardSurface(padding: Theme.Spacing.md)
         }
     }
 
     @ViewBuilder
     private var qrSection: some View {
         if let qr = viewModel.session?.qrString {
-            VStack(spacing: Theme.Spacing.md) {
-                KHQRCard(qrString: qr, amount: viewModel.amount)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .strokeBorder(Theme.separator, lineWidth: 0.7)
-                    )
-
-                if let snapshot = viewModel.qrSnapshot {
-                    HStack(spacing: Theme.Spacing.md) {
-                        Button {
-                            save(snapshot)
-                        } label: {
-                            Label("Save to Photos", systemImage: "square.and.arrow.down")
-                        }
-                        .buttonStyle(.secondary)
-
-                        ShareLink(
-                            item: Image(uiImage: snapshot),
-                            preview: SharePreview(Text(verbatim: "KHQR"), image: Image(uiImage: snapshot))
-                        ) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                        .buttonStyle(.secondary)
+            VStack(spacing: Theme.Spacing.sm) {
+                if viewModel.canOpenBankApp {
+                    Button("Open ABA Mobile") {
+                        Task { await viewModel.openBankApp() }
                     }
+                    .buttonStyle(.primary)
+                    .padding(.bottom, Theme.Spacing.sm)
                 }
 
-                note("Scan it with ABA Mobile or any KHQR bank app. Paying on this phone? Save it, then in your bank app tap Scan and choose the image from your photos.")
+                KHQRCard(qrString: qr, amount: viewModel.amount)
+                    .softShadow()
+                    .padding(.bottom, Theme.Spacing.sm)
+
+                Text("Scan to Pay")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
+
+                Text("or")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+
+                if let snapshot = viewModel.qrSnapshot {
+                    Button {
+                        save(snapshot)
+                    } label: {
+                        Label("Download QR", systemImage: "square.and.arrow.down")
+                    }
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.brand)
+                }
+
+                Text("and upload to Mobile Banking app supporting KHQR")
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
     private var cardSection: some View {
         VStack(spacing: Theme.Spacing.md) {
-            note("You'll type your card number, expiry date and CVV on ABA PayWay's secure form. Plant Farm never sees your card details.")
+            HStack(spacing: Theme.Spacing.md) {
+                PaymentMethodIcon(method: .card)
+                PaymentBrandMarks()
+                Spacer(minLength: 0)
+            }
+
+            Text("You'll type your card number, expiry date and CVV on ABA PayWay's secure form. Plant Farm never sees your card details.")
+                .font(.system(size: 12.5))
+                .foregroundStyle(Theme.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             Button("Enter card details") { viewModel.showsCardForm = true }
                 .buttonStyle(.primary)
                 .disabled(viewModel.cardForm == nil)
         }
+        .cardSurface(padding: Theme.Spacing.lg)
     }
 
-    private func note(_ text: LocalizedStringResource) -> some View {
-        Text(text)
-            .font(.system(size: 12.5))
-            .foregroundStyle(Theme.textSecondary)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity)
+    // MARK: - Totals
+
+    private var totals: some View {
+        VStack(spacing: Theme.Spacing.sm) {
+            totalRow(Text("Subtotal"), subtotal)
+            totalRow(Text("Delivery"), max(0, viewModel.amount - subtotal))
+
+            Divider().overlay(Theme.separator)
+
+            HStack {
+                Text("Total")
+                Spacer()
+                Text(viewModel.amount.priceText)
+            }
+            .font(.system(size: 15, weight: .bold))
+            .foregroundStyle(Theme.textPrimary)
+        }
+        .padding(.horizontal, Theme.Spacing.xs)
+    }
+
+    private func totalRow(_ label: Text, _ value: Double) -> some View {
+        HStack {
+            label
+            Spacer()
+            Text(value.priceText)
+        }
+        .font(.system(size: 13))
+        .foregroundStyle(Theme.textSecondary)
     }
 
     // MARK: - Bottom bar
@@ -304,7 +323,7 @@ struct PaymentView: View {
                 items: [CartItem(plant: .preview, quantity: 2)],
                 total: 37.50,
                 deliveryAddress: "No. 42, St. 271, Phnom Penh",
-                paymentMethod: .khqr
+                paymentMethod: .abaKHQR
             ),
             onPaid: { _ in },
             onLater: {}

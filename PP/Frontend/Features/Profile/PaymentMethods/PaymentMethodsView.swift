@@ -30,6 +30,12 @@ struct PaymentMethodsView: View {
                     }
                 }
 
+                SectionCard(title: "We accept") {
+                    PaymentBrandMarks(marks: ["PayABA", "PayKHQR"] + PaymentBrandMarks.cards)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(Text(verbatim: "ABA, KHQR, Visa, Mastercard, UnionPay, JCB"))
+                }
+
                 securityNote
             }
             .padding(Theme.Spacing.lg)

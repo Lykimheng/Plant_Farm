@@ -275,32 +275,22 @@
         }
       }
     },
-    "ABA Mobile didn't open on this phone. Scan or save the KHQR code below instead." : {
+    "ABA KHQR" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ABA Mobile មិនបានបើកនៅលើទូរស័ព្ទនេះទេ។ សូមស្កេន ឬរក្សាទុកកូដ KHQR ខាងក្រោមជំនួសវិញ។"
+            "value" : "ABA KHQR"
           }
         }
       }
     },
-    "ABA Mobile opens with the amount ready. Confirm there, then come back to Plant Farm." : {
+    "ABA Mobile opens if you have it. Otherwise you'll get a KHQR code to scan with any banking app." : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ABA Mobile នឹងបើកជាមួយចំនួនទឹកប្រាក់ដែលបានរៀបចំរួច។ សូមបញ្ជាក់នៅទីនោះ រួចត្រឡប់មក Plant Farm វិញ។"
-          }
-        }
-      }
-    },
-    "ABA Pay" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ABA Pay"
+            "value" : "ABA Mobile នឹងបើកឡើង ប្រសិនបើអ្នកមានកម្មវិធីនេះ។ បើមិនដូច្នោះទេ អ្នកនឹងទទួលបានកូដ KHQR ដើម្បីស្កេនជាមួយកម្មវិធីធនាគារណាមួយ។"
           }
         }
       }
@@ -504,6 +494,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "អ្នកគ្រប់គ្រងបានលាក់ការវាយតម្លៃនេះ ដូច្នេះវាមិនត្រូវបានបង្ហាញដល់អ្នកដទៃ ឬរាប់បញ្ចូលក្នុងការវាយតម្លៃឡើយ។"
+          }
+        }
+      }
+    },
+    "and upload to Mobile Banking app supporting KHQR" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ហើយបញ្ចូលទៅក្នុងកម្មវិធីធនាគារដែលគាំទ្រ KHQR"
           }
         }
       }
@@ -948,6 +948,16 @@
         }
       }
     },
+    "Choose way to pay" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ជ្រើសរើសវិធីទូទាត់"
+          }
+        }
+      }
+    },
     "City" : {
       "localizations" : {
         "km" : {
@@ -1037,16 +1047,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "បញ្ជាក់ពាក្យសម្ងាត់"
-          }
-        }
-      }
-    },
-    "Confirm the payment in ABA Mobile, then come back here. This screen updates as soon as ABA confirms it." : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "សូមបញ្ជាក់ការទូទាត់នៅក្នុង ABA Mobile រួចត្រឡប់មកទីនេះវិញ។ អេក្រង់នេះនឹងធ្វើបច្ចុប្បន្នភាពភ្លាមៗ នៅពេល ABA បញ្ជាក់។"
           }
         }
       }
@@ -1181,6 +1181,16 @@
         }
       }
     },
+    "Credit/Debit Card" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "កាតឥណទាន/ឥណពន្ធ"
+          }
+        }
+      }
+    },
     "Cut off affected leaves, improve airflow, avoid wetting the foliage, and treat with a fungicide." : {
       "localizations" : {
         "km" : {
@@ -1261,6 +1271,16 @@
         }
       }
     },
+    "Delivery" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ការដឹកជញ្ជូន"
+          }
+        }
+      }
+    },
     "Delivery (%@)" : {
       "localizations" : {
         "km" : {
@@ -1327,6 +1347,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "រួចរាល់"
+          }
+        }
+      }
+    },
+    "Download QR" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ទាញយក QR"
           }
         }
       }
@@ -2105,16 +2135,6 @@
         }
       }
     },
-    "KHQR" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "KHQR"
-          }
-        }
-      }
-    },
     "KHQR code for %@" : {
       "localizations" : {
         "km" : {
@@ -2796,6 +2816,16 @@
         }
       }
     },
+    "or" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "ឬ"
+          }
+        }
+      }
+    },
     "Order #%@" : {
       "localizations" : {
         "km" : {
@@ -3006,16 +3036,6 @@
         }
       }
     },
-    "Pay from your ABA account" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ទូទាត់ពីគណនី ABA របស់អ្នក"
-          }
-        }
-      }
-    },
     "Pay later" : {
       "localizations" : {
         "km" : {
@@ -3056,12 +3076,12 @@
         }
       }
     },
-    "Pay with" : {
+    "Pay with %@ instead" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "បង់ប្រាក់តាមរយៈ"
+            "value" : "ទូទាត់តាម %@ ជំនួសវិញ"
           }
         }
       }
@@ -3082,16 +3102,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "ការទូទាត់ត្រូវបានបោះបង់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។"
-          }
-        }
-      }
-    },
-    "Payment Method" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "វិធីទូទាត់"
           }
         }
       }
@@ -3559,16 +3569,6 @@
         }
       }
     },
-    "Save to Photos" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "រក្សាទុកក្នុងរូបថត"
-          }
-        }
-      }
-    },
     "Saving %@" : {
       "localizations" : {
         "km" : {
@@ -3592,16 +3592,6 @@
     "Scan history" : {
 
     },
-    "Scan it with ABA Mobile or any KHQR bank app. Paying on this phone? Save it, then in your bank app tap Scan and choose the image from your photos." : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ស្កេនវាជាមួយ ABA Mobile ឬកម្មវិធីធនាគារណាមួយដែលគាំទ្រ KHQR។ បង់ប្រាក់នៅលើទូរស័ព្ទនេះឬ? សូមរក្សាទុកវា បន្ទាប់មកនៅក្នុងកម្មវិធីធនាគាររបស់អ្នក សូមចុច ស្កេន ហើយជ្រើសរើសរូបភាពពីរូបថតរបស់អ្នក។"
-          }
-        }
-      }
-    },
     "Scan result" : {
       "localizations" : {
         "km" : {
@@ -3612,11 +3602,21 @@
         }
       }
     },
-    "Scan to pay with any bank app" : {
+    "Scan to Pay" : {
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
+            "value" : "ស្កេនដើម្បីទូទាត់"
+          }
+        }
+      }
+    },
+    "Scan to pay with any banking app" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "ស្កេនដើម្បីទូទាត់ជាមួយកម្មវិធីធនាគារណាមួយ"
           }
         }
@@ -3702,16 +3702,6 @@
         }
       }
     },
-    "Share" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ចែករំលែក"
-          }
-        }
-      }
-    },
     "Shop unavailable" : {
       "localizations" : {
         "km" : {
@@ -3754,16 +3744,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "បង្ហាញ %@ ទាំងអស់"
-          }
-        }
-      }
-    },
-    "Show KHQR code instead" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "បង្ហាញកូដ KHQR ជំនួសវិញ"
           }
         }
       }
@@ -4466,16 +4446,6 @@
         }
       }
     },
-    "Visa / Mastercard" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa / Mastercard"
-          }
-        }
-      }
-    },
     "Waiting for confirmation" : {
       "localizations" : {
         "km" : {
@@ -4532,6 +4502,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ការស្រោចទឹក"
+          }
+        }
+      }
+    },
+    "We accept" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "យើងទទួលយក"
           }
         }
       }
@@ -4764,16 +4744,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "អ្នកសន្សំបាន %@ ក្នុងមួយដើម"
-          }
-        }
-      }
-    },
-    "You'll get a KHQR code to scan with ABA Mobile or any KHQR bank app. You can also save it and scan it from your photos." : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "អ្នកនឹងទទួលបានកូដ KHQR ដើម្បីស្កេនជាមួយ ABA Mobile ឬកម្មវិធីធនាគារណាមួយដែលគាំទ្រ KHQR។ អ្នកក៏អាចរក្សាទុកវា ហើយស្កេនពីរូបថតរបស់អ្នកបានដែរ។"
           }
         }
       }

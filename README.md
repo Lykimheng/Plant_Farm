@@ -316,9 +316,9 @@ and signs out when the server answers 401. After pulling this change run
 | `GET` | `/reviews` | optional | Plant reviews; with a token, also your own review |
 | `POST` `DELETE` | `/reviews` | token | Post/edit or delete your review |
 | `GET` `POST` `DELETE` | `/my_plants` | token | Personal plant tracker |
-| `GET` `POST` | `/orders` | token | Order history, checkout (`payment_method`: `aba`, `khqr`, `card` or `cod`) |
+| `GET` `POST` | `/orders` | token | Order history, checkout (`payment_method`: `khqr`, `card` or `cod`) |
 | `POST` | `/orders/{id}/cancel` | token | Cancel your own order while it is still pending and unpaid |
-| `POST` | `/orders/{id}/payments` | token | Start paying an order with ABA PayWay (`method`: `aba`, `khqr`, `card`) |
+| `POST` | `/orders/{id}/payments` | token | Start paying an order with ABA PayWay (`method`: `khqr` or `card`) |
 | `GET` | `/orders/{id}/payment` | token | The latest payment attempt, re-checked with PayWay while it's open |
 | `POST` | `/orders/{id}/payment/cancel` | token | Close the open PayWay transaction; the order stays unpaid |
 | `POST` | `/payway/callback` | | PayWay's pushback; the server re-checks the transaction with PayWay |
@@ -342,8 +342,11 @@ from its visible reviews on every change, so they can't drift.
 
 ## Online payment (ABA PayWay)
 
-ABA Pay, KHQR and Visa / Mastercard are paid through
+ABA KHQR and Credit/Debit Card are paid through
 [ABA PayWay](https://developer.payway.com.kh). Cash on delivery skips it.
+The checkout follows ABA's Merchant Integration Guidelines: the method names and
+wording are theirs, and the logos in `Assets.xcassets/PayWay` are exported from
+their guideline file, so don't redraw, tint or stretch them.
 
 1. Put the keys from ABA's email in `PP-Backend/.env` (they stay on the server;
    the app never sees them):
@@ -362,15 +365,21 @@ ABA Pay, KHQR and Visa / Mastercard are paid through
    `https://checkout.payway.com.kh` and use the production keys.
 2. Run `php artisan migrate` once (adds the `payments` table and the
    payment columns on `orders`).
-3. PayWay only answers servers it knows: ask ABA to whitelist the public IP
-   your backend calls from. Until then every attempt fails, and
-   `storage/logs/laravel.log` says `PayWay error 6: wrong domain`.
+3. In the PayWay merchant portal, upload the shop logo (300 × 300 JPG or PNG, 3 MB
+   at most) and set the business name; both appear on PayWay's card form, and
+   the name appears in bank apps when a KHQR code is scanned.
+
+If a payment can't start, `storage/logs/laravel.log` says why. `Wrong Hash` means
+`PAYWAY_MERCHANT_ID` and `PAYWAY_API_KEY` don't belong together (the key is 40
+characters); `wrong domain` means ABA wants this server's IP whitelisted.
 
 **How a payment works.** The app places the order (unpaid), then asks the
 server to start a PayWay transaction for the order's server-side total.
-ABA Pay and KHQR share one transaction: the app opens ABA Mobile with its link,
-or shows the KHQR code to scan or save. Cards open PayWay's own card form
-inside the app, so card numbers go straight to ABA. While the customer pays,
+ABA KHQR opens ABA Mobile when it's installed and always shows the KHQR code, to
+scan or download. Cards open PayWay's own card form inside the app, so card
+numbers go straight to ABA. Every purchase sends `payment_gate=0`: a merchant
+profile that also has PayWay's QR Payment API answers with QR data instead of
+the card form without it. While the customer pays,
 the app asks the server every few seconds; the server asks PayWay's
 check-transaction API and marks the order paid only when PayWay says
 `APPROVED` for exactly that amount. Nothing the app sends can mark an order

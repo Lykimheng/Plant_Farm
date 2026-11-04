@@ -21,19 +21,18 @@ final class PaymentViewModel: ObservableObject {
     @Published private(set) var phase: Phase = .starting
     @Published private(set) var message: LocalizedStringResource?
     @Published private(set) var isBusy = false
-    @Published private(set) var isBankAppMissing = false
+    @Published private(set) var canOpenBankApp = false
     @Published private(set) var qrSnapshot: UIImage?
     // only the response that opens a card attempt carries PayWay's form
     @Published private(set) var cardForm: PaymentSession.CardForm?
     @Published var showsCardForm = false
-    @Published var showsQRForBankApp = false
 
     let order: OrderModel
     private var hasStarted = false
 
     init(order: OrderModel) {
         self.order = order
-        method = order.paymentMethod.paysOnline ? order.paymentMethod : .khqr
+        method = order.paymentMethod.paysOnline ? order.paymentMethod : .abaKHQR
     }
 
     var isWaiting: Bool { phase == .waiting }
@@ -56,11 +55,8 @@ final class PaymentViewModel: ObservableObject {
     }
 
     func openBankApp() async {
-        guard let link = session?.deeplink, await UIApplication.shared.open(link) else {
-            isBankAppMissing = true
-            showsQRForBankApp = true
-            return
-        }
+        guard let link = session?.deeplink else { return }
+        await UIApplication.shared.open(link)
     }
 
     func refresh(using orders: OrdersStore) async {
@@ -131,8 +127,7 @@ final class PaymentViewModel: ObservableObject {
         session = nil
         qrSnapshot = nil
         cardForm = nil
-        isBankAppMissing = false
-        showsQRForBankApp = false
+        canOpenBankApp = false
 
         do {
             apply(try await orders.startPayment(for: order, method: method))
@@ -148,7 +143,9 @@ final class PaymentViewModel: ObservableObject {
 
         if method == .card {
             showsCardForm = cardForm != nil
-        } else if method == .aba {
+        } else if let link = session?.deeplink, UIApplication.shared.canOpenURL(link) {
+            // ABA KHQR: straight to ABA Mobile when it's there, the code stays on screen either way
+            canOpenBankApp = true
             await openBankApp()
         }
     }

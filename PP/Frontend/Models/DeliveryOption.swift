@@ -25,6 +25,7 @@ nonisolated struct PaymentMethod: Identifiable, Hashable {
     let id: String
     let name: LocalizedStringResource
     let icon: String
+    var logo: String? = nil
     let detail: LocalizedStringResource
     let hint: LocalizedStringResource
 
@@ -33,16 +34,12 @@ nonisolated struct PaymentMethod: Identifiable, Hashable {
 
     var paysOnline: Bool { self != .cashOnDelivery }
 
-    static let aba = PaymentMethod(
-        id: "aba", name: "ABA Pay", icon: "building.columns", detail: "Pay from your ABA account",
-        hint: "ABA Mobile opens with the amount ready. Confirm there, then come back to Plant Farm."
-    )
-    static let khqr = PaymentMethod(
-        id: "khqr", name: "KHQR", icon: "qrcode", detail: "Scan to pay with any bank app",
-        hint: "You'll get a KHQR code to scan with ABA Mobile or any KHQR bank app. You can also save it and scan it from your photos."
+    static let abaKHQR = PaymentMethod(
+        id: "khqr", name: "ABA KHQR", icon: "qrcode", logo: "PayABAKHQR", detail: "Scan to pay with any banking app",
+        hint: "ABA Mobile opens if you have it. Otherwise you'll get a KHQR code to scan with any banking app."
     )
     static let card = PaymentMethod(
-        id: "card", name: "Visa / Mastercard", icon: Icons.card, detail: "Credit or debit card",
+        id: "card", name: "Credit/Debit Card", icon: Icons.card, logo: "PayCardTile", detail: "Credit or debit card",
         hint: "You'll type your card number, expiry date and CVV on ABA PayWay's secure form. Plant Farm never sees your card details."
     )
     static let cashOnDelivery = PaymentMethod(
@@ -50,11 +47,11 @@ nonisolated struct PaymentMethod: Identifiable, Hashable {
         hint: "Pay the courier in cash when your plants arrive."
     )
 
-    static let all: [PaymentMethod] = [.aba, .khqr, .card, .cashOnDelivery]
-    static let online: [PaymentMethod] = all.filter(\.paysOnline)
+    static let all: [PaymentMethod] = [.abaKHQR, .card, .cashOnDelivery]
 
     static func with(id: String) -> PaymentMethod {
-        all.first { $0.id == id } ?? .cashOnDelivery
+        // "aba" was its own method before ABA merged ABA Pay and KHQR
+        id == "aba" ? .abaKHQR : all.first { $0.id == id } ?? .cashOnDelivery
     }
 }
 

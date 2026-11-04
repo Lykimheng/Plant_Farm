@@ -112,11 +112,7 @@ struct OrderDetailView: View {
         SectionCard(title: "Payment", icon: Icons.card) {
             VStack(spacing: Theme.Spacing.md) {
                 HStack(spacing: Theme.Spacing.md) {
-                    Image(systemName: current.paymentMethod.icon)
-                        .font(.system(size: 15))
-                        .foregroundStyle(Theme.brand)
-                        .frame(width: 36, height: 36)
-                        .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+                    PaymentMethodIcon(method: current.paymentMethod)
 
                     Text(current.paymentMethod.name)
                         .font(.system(size: 14, weight: .medium))

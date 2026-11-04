@@ -22,9 +22,9 @@ class OrderForm
     ];
 
     public const PAYMENT_METHODS = [
-        'aba'  => 'ABA Pay',
-        'khqr' => 'KHQR',
-        'card' => 'Visa / Mastercard',
+        'aba'  => 'ABA KHQR', // orders placed before ABA Pay and KHQR became one method
+        'khqr' => 'ABA KHQR',
+        'card' => 'Credit/Debit Card',
         'cod'  => 'Cash on delivery',
     ];
 

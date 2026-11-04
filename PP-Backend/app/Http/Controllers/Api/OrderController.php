@@ -17,8 +17,8 @@ class OrderController extends Controller
 {
     private const DELIVERY_FEES = ['standard' => 1.50, 'express' => 2.00];
 
-    // aba, khqr and card are paid through ABA PayWay after the order is placed
-    private const PAYMENT_METHODS = ['aba', 'khqr', 'card', 'cod'];
+    // khqr and card are paid through ABA PayWay after the order is placed
+    private const PAYMENT_METHODS = ['khqr', 'card', 'cod'];
 
     public function index(Request $request)
     {

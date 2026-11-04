@@ -176,7 +176,7 @@ struct CheckoutView: View {
     // MARK: - Payment
 
     private var paymentMethods: some View {
-        SectionCard(title: "Payment Method", icon: Icons.card) {
+        SectionCard(title: "Choose way to pay", icon: Icons.card) {
             VStack(spacing: 0) {
                 ForEach(viewModel.paymentMethods) { method in
                     PaymentMethodRow(
@@ -346,22 +346,27 @@ struct PaymentMethodRow: View {
     let isSelected: Bool
     let onTap: () -> Void
 
+    private static let detailColor = Color(light: 0x697386, dark: 0x9AA5A4)
+
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: Theme.Spacing.md) {
-                Image(systemName: method.icon)
-                    .font(.system(size: 16))
-                    .foregroundStyle(Theme.brand)
-                    .frame(width: 40, height: 40)
-                    .background(Theme.brandTint, in: RoundedRectangle(cornerRadius: Theme.Radius.sm, style: .continuous))
+                PaymentMethodIcon(method: method)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(method.name)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Theme.textPrimary)
-                    Text(method.detail)
-                        .font(.system(size: 11.5))
-                        .foregroundStyle(Theme.textTertiary)
+
+                    if method == .card {
+                        PaymentBrandMarks()
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(Text(method.detail))
+                    } else {
+                        Text(method.detail)
+                            .font(.system(size: 11.5))
+                            .foregroundStyle(Self.detailColor)
+                    }
                 }
 
                 Spacer()

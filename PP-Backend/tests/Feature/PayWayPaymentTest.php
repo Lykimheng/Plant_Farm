@@ -27,6 +27,7 @@ class PayWayPaymentTest extends TestCase
     private ?float $paywayAmount = null;
     private bool $paywayKnowsTransaction = true;
     private ?array $paywayRejection = null;
+    private bool $paywayRepliesWithCamelCase = false;
 
     private array $purchases = [];
     private array $checks = [];
@@ -83,6 +84,7 @@ class PayWayPaymentTest extends TestCase
         $this->assertSame('USD', $sent['currency']);
         $this->assertSame('ec000002', $sent['merchant_id']);
         $this->assertSame('abapay_khqr_deeplink', $sent['payment_option']);
+        $this->assertSame('0', $sent['payment_gate']);
         $this->assertSame(Payment::sole()->tran_id, $sent['tran_id']);
         $this->assertSame(
             ['ios_scheme' => 'plantfarm://payway', 'android_scheme' => 'plantfarm://payway'],
@@ -102,6 +104,16 @@ class PayWayPaymentTest extends TestCase
 
         Http::assertSent(fn (Request $request) => $request->url() === 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase');
         Http::assertSent(fn (Request $request) => $request->url() === 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/check-transaction-2');
+    }
+
+    public function test_the_qr_api_reply_shape_is_accepted_too(): void
+    {
+        $this->paywayRepliesWithCamelCase = true;
+        $orderId = $this->placeOrder('khqr');
+
+        $this->startPayment($orderId, 'khqr')
+            ->assertOk()
+            ->assertJsonPath('payment.qr_string', '00020101021230510016abaakhppxxx@abaa');
     }
 
     public function test_order_stays_unpaid_until_payway_approves(): void
@@ -156,8 +168,8 @@ class PayWayPaymentTest extends TestCase
 
     public function test_callback_marks_the_order_paid_once_payway_confirms(): void
     {
-        $orderId = $this->placeOrder('aba');
-        $this->startPayment($orderId, 'aba');
+        $orderId = $this->placeOrder('khqr');
+        $this->startPayment($orderId, 'khqr');
 
         $this->paywayStatus = 'APPROVED';
 
@@ -229,18 +241,18 @@ class PayWayPaymentTest extends TestCase
 
     public function test_switching_method_closes_the_previous_transaction(): void
     {
-        $orderId = $this->placeOrder('aba');
-        $this->startPayment($orderId, 'aba');
+        $orderId = $this->placeOrder('khqr');
+        $this->startPayment($orderId, 'khqr');
         $first = Payment::sole()->tran_id;
 
-        $this->startPayment($orderId, 'khqr')
+        $this->startPayment($orderId, 'card')
             ->assertOk()
-            ->assertJsonPath('payment.method', 'khqr')
+            ->assertJsonPath('payment.method', 'card')
             ->assertJsonPath('payment.status', 'pending');
 
         $this->assertSame([$first], $this->closes);
         $this->assertSame('cancelled', Payment::where('tran_id', $first)->value('status'));
-        $this->assertSame('khqr', Order::find($orderId)->payment_method);
+        $this->assertSame('card', Order::find($orderId)->payment_method);
         $this->assertCount(2, $this->purchases);
     }
 
@@ -272,6 +284,9 @@ class PayWayPaymentTest extends TestCase
             ->assertJsonPath('payment.qr_string', null);
 
         $this->assertSame('cards', $this->purchases[0]['payment_option']);
+        $this->assertSame('hosted_view', $this->purchases[0]['view_type']);
+        $this->assertSame('0', $this->purchases[0]['payment_gate']);
+        Http::assertSent(fn (Request $request) => str_contains($request->header('User-Agent')[0], 'iPhone'));
         $this->assertSame($this->purchaseHash($this->purchases[0]), $this->purchases[0]['hash']);
     }
 
@@ -441,7 +456,7 @@ class PayWayPaymentTest extends TestCase
 
                 return Http::response([
                     'status' => ['code' => '00', 'message' => 'Success!', 'tran_id' => $fields['tran_id']],
-                    'qr_string' => '00020101021230510016abaakhppxxx@abaa',
+                    $this->paywayRepliesWithCamelCase ? 'qrString' : 'qr_string' => '00020101021230510016abaakhppxxx@abaa',
                     'abapay_deeplink' => 'abamobilebank://ababank.com?type=payway&qrcode=000201',
                     'checkout_qr_url' => 'https://checkout-uat.payway.com.kh/qr',
                 ]);

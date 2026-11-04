@@ -28,7 +28,7 @@ class PaymentController extends Controller
         $method = (string) $request->input('method');
 
         if (! in_array($method, OrderPayments::METHODS, true)) {
-            return $this->fail('Choose ABA Pay, KHQR or a card to pay online.', 422);
+            return $this->fail('Choose ABA KHQR or a card to pay online.', 422);
         }
 
         $found = $request->user()->orders()->with('items')->find($order);
