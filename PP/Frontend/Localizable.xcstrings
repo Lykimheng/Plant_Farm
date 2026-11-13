@@ -129,16 +129,6 @@
         }
       }
     },
-    "6-digit code" : {
-      "localizations" : {
-        "km" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "លេខកូដ 6 ខ្ទង់"
-          }
-        }
-      }
-    },
     "^[%lld item](inflect: true)" : {
       "localizations" : {
         "km" : {
@@ -235,6 +225,16 @@
         }
       }
     },
+    "6-digit code" : {
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លេខកូដ 6 ខ្ទង់"
+          }
+        }
+      }
+    },
     "20% off every purchase." : {
       "localizations" : {
         "km" : {
@@ -279,7 +279,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ABA KHQR"
           }
         }
@@ -289,7 +289,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ABA Mobile នឹងបើកឡើង ប្រសិនបើអ្នកមានកម្មវិធីនេះ។ បើមិនដូច្នោះទេ អ្នកនឹងទទួលបានកូដ KHQR ដើម្បីស្កេនជាមួយកម្មវិធីធនាគារណាមួយ។"
           }
         }
@@ -416,7 +416,14 @@
       }
     },
     "All saved scans and their photos will be removed from this device." : {
-
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រាល់ការស្កេនដែលបានរក្សាទុក និងរូបភាពរបស់វា នឹងត្រូវបានលុបចេញពីឧបករណ៍នេះ។"
+          }
+        }
+      }
     },
     "Allow camera" : {
       "localizations" : {
@@ -432,7 +439,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "អនុញ្ញាតឱ្យរក្សាទុកក្នុងរូបថត"
           }
         }
@@ -479,10 +486,11 @@
       }
     },
     "Amount to pay" : {
+      "extractionState" : "manual",
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ចំនួនទឹកប្រាក់ត្រូវបង់"
           }
         }
@@ -502,7 +510,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ហើយបញ្ចូលទៅក្នុងកម្មវិធីធនាគារដែលគាំទ្រ KHQR"
           }
         }
@@ -762,7 +770,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បោះបង់ការទូទាត់"
           }
         }
@@ -782,7 +790,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បោះបង់ការទូទាត់នេះឬ?"
           }
         }
@@ -802,7 +810,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការទូទាត់តាមកាត"
           }
         }
@@ -952,7 +960,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ជ្រើសរើសវិធីទូទាត់"
           }
         }
@@ -989,7 +997,14 @@
       }
     },
     "Clear scan history?" : {
-
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "លុបប្រវត្តិស្កេន?"
+          }
+        }
+      }
     },
     "Clear search" : {
       "localizations" : {
@@ -1005,7 +1020,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បិទ"
           }
         }
@@ -1065,7 +1080,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "កំពុងភ្ជាប់ទៅ ABA PayWay…"
           }
         }
@@ -1125,7 +1140,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "មិនអាចរក្សាទុកកូដ KHQR បានទេ។ សូមព្យាយាមម្ដងទៀត។"
           }
         }
@@ -1185,7 +1200,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "កាតឥណទាន/ឥណពន្ធ"
           }
         }
@@ -1275,7 +1290,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការដឹកជញ្ជូន"
           }
         }
@@ -1355,7 +1370,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ទាញយក QR"
           }
         }
@@ -1541,7 +1556,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បញ្ចូលព័ត៌មានកាត"
           }
         }
@@ -1551,7 +1566,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "សូមបញ្ចូលលេខកូដ 6 ខ្ទង់ពីអ៊ីមែល។"
           }
         }
@@ -1561,7 +1576,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បញ្ចូលលេខកូដ 6 ខ្ទង់ដែលយើងបានផ្ញើតាមអ៊ីមែលទៅ %@ ហើយជ្រើសរើសពាក្យសម្ងាត់ថ្មី។"
           }
         }
@@ -1571,7 +1586,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បញ្ចូលអ៊ីមែលរបស់អ្នក ហើយយើងនឹងផ្ញើលេខកូដសម្រាប់កំណត់ពាក្យសម្ងាត់របស់អ្នកឡើងវិញ។"
           }
         }
@@ -2119,7 +2134,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បន្តការទូទាត់"
           }
         }
@@ -2139,7 +2154,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "កូដ KHQR សម្រាប់ %@"
           }
         }
@@ -2149,7 +2164,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បានរក្សាទុកកូដ KHQR ក្នុងរូបថត"
           }
         }
@@ -2664,7 +2679,14 @@
       }
     },
     "No scans yet" : {
-
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "មិនទាន់មានការស្កេននៅឡើយទេ"
+          }
+        }
+      }
     },
     "No sign of the common problems the scanner knows about." : {
       "localizations" : {
@@ -2790,7 +2812,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បើក ABA Mobile"
           }
         }
@@ -2820,7 +2842,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ឬ"
           }
         }
@@ -2990,7 +3012,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បានបង់ប្រាក់"
           }
         }
@@ -3040,7 +3062,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បង់ប្រាក់ពេលក្រោយ"
           }
         }
@@ -3050,7 +3072,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បង់ប្រាក់ឥឡូវ · %@"
           }
         }
@@ -3060,7 +3082,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ទូទាត់ជាសាច់ប្រាក់ជូនអ្នកដឹកជញ្ជូន នៅពេលរុក្ខជាតិរបស់អ្នកមកដល់។"
           }
         }
@@ -3080,7 +3102,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ទូទាត់តាម %@ ជំនួសវិញ"
           }
         }
@@ -3090,7 +3112,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការទូទាត់"
           }
         }
@@ -3100,7 +3122,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការទូទាត់ត្រូវបានបោះបង់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។"
           }
         }
@@ -3120,7 +3142,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បានទទួលការទូទាត់។ សូមអរគុណ!"
           }
         }
@@ -3150,7 +3172,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការចូលប្រើរូបថតត្រូវបានបិទសម្រាប់ Plant Farm។ នៅក្នុងការកំណត់ សូមចុច រូបថត ហើយជ្រើសរើស ការចូលប្រើពេញលេញ ឬ ការចូលប្រើមានកំណត់ ដើម្បីអ្នកអាចជ្រើសរើសរូបថតបាន។"
           }
         }
@@ -3222,7 +3244,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Plant Farm មិនអាចបន្ថែមរូបថតបានទេនៅពេលនេះ។ នៅក្នុងការកំណត់ សូមចុច រូបថត ហើយអនុញ្ញាតឱ្យ Plant Farm បន្ថែមរូបថត ដើម្បីអ្នកអាចរក្សាទុកកូដ KHQR បាន។"
           }
         }
@@ -3261,7 +3283,14 @@
       }
     },
     "Plants you identify with the camera or from your photos will show up here." : {
-
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "រុក្ខជាតិដែលអ្នកកំណត់អត្តសញ្ញាណដោយប្រើកាមេរ៉ា ឬពីក្នុងរូបថតរបស់អ្នក នឹងបង្ហាញនៅទីនេះ។"
+          }
+        }
+      }
     },
     "Poor" : {
       "localizations" : {
@@ -3433,7 +3462,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បានសងប្រាក់វិញ"
           }
         }
@@ -3590,7 +3619,14 @@
       }
     },
     "Scan history" : {
-
+      "localizations" : {
+        "km" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ប្រវត្តិស្កេន"
+          }
+        }
+      }
     },
     "Scan result" : {
       "localizations" : {
@@ -3606,7 +3642,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ស្កេនដើម្បីទូទាត់"
           }
         }
@@ -3616,7 +3652,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ស្កេនដើម្បីទូទាត់ជាមួយកម្មវិធីធនាគារណាមួយ"
           }
         }
@@ -3636,7 +3672,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការពារដោយ ABA PayWay · %@"
           }
         }
@@ -3666,7 +3702,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ផ្ញើលេខកូដថ្មី"
           }
         }
@@ -3686,7 +3722,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ផ្ញើលេខកូដ"
           }
         }
@@ -3891,7 +3927,6 @@
       }
     },
     "Something went wrong while looking at the photo. Please try again." : {
-      "extractionState" : "stale",
       "localizations" : {
         "km" : {
           "stringUnit" : {
@@ -4143,7 +4178,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការទូទាត់មិនបានសម្រេច។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ សូមព្យាយាមម្ដងទៀត ឬជ្រើសរើសវិធីទូទាត់ផ្សេង។"
           }
         }
@@ -4153,7 +4188,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ពេលវេលាទូទាត់បានផុតកំណត់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ ចុច ព្យាយាមម្ដងទៀត ដើម្បីទទួលបានកូដថ្មី។"
           }
         }
@@ -4200,7 +4235,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការបញ្ជាទិញនេះបានបង់ប្រាក់រួចហើយ ដូច្នេះមិនអាចលុបចោលនៅទីនេះបានទេ។ សូមទាក់ទងមកយើង ប្រសិនបើអ្នកត្រូវការផ្លាស់ប្ដូរវា។"
           }
         }
@@ -4340,7 +4375,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "បើកការចូលប្រើរូបថត"
           }
         }
@@ -4360,7 +4395,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "មិនទាន់បង់ប្រាក់"
           }
         }
@@ -4460,7 +4495,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "កំពុងរង់ចាំការទូទាត់របស់អ្នក…"
           }
         }
@@ -4510,7 +4545,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "យើងទទួលយក"
           }
         }
@@ -4762,7 +4797,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "អ្នកនឹងបញ្ចូលលេខកាត កាលបរិច្ឆេទផុតកំណត់ និង CVV នៅលើទម្រង់សុវត្ថិភាពរបស់ ABA PayWay។ Plant Farm មិនដែលឃើញព័ត៌មានកាតរបស់អ្នកទេ។"
           }
         }
@@ -4772,7 +4807,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ធនាគាររបស់អ្នកបានបដិសេធការទូទាត់។ ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់ទេ។ សូមព្យាយាមម្ដងទៀត ឬជ្រើសរើសវិធីទូទាត់ផ្សេង។"
           }
         }
@@ -4878,7 +4913,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការបញ្ជាទិញរបស់អ្នកត្រូវបានរក្សាទុក។ អ្នកអាចបង់ប្រាក់បានគ្រប់ពេលពី ការបញ្ជាទិញរបស់ខ្ញុំ។"
           }
         }
@@ -4888,7 +4923,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ការបញ្ជាទិញរបស់អ្នកនៅតែត្រូវបានរក្សាទុក ប៉ុន្តែមិនទាន់បានបង់ប្រាក់។ អ្នកអាចបង់ប្រាក់នៅពេលក្រោយពី ការបញ្ជាទិញរបស់ខ្ញុំ។"
           }
         }
@@ -4918,7 +4953,7 @@
       "localizations" : {
         "km" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "វគ្គចូលរបស់អ្នកបានផុតកំណត់។ សូមចូលគណនីម្ដងទៀត។"
           }
         }

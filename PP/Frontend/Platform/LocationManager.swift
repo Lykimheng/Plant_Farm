@@ -51,7 +51,6 @@ final class LocationManager: NSObject, ObservableObject {
         }
     }
 
-    // Returns false when iOS won't show the prompt again and the user has to go to Settings
     @discardableResult
     func requestPermission() -> Bool {
         switch authorizationStatus {
@@ -82,7 +81,6 @@ extension LocationManager: CLLocationManagerDelegate {
             self.authorizationStatus = status
             switch status {
             case .authorizedWhenInUse, .authorizedAlways:
-                // one-shot: the delivery address doesn't need continuous tracking
                 manager.requestLocation()
             case .denied, .restricted:
                 self.userAddress = ""

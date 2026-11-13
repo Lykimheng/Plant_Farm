@@ -17,6 +17,17 @@ class AuthController extends Controller
 {
     private const MIN_PASSWORD_LENGTH = 6;
 
+    // bcrypt ignores everything past 72 bytes, so a longer new password would only seem stronger
+    private const MAX_NEW_PASSWORD_BYTES = 72;
+
+    // sign-in stays lenient for passwords set before the limit existed
+    private const MAX_PASSWORD_LENGTH = 128;
+
+    // users table column sizes
+    private const MAX_NAME_LENGTH = 100;
+    private const MAX_EMAIL_LENGTH = 150;
+    private const MAX_LOCATION_LENGTH = 100;
+
     /** Wrong reset codes allowed per email before the code is thrown away. */
     private const RESET_ATTEMPTS = 5;
 
@@ -49,6 +60,19 @@ class AuthController extends Controller
         return response()->json(['success' => false, 'message' => $message], $status);
     }
 
+    private function newPasswordProblem(string $password): ?string
+    {
+        if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
+            return 'Use at least '.self::MIN_PASSWORD_LENGTH.' characters.';
+        }
+
+        if (strlen($password) > self::MAX_NEW_PASSWORD_BYTES) {
+            return 'That password is too long.';
+        }
+
+        return null;
+    }
+
     public function register(Request $request)
     {
         $name     = trim($request->input('name', ''));
@@ -60,8 +84,18 @@ class AuthController extends Controller
             return $this->fail('Name, email and password are required.');
         }
 
+        if (mb_strlen($name) > self::MAX_NAME_LENGTH
+            || mb_strlen($email) > self::MAX_EMAIL_LENGTH
+            || mb_strlen($location) > self::MAX_LOCATION_LENGTH) {
+            return $this->fail('Name, email or city is too long.');
+        }
+
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $this->fail('Invalid email format.');
+        }
+
+        if ($problem = $this->newPasswordProblem($password)) {
+            return $this->fail($problem);
         }
 
         if (User::where('email', $email)->exists()) {
@@ -85,6 +119,11 @@ class AuthController extends Controller
 
         if ($email === '' || $password === '') {
             return $this->fail('Email and password are required.');
+        }
+
+        // no account can match, so don't spend a hash check on it
+        if (mb_strlen($email) > self::MAX_EMAIL_LENGTH || mb_strlen($password) > self::MAX_PASSWORD_LENGTH) {
+            return $this->fail('Invalid email or password.');
         }
 
         $user = User::where('email', $email)->first();
@@ -125,7 +164,7 @@ class AuthController extends Controller
     {
         $email = trim((string) $request->input('email', ''));
 
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (mb_strlen($email) > self::MAX_EMAIL_LENGTH || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $this->fail('Invalid email format.');
         }
 
@@ -174,8 +213,12 @@ class AuthController extends Controller
             return $this->fail('Email, code and new password are required.');
         }
 
-        if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            return $this->fail('Use at least '.self::MIN_PASSWORD_LENGTH.' characters.');
+        if (mb_strlen($email) > self::MAX_EMAIL_LENGTH || strlen($code) > 6) {
+            return $this->fail('That code is wrong or has expired.');
+        }
+
+        if ($problem = $this->newPasswordProblem($password)) {
+            return $this->fail($problem);
         }
 
         $attempts = 'password-reset:'.mb_strtolower($email);
@@ -221,6 +264,10 @@ class AuthController extends Controller
 
         if ($name === '') {
             return $this->fail('Name is required.');
+        }
+
+        if (mb_strlen($name) > self::MAX_NAME_LENGTH) {
+            return $this->fail('That name is too long.');
         }
 
         $request->user()->update(['name' => $name]);

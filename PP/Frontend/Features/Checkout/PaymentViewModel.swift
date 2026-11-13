@@ -8,8 +8,6 @@
 import SwiftUI
 import Combine
 
-// The server decides whether the order is paid, from ABA PayWay's own answer;
-// this only asks it, every few seconds and whenever the customer comes back.
 @MainActor
 final class PaymentViewModel: ObservableObject {
     enum Phase {

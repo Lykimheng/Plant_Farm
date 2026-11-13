@@ -21,7 +21,7 @@ struct ToastView: View {
         .foregroundStyle(Theme.onBrand)
         .padding(.horizontal, Theme.Spacing.lg)
         .padding(.vertical, Theme.Spacing.md)
-        .background(Theme.brand, in: Capsule())
+        .background(Theme.brandAccent, in: Capsule())
         .softShadow(radius: 12, y: 6)
         .padding(.horizontal, Theme.Spacing.lg)
     }

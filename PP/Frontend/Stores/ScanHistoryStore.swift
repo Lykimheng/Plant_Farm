@@ -2,6 +2,8 @@
 //  ScanHistoryStore.swift
 //  PP
 //
+//  Created by Ly Kimheng on 12/8/26.
+//
 
 import SwiftUI
 import Combine

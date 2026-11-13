@@ -10,8 +10,6 @@ import AVFoundation
 
 struct CameraPreview: UIViewRepresentable {
     let session: AVCaptureSession
-    /// The preview's connection only exists once the session is running, so the
-    /// rotation is re-applied when this flips.
     var isRunning: Bool = false
 
     func makeUIView(context: Context) -> PreviewView {

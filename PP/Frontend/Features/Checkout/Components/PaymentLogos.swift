@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// ABA's merchant guidelines: logos stay as supplied (no shadow, tint or stretching),
-// at least 40pt for a method and 20pt for a brand mark, with 4pt between marks
 struct PaymentMethodIcon: View {
     let method: PaymentMethod
     var size: CGFloat = 40

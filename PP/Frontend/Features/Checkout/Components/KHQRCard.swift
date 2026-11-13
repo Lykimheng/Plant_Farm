@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// laid out as in ABA's merchant guidelines; stays white in dark mode,
-// since bank apps read a dark code on a light card best
 struct KHQRCard: View {
     let amount: Double
     private let code: UIImage?

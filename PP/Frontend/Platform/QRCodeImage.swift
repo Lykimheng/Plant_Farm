@@ -13,7 +13,6 @@ nonisolated enum QRCodeImage {
     static func make(from text: String, scale: CGFloat = 12) -> UIImage? {
         let filter = CIFilter.qrCodeGenerator()
         filter.message = Data(text.utf8)
-        // high enough to read past the currency mark in the middle of a KHQR code
         filter.correctionLevel = "Q"
 
         guard let output = filter.outputImage?.transformed(by: CGAffineTransform(scaleX: scale, y: scale)),

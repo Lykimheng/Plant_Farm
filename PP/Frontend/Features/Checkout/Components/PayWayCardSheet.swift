@@ -8,7 +8,6 @@
 import SwiftUI
 import WebKit
 
-// ABA PayWay's own card form: card details go straight to the bank, never through Plant Farm
 struct PayWayCardSheet: View {
     let form: PaymentSession.CardForm
     let amount: Double
